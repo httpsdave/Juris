@@ -6,12 +6,22 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "scrape:all": "tsx scripts/scrape/run.ts",
+    "scrape:open-congress": "tsx scripts/scrape/open-congress.ts --run"
   },
   "dependencies": {
+    "@fontsource/dm-serif-display": "^5.2.8",
+    "@fontsource/jetbrains-mono": "^5.2.8",
+    "cheerio": "^1.1.2",
+    "framer-motion": "^12.38.0",
+    "lucide-react": "^0.511.0",
     "next": "16.1.7",
+    "pdf-parse": "^2.4.5",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "tesseract.js": "^5.1.1",
+    "zod": "^4.1.11"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -21,6 +31,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.1.7",
     "tailwindcss": "^4",
+    "tsx": "^4.20.6",
     "typescript": "^5"
   }
 }

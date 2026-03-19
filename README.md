@@ -1,36 +1,41 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Juris
 
-## Getting Started
+A legal discovery platform for Philippine laws. Solves the fragmentation problem: laws scattered across multiple official portals, outdated mirrors, and inconsistent formats. Juris aggregates, searches, and displays Philippine legal sources with source transparency and freshness indicators.
 
-First, run the development server:
+## Why This Matters
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Philippine laws are published across multiple portals (Official Gazette, Congress, judiciary databases, legal repositories). Researchers, students, and citizens spend hours searching fragmented sources. Juris centralizes this into one searchable platform with clear source attribution.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## What It Does
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Search across all sources** — Find any Philippine law, decree, or issuance in one place.
+- **Know the source** — See where each law came from (official gazette, congress API, judiciary database, etc.). Understand if it's an official publication or a community mirror.
+- **Read with context** — View full text with embedded source documents (PDFs where available). Track publication dates and authority levels.
+- **Aggregate intelligently** — Deduplicates and ranks records by freshness and authority. Prioritizes official versions over mirrors.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Tech Stack
 
-## Learn More
+| Component | Technology |
+|-----------|-----------|
+| **Framework** | Next.js 16 (App Router) + TypeScript |
+| **UI** | React + Tailwind CSS |
+| **Scraping** | Node.js + Cheerio |
+| **Data** | JSON (in-memory indexing) |
+| **PDF Processing** | pdf-parse library |
 
-To learn more about Next.js, take a look at the following resources:
+## Data Sources
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Currently ingests from:
+- Open Congress API (official congressional records)
+- Official Gazette (RSS + web scraping)
+- Judiciary e-Library (court decisions and documents)
+- LawPhil and ChanRobles (legal databases)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+See [docs/data-sources.md](docs/data-sources.md) for source details and accuracy notes.
 
-## Deploy on Vercel
+## Accuracy & Transparency
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- All records include source URL and publication date.
+- Multiple versions of the same law are merged intelligently; official sources take precedence.
+- Blocked sources (e.g., HTTP 403) are flagged, not hidden.
+- Noisy or low-confidence text is automatically filtered.

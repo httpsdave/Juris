@@ -1,0 +1,46 @@
+{
+  "startedAt": "2026-03-19T10:01:16.239Z",
+  "finishedAt": "2026-03-19T10:03:04.638Z",
+  "previousRecords": 9310,
+  "runRecords": 2089,
+  "sources": [
+    {
+      "source": "official_gazette",
+      "count": 20,
+      "warnings": [
+        "Official Gazette article parse failed (https://www.officialgazette.gov.ph/2025/10/23/republic-act-no-12313/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/2025/10/23/republic-act-no-12313/",
+        "Official Gazette article parse failed (https://www.officialgazette.gov.ph/2025/10/22/implementing-guidelines-of-executive-order-no-95-s-2025/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/2025/10/22/implementing-guidelines-of-executive-order-no-95-s-2025/",
+        "Official Gazette article parse failed (https://www.officialgazette.gov.ph/2025/10/03/republic-act-no-12310/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/2025/10/03/republic-act-no-12310/",
+        "Official Gazette article parse failed (https://www.officialgazette.gov.ph/2025/09/18/republic-act-no-12306/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/2025/09/18/republic-act-no-12306/"
+      ]
+    },
+    {
+      "source": "judiciary_elibrary",
+      "count": 900,
+      "warnings": []
+    },
+    {
+      "source": "lawphil",
+      "count": 1,
+      "warnings": []
+    },
+    {
+      "source": "chanrobles",
+      "count": 46,
+      "warnings": []
+    },
+    {
+      "source": "congress",
+      "count": 1,
+      "warnings": [
+        "Congress portal returned HTTP 403. Marked as blocked for automated crawling."
+      ]
+    },
+    {
+      "source": "open_congress",
+      "count": 1200,
+      "warnings": []
+    }
+  ],
+  "totalRecords": 10510
+}
