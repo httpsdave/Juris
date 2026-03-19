@@ -651,7 +651,7 @@ export function JurisExplorer({
           <div className="p-8 md:p-12 w-full md:w-2/3 border-b-2 md:border-b-0 md:border-r-2 border-[#333333] space-y-6">
             <p className="inline-flex items-center gap-2 font-mono text-sm tracking-widest text-[var(--color-accent)] font-bold uppercase">
               <Scale className="h-5 w-5" aria-hidden="true" />
-              Edition: Philippine Law Explorer
+              Philippine Legal Database
             </p>
             <h1 className="text-4xl sm:text-6xl lg:text-[4.5rem]">
               Knowledge is structured. <br/> Access is power.
@@ -664,7 +664,7 @@ export function JurisExplorer({
             <div>
               <h2 className="mb-6 inline-flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-widest border-b border-black/20 pb-2 w-full">
                 <Database className="h-4 w-4" aria-hidden="true" />
-                System Pulse
+                Archive Overview
               </h2>
               <div className="grid grid-cols-2 gap-4">
                 <Metric label="Indexed" value={String(total)} inverted />
@@ -689,8 +689,8 @@ export function JurisExplorer({
       </section>
 
       {/* Controller / Search Bar */}
-      <section className="animate-slide-up-cascade grid gap-4 bg-[var(--color-surface-0)] border-y-2 border-[var(--color-fg-primary)] py-6 md:grid-cols-[1fr_240px_240px] items-end px-2">
-        <label className="group relative block w-full">
+      <section className="animate-slide-up-cascade grid grid-cols-2 gap-4 bg-[var(--color-surface-0)] border-y-2 border-[var(--color-fg-primary)] py-6 md:grid-cols-[1fr_240px_240px] items-end px-2">
+        <label className="group relative block w-full col-span-2 md:col-span-1">
           <span className="mb-2 block font-mono text-xs font-bold uppercase tracking-widest text-[var(--color-fg-muted)]">
             Primary Query
           </span>
@@ -745,7 +745,7 @@ export function JurisExplorer({
           />
         </div>
 
-        <div className="md:col-span-3 flex flex-col gap-2 border-l-4 border-[var(--color-accent)] bg-[var(--color-surface-1)] px-4 py-3">
+        <div className="col-span-2 md:col-span-3 flex flex-col gap-2 border-l-4 border-[var(--color-accent)] bg-[var(--color-surface-1)] px-4 py-3">
           <label className="inline-flex cursor-pointer items-center gap-3 font-mono text-xs font-bold uppercase tracking-widest text-[var(--color-fg-primary)]">
             <input
               type="checkbox"
@@ -761,11 +761,11 @@ export function JurisExplorer({
         </div>
       </section>
 
-      <div className="flex items-center justify-between font-mono text-xs font-bold uppercase text-[var(--color-fg-muted)]">
-        <p className="bg-[var(--color-fg-primary)] text-[var(--color-surface-0)] px-3 py-1 brutal-shadow">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:justify-between font-mono text-xs font-bold uppercase text-[var(--color-fg-muted)]">
+        <p className="bg-[var(--color-fg-primary)] text-[var(--color-surface-0)] px-3 py-1 brutal-shadow self-start">
           {loading ? "Scanning Archives..." : `${total.toLocaleString()} Articles Indexed`} {broadMode ? "(Broad)" : "(Strict)"}
         </p>
-        <Link href="/about" className="group flex items-center gap-2 text-[var(--color-accent)] hover:underline decoration-2 underline-offset-4">
+        <Link href="/about" className="group flex items-center gap-2 text-[var(--color-accent)] hover:underline decoration-2 underline-offset-4 self-start sm:self-auto">
           Documentation & Methodology
           <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" aria-hidden="true" />
         </Link>
@@ -777,7 +777,7 @@ export function JurisExplorer({
 
       <section className="grid gap-12 lg:grid-cols-[1fr_320px]">
         {/* Results Container */}
-        <div className="space-y-6">
+        <div className="space-y-6 min-w-0">
           {error ? (
             <div className="border-2 border-[#E23126] bg-[#FFB8B3] p-6 font-mono text-sm text-[#E23126] brutal-shadow dark:text-red-900">
               SYSTEM ERROR: {error}
@@ -816,27 +816,27 @@ export function JurisExplorer({
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.3, delay: Math.min(index * 0.05, 0.5) }}
-                  className="group relative border-2 border-[var(--color-fg-primary)] bg-[var(--color-surface-1)] p-6 md:p-8 brutal-shadow transition-all hover:bg-[var(--color-surface-0)] hover:-translate-y-1"
+                  className="group relative border-2 border-[var(--color-fg-primary)] bg-[var(--color-surface-1)] p-4 sm:p-6 md:p-8 brutal-shadow transition-all hover:bg-[var(--color-surface-0)] hover:-translate-y-1"
                 >
-                  <div className="mb-6 flex flex-wrap items-center gap-3 font-mono text-xs font-bold uppercase">
-                    <span className="border-2 border-[var(--color-fg-primary)] bg-[var(--color-surface-2)] px-3 py-1.5 text-[var(--color-fg-primary)] brutal-shadow shadow-sm">
+                  <div className="mb-6 flex flex-wrap items-center gap-2 sm:gap-3 font-mono text-[10px] sm:text-xs font-bold uppercase">
+                    <span className="border-2 border-[var(--color-fg-primary)] bg-[var(--color-surface-2)] px-2 sm:px-3 py-1.5 text-[var(--color-fg-primary)] brutal-shadow shadow-sm">
                       {normalizeLabel(law.source)}
                     </span>
-                    <span className="border-2 border-[var(--color-accent)] bg-[var(--color-surface-0)] px-3 py-1.5 text-[var(--color-accent)] brutal-shadow shadow-sm">
+                    <span className="border-2 border-[var(--color-accent)] bg-[var(--color-surface-0)] px-2 sm:px-3 py-1.5 text-[var(--color-accent)] brutal-shadow shadow-sm">
                       {normalizeLabel(law.category)}
                     </span>
                     <span
                       title={freshnessDescription(law.freshness)}
-                      className={`px-3 py-1.5 border-2 shadow-sm ${freshnessTone(law.freshness)}`}
+                      className={`px-2 sm:px-3 py-1.5 border-2 shadow-sm ${freshnessTone(law.freshness)}`}
                     >
                       STATUS: {freshnessLabel(law.freshness)}
                     </span>
                   </div>
 
-                  <h3 className="mb-4 text-2xl md:text-3xl lg:text-4xl text-[var(--color-fg-primary)] tracking-tight">
+                  <h3 className="mb-4 text-2xl md:text-3xl lg:text-4xl text-[var(--color-fg-primary)] tracking-tight break-words">
                     {law.title}
                   </h3>
-                  <p className="mb-8 font-sans text-sm md:text-base leading-relaxed text-[var(--color-fg-muted)] max-w-4xl border-l-4 border-[var(--color-fg-primary)] pl-4 py-1">
+                  <p className="mb-8 font-sans text-sm md:text-base leading-relaxed text-[var(--color-fg-muted)] max-w-4xl border-l-4 border-[var(--color-fg-primary)] pl-4 py-1 break-words">
                     {renderHighlightedText(law.summary, searchTerms)}
                   </p>
 
@@ -861,35 +861,35 @@ export function JurisExplorer({
                     )}
                   </div>
 
-                  <div className="flex flex-wrap gap-4">
+                  <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4">
                     <Link
                       href={readerHref}
                       onClick={rememberExplorerScroll}
-                      className="inline-flex items-center gap-2 border-2 border-[var(--color-accent)] bg-[var(--color-accent)] px-5 py-2.5 font-mono text-xs font-bold uppercase text-[var(--color-surface-0)] transition-transform hover:-translate-y-1 hover:brutal-shadow"
+                      className="inline-flex w-full sm:w-auto justify-center items-center gap-2 border-2 border-[var(--color-accent)] bg-[var(--color-accent)] px-4 sm:px-5 py-2.5 font-mono text-xs font-bold uppercase text-[var(--color-surface-0)] transition-transform hover:-translate-y-1 hover:brutal-shadow"
                     >
                       Read in Juris
-                      <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+                      <ArrowUpRight className="h-4 w-4 shrink-0" aria-hidden="true" />
                     </Link>
 
                     <a
                       href={law.sourceUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center gap-2 border-2 border-[var(--color-fg-primary)] bg-[var(--color-fg-primary)] px-5 py-2.5 font-mono text-xs font-bold uppercase text-[var(--color-surface-0)] transition-transform hover:-translate-y-1 hover:brutal-shadow"
+                      className="inline-flex w-full sm:w-auto justify-center items-center gap-2 border-2 border-[var(--color-fg-primary)] bg-[var(--color-fg-primary)] px-4 sm:px-5 py-2.5 font-mono text-xs font-bold uppercase text-[var(--color-surface-0)] transition-transform hover:-translate-y-1 hover:brutal-shadow"
                     >
                       Retrieve Document
-                      <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+                      <ArrowUpRight className="h-4 w-4 shrink-0" aria-hidden="true" />
                     </a>
 
                     <button
                       type="button"
                       onClick={() => toggleBookmark(law.id)}
-                      className={`inline-flex items-center gap-2 border-2 px-5 py-2.5 font-mono text-xs font-bold uppercase transition-transform hover:-translate-y-1 hover:brutal-shadow ${isBookmarked ? "bg-[var(--color-accent)] text-[var(--color-surface-0)] border-[var(--color-accent)]" : "bg-[var(--color-surface-1)] text-[var(--color-fg-primary)] border-[var(--color-fg-primary)]"}`}
+                      className={`inline-flex w-full sm:w-auto justify-center items-center gap-2 border-2 px-4 sm:px-5 py-2.5 font-mono text-xs font-bold uppercase transition-transform hover:-translate-y-1 hover:brutal-shadow ${isBookmarked ? "bg-[var(--color-accent)] text-[var(--color-surface-0)] border-[var(--color-accent)]" : "bg-[var(--color-surface-1)] text-[var(--color-fg-primary)] border-[var(--color-fg-primary)]"}`}
                     >
                       {isBookmarked ? (
-                        <BookmarkCheck className="h-4 w-4" aria-hidden="true" />
+                        <BookmarkCheck className="h-4 w-4 shrink-0" aria-hidden="true" />
                       ) : (
-                        <Bookmark className="h-4 w-4" aria-hidden="true" />
+                        <Bookmark className="h-4 w-4 shrink-0" aria-hidden="true" />
                       )}
                       {isBookmarked ? "In Registry" : "Save"}
                     </button>
@@ -897,9 +897,9 @@ export function JurisExplorer({
                     <button
                       type="button"
                       onClick={() => toggleReadLater(law.id)}
-                      className={`inline-flex items-center gap-2 border-2 px-5 py-2.5 font-mono text-xs font-bold uppercase transition-transform hover:-translate-y-1 hover:brutal-shadow ${isReadLater ? "bg-[var(--color-fg-primary)] text-[var(--color-surface-0)] border-[var(--color-fg-primary)]" : "bg-[var(--color-surface-1)] text-[var(--color-fg-primary)] border-[var(--color-fg-primary)]"}`}
+                      className={`inline-flex w-full sm:w-auto justify-center items-center gap-2 border-2 px-4 sm:px-5 py-2.5 font-mono text-xs font-bold uppercase transition-transform hover:-translate-y-1 hover:brutal-shadow ${isReadLater ? "bg-[var(--color-fg-primary)] text-[var(--color-surface-0)] border-[var(--color-fg-primary)]" : "bg-[var(--color-surface-1)] text-[var(--color-fg-primary)] border-[var(--color-fg-primary)]"}`}
                     >
-                      <Clock3 className="h-4 w-4" aria-hidden="true" />
+                      <Clock3 className="h-4 w-4 shrink-0" aria-hidden="true" />
                       {isReadLater ? "Queued" : "Queue"}
                     </button>
                   </div>
