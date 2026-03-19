@@ -167,18 +167,18 @@ function buildMatchExcerpt(text: string | undefined, terms: string[], radius = 1
 
 function freshnessTone(status: FreshnessStatus) {
   if (status === "fresh") {
-    return "bg-[var(--color-surface-1)] text-[#097969] border border-[#097969] brutal-shadow";
+    return "bg-[var(--color-surface-1)] text-[#097969] border border-[#097969]";
   }
 
   if (status === "api") {
-    return "bg-[var(--color-surface-1)] text-[#005A9C] border border-[#005A9C] brutal-shadow";
+    return "bg-[var(--color-surface-1)] text-[#005A9C] border border-[#005A9C]";
   }
 
   if (status === "blocked") {
-    return "bg-[var(--color-surface-1)] text-[#E46C0A] border border-[#E46C0A] brutal-shadow";
+    return "bg-[var(--color-surface-1)] text-[#E46C0A] border border-[#E46C0A]";
   }
 
-  return "bg-[var(--color-surface-1)] text-[var(--color-fg-primary)] border border-[var(--color-fg-primary)] brutal-shadow";
+  return "bg-[var(--color-surface-1)] text-[var(--color-fg-primary)] border border-[var(--color-fg-primary)]";
 }
 
 function freshnessLabel(status: FreshnessStatus): string {
@@ -646,7 +646,7 @@ export function JurisExplorer({
   return (
     <div className="relative mx-auto flex w-full max-w-7xl flex-col gap-10 px-4 pb-16 pt-8 sm:px-8">
       {/* Editorial Hero */}
-      <section className="animate-slide-up-cascade bg-[var(--color-surface-inv)] text-[var(--color-fg-primary-inv)] brutal-shadow border-2 border-[var(--color-surface-inv)]">
+      <section className="animate-slide-up-cascade bg-[var(--color-surface-inv)] text-[var(--color-fg-primary-inv)] border-2 border-[var(--color-surface-inv)]">
         <div className="flex flex-col md:flex-row">
           <div className="p-8 md:p-12 w-full md:w-2/3 border-b-2 md:border-b-0 md:border-r-2 border-[#333333] space-y-6">
             <p className="inline-flex items-center gap-2 font-mono text-sm tracking-widest text-[var(--color-accent)] font-bold uppercase">
@@ -762,7 +762,7 @@ export function JurisExplorer({
       </section>
 
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:justify-between font-mono text-xs font-bold uppercase text-[var(--color-fg-muted)]">
-        <p className="bg-[var(--color-fg-primary)] text-[var(--color-surface-0)] px-3 py-1 brutal-shadow self-start">
+        <p className="bg-[var(--color-fg-primary)] text-[var(--color-surface-0)] px-3 py-1 self-start">
           {loading ? "Scanning Archives..." : `${total.toLocaleString()} Articles Indexed`} {broadMode ? "(Broad)" : "(Strict)"}
         </p>
         <Link href="/about" className="group flex items-center gap-2 text-[var(--color-accent)] hover:underline decoration-2 underline-offset-4 self-start sm:self-auto">
@@ -819,10 +819,10 @@ export function JurisExplorer({
                   className="group relative border-2 border-[var(--color-fg-primary)] bg-[var(--color-surface-1)] p-4 sm:p-6 md:p-8 brutal-shadow transition-all hover:bg-[var(--color-surface-0)] hover:-translate-y-1"
                 >
                   <div className="mb-6 flex flex-wrap items-center gap-2 sm:gap-3 font-mono text-[10px] sm:text-xs font-bold uppercase">
-                    <span className="border-2 border-[var(--color-fg-primary)] bg-[var(--color-surface-2)] px-2 sm:px-3 py-1.5 text-[var(--color-fg-primary)] brutal-shadow shadow-sm">
+                    <span className="border-2 border-[var(--color-fg-primary)] bg-[var(--color-surface-2)] px-2 sm:px-3 py-1.5 text-[var(--color-fg-primary)]">
                       {normalizeLabel(law.source)}
                     </span>
-                    <span className="border-2 border-[var(--color-accent)] bg-[var(--color-surface-0)] px-2 sm:px-3 py-1.5 text-[var(--color-accent)] brutal-shadow shadow-sm">
+                    <span className="border-2 border-[var(--color-accent)] bg-[var(--color-surface-0)] px-2 sm:px-3 py-1.5 text-[var(--color-accent)]">
                       {normalizeLabel(law.category)}
                     </span>
                     <span
@@ -970,7 +970,7 @@ export function JurisExplorer({
               {sourceCoverage.map((sourceInfo) => (
                 <div
                   key={sourceInfo.id}
-                  className="border-2 border-[var(--color-fg-primary)] bg-[var(--color-surface-1)] p-4 text-sm brutal-shadow hover:-translate-y-1 transition-transform"
+                  className="border-2 border-[var(--color-fg-primary)] bg-[var(--color-surface-1)] p-4 text-sm hover:-translate-y-1 transition-transform"
                 >
                   <p className="font-bold font-sans tracking-tight leading-none text-base">{sourceInfo.name}</p>
                   <p className="mt-3 font-mono text-xs font-bold uppercase text-[var(--color-fg-muted)] flex justify-between bg-[var(--color-surface-2)] px-2 py-1">
@@ -1087,7 +1087,7 @@ function MultiSelectDropdown({
 
 function Metric({ label, value, inverted }: { label: string; value: string; inverted?: boolean }) {
   return (
-    <div className={`p-4 border-2 ${inverted ? "border-[var(--color-surface-0)] bg-[var(--color-accent)] text-[var(--color-surface-0)]" : "border-[var(--color-fg-primary)] bg-[var(--color-surface-1)]"} brutal-shadow`}>
+    <div className={`p-4 border-2 ${inverted ? "border-[var(--color-surface-0)] bg-[var(--color-accent)] text-[var(--color-surface-0)]" : "border-[var(--color-fg-primary)] bg-[var(--color-surface-1)]"}`}>
       <p className={`font-mono text-[10px] font-bold uppercase tracking-widest ${inverted ? "text-white opacity-80" : "text-[var(--color-fg-muted)]"}`}>{label}</p>
       <p className="mt-2 text-3xl font-black">{value}</p>
     </div>
@@ -1106,7 +1106,7 @@ function Panel({
   children: React.ReactNode;
 }) {
   return (
-    <section className="border-2 border-[var(--color-fg-primary)] bg-[var(--color-surface-0)] p-6 brutal-shadow">
+    <section className="border-2 border-[var(--color-fg-primary)] bg-[var(--color-surface-0)] p-6">
       <h2 className="mb-2 inline-flex items-center gap-3 font-mono text-sm font-bold uppercase tracking-widest text-[var(--color-fg-primary)] border-b-4 border-[var(--color-fg-primary)] pb-3 w-full">
         {icon}
         {title}
