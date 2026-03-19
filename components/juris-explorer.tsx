@@ -13,7 +13,7 @@ import {
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 import type {
@@ -21,13 +21,14 @@ import type {
   LawCategory,
   LawRecord,
   LawSourceId,
+  SourceHealthMetrics,
   SourceProfile,
 } from "@/types/law";
 
 interface JurisExplorerProps {
   sourceOptions: Array<{ label: string; value: LawSourceId | "all" }>;
   categoryOptions: Array<{ label: string; value: LawCategory | "all" }>;
-  sourceCoverage: Array<SourceProfile & { indexedCount: number }>;
+  sourceCoverage: Array<SourceProfile & SourceHealthMetrics>;
 }
 
 interface LawApiResponse {
@@ -55,7 +56,14 @@ interface OpenCongressStatsResponse {
 
 const BOOKMARK_KEY = "juris.bookmarks.v1";
 const READ_LATER_KEY = "juris.readLater.v1";
+const EXPLORER_SCROLL_KEY = "juris.explorer.scroll.v1";
 const SEARCH_STOP_WORDS = new Set(["a", "an", "and", "are", "as", "at", "be", "by", "for", "from", "in", "into", "is", "it", "of", "on", "or", "that", "the", "this", "to", "with"]);
+
+interface ScrollRestoreState {
+  path: string;
+  scrollY: number;
+  savedAt: string;
+}
 
 function normalizeLabel(input: string): string {
   return input
@@ -173,6 +181,42 @@ function freshnessTone(status: FreshnessStatus) {
   return "bg-[var(--color-surface-1)] text-[var(--color-fg-primary)] border border-[var(--color-fg-primary)] brutal-shadow";
 }
 
+function freshnessLabel(status: FreshnessStatus): string {
+  if (status === "fresh") {
+    return "recently verified";
+  }
+
+  if (status === "api") {
+    return "live api feed";
+  }
+
+  if (status === "blocked") {
+    return "source currently blocked";
+  }
+
+  return "needs recheck";
+}
+
+function freshnessDescription(status: FreshnessStatus): string {
+  if (status === "fresh") {
+    return "Recently validated by scraper checks.";
+  }
+
+  if (status === "api") {
+    return "Pulled from an API source in the latest ingestion run.";
+  }
+
+  if (status === "blocked") {
+    return "Source endpoint was inaccessible during scraping.";
+  }
+
+  return "Record exists but source verification is older and should be refreshed.";
+}
+
+function formatPercent(value: number): string {
+  return `${Math.round(value)}%`;
+}
+
 function loadIdSet(key: string): Set<string> {
   if (typeof window === "undefined") {
     return new Set();
@@ -207,8 +251,12 @@ export function JurisExplorer({
 }: JurisExplorerProps) {
   const [query, setQuery] = useState("");
   const [broadMode, setBroadMode] = useState(false);
-  const [source, setSource] = useState<LawSourceId | "all">("all");
-  const [category, setCategory] = useState<LawCategory | "all">("all");
+  const [selectedSources, setSelectedSources] = useState<LawSourceId[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<LawCategory[]>([]);
+  const [sourceMenuOpen, setSourceMenuOpen] = useState(false);
+  const [categoryMenuOpen, setCategoryMenuOpen] = useState(false);
+  const [filtersReady, setFiltersReady] = useState(false);
+  const [hasFetchedOnce, setHasFetchedOnce] = useState(false);
   const [laws, setLaws] = useState<LawRecord[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -216,7 +264,77 @@ export function JurisExplorer({
   const [bookmarks, setBookmarks] = useState<Set<string>>(new Set());
   const [readLater, setReadLater] = useState<Set<string>>(new Set());
   const [openCongressStats, setOpenCongressStats] = useState<OpenCongressStatsResponse["data"]>();
+  const initialFilterHydrationRef = useRef(false);
+  const hasRestoredScrollRef = useRef(false);
+  const sourceMenuRef = useRef<HTMLDivElement | null>(null);
+  const categoryMenuRef = useRef<HTMLDivElement | null>(null);
+  const sourceFilterOptions = useMemo(
+    () =>
+      sourceOptions.filter(
+        (option): option is { label: string; value: LawSourceId } => option.value !== "all",
+      ),
+    [sourceOptions],
+  );
+  const categoryFilterOptions = useMemo(
+    () =>
+      categoryOptions.filter(
+        (option): option is { label: string; value: LawCategory } => option.value !== "all",
+      ),
+    [categoryOptions],
+  );
+  const sourceValues = useMemo(
+    () => new Set(sourceFilterOptions.map((option) => option.value)),
+    [sourceFilterOptions],
+  );
+  const categoryValues = useMemo(
+    () => new Set(categoryFilterOptions.map((option) => option.value)),
+    [categoryFilterOptions],
+  );
   const searchTerms = useMemo(() => buildSearchTerms(query), [query]);
+  const sourceSummaryLabel = useMemo(() => {
+    if (!selectedSources.length) {
+      return "All sources";
+    }
+
+    if (selectedSources.length === 1) {
+      return normalizeLabel(selectedSources[0]);
+    }
+
+    return `${selectedSources.length} sources selected`;
+  }, [selectedSources]);
+  const categorySummaryLabel = useMemo(() => {
+    if (!selectedCategories.length) {
+      return "All classifications";
+    }
+
+    if (selectedCategories.length === 1) {
+      return normalizeLabel(selectedCategories[0]);
+    }
+
+    return `${selectedCategories.length} classifications selected`;
+  }, [selectedCategories]);
+  const backHref = useMemo(() => {
+    const params = new URLSearchParams();
+
+    if (query.trim()) {
+      params.set("q", query.trim());
+    }
+
+    selectedSources.forEach((sourceId) => {
+      params.append("source", sourceId);
+    });
+
+    selectedCategories.forEach((categoryId) => {
+      params.append("category", categoryId);
+    });
+
+    if (broadMode) {
+      params.set("broad", "true");
+    }
+
+    const search = params.toString();
+    return search ? `/?${search}` : "/";
+  }, [broadMode, query, selectedCategories, selectedSources]);
 
   useEffect(() => {
     setBookmarks(loadIdSet(BOOKMARK_KEY));
@@ -224,6 +342,121 @@ export function JurisExplorer({
   }, []);
 
   useEffect(() => {
+    if (initialFilterHydrationRef.current || typeof window === "undefined") {
+      return;
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const queryFromUrl = params.get("q") ?? "";
+    const broadFromUrl = params.get("broad");
+    const sourceFromUrl = params
+      .getAll("source")
+      .flatMap((value) => value.split(","))
+      .map((value) => value.trim())
+      .filter((value): value is LawSourceId => sourceValues.has(value as LawSourceId));
+    const categoryFromUrl = params
+      .getAll("category")
+      .flatMap((value) => value.split(","))
+      .map((value) => value.trim())
+      .filter((value): value is LawCategory => categoryValues.has(value as LawCategory));
+
+    initialFilterHydrationRef.current = true;
+    setQuery(queryFromUrl);
+    setBroadMode(broadFromUrl === "true" || broadFromUrl === "1");
+    setSelectedSources(Array.from(new Set(sourceFromUrl)));
+    setSelectedCategories(Array.from(new Set(categoryFromUrl)));
+    setFiltersReady(true);
+  }, [categoryValues, sourceValues]);
+
+  useEffect(() => {
+    if (!filtersReady || typeof window === "undefined") {
+      return;
+    }
+
+    const params = new URLSearchParams();
+
+    if (query.trim()) {
+      params.set("q", query.trim());
+    }
+
+    selectedSources.forEach((sourceId) => {
+      params.append("source", sourceId);
+    });
+
+    selectedCategories.forEach((categoryId) => {
+      params.append("category", categoryId);
+    });
+
+    if (broadMode) {
+      params.set("broad", "true");
+    }
+
+    const search = params.toString();
+    const nextUrl = search ? `/?${search}` : "/";
+    const currentUrl = `${window.location.pathname}${window.location.search}`;
+
+    if (currentUrl !== nextUrl) {
+      window.history.replaceState(window.history.state, "", nextUrl);
+    }
+  }, [broadMode, filtersReady, query, selectedCategories, selectedSources]);
+
+  useEffect(() => {
+    const onDocumentClick = (event: MouseEvent) => {
+      const target = event.target;
+
+      if (!(target instanceof Node)) {
+        return;
+      }
+
+      if (sourceMenuRef.current && !sourceMenuRef.current.contains(target)) {
+        setSourceMenuOpen(false);
+      }
+
+      if (categoryMenuRef.current && !categoryMenuRef.current.contains(target)) {
+        setCategoryMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", onDocumentClick);
+    return () => {
+      document.removeEventListener("mousedown", onDocumentClick);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!filtersReady || !hasFetchedOnce || hasRestoredScrollRef.current || typeof window === "undefined") {
+      return;
+    }
+
+    hasRestoredScrollRef.current = true;
+
+    try {
+      const raw = window.sessionStorage.getItem(EXPLORER_SCROLL_KEY);
+
+      if (!raw) {
+        return;
+      }
+
+      const parsed = JSON.parse(raw) as ScrollRestoreState;
+      const currentPath = `${window.location.pathname}${window.location.search}`;
+
+      if (parsed.path !== currentPath) {
+        return;
+      }
+
+      window.requestAnimationFrame(() => {
+        window.scrollTo({ top: Math.max(0, parsed.scrollY), behavior: "auto" });
+      });
+    } catch {
+      // Ignore malformed restoration payloads.
+    }
+  }, [filtersReady, hasFetchedOnce]);
+
+  useEffect(() => {
+    if (!filtersReady) {
+      return;
+    }
+
     const controller = new AbortController();
 
     const timeout = setTimeout(async () => {
@@ -237,13 +470,13 @@ export function JurisExplorer({
           url.searchParams.set("q", query.trim());
         }
 
-        if (source !== "all") {
-          url.searchParams.set("source", source);
-        }
+        selectedSources.forEach((sourceId) => {
+          url.searchParams.append("source", sourceId);
+        });
 
-        if (category !== "all") {
-          url.searchParams.set("category", category);
-        }
+        selectedCategories.forEach((categoryId) => {
+          url.searchParams.append("category", categoryId);
+        });
 
         url.searchParams.set("broad", broadMode ? "true" : "false");
 
@@ -274,6 +507,7 @@ export function JurisExplorer({
         setError(err instanceof Error ? err.message : "Unable to fetch laws right now.");
       } finally {
         setLoading(false);
+        setHasFetchedOnce(true);
       }
     }, 180);
 
@@ -281,7 +515,7 @@ export function JurisExplorer({
       clearTimeout(timeout);
       controller.abort();
     };
-  }, [query, source, category, broadMode]);
+  }, [broadMode, filtersReady, query, selectedCategories, selectedSources]);
 
   useEffect(() => {
     let active = true;
@@ -359,6 +593,56 @@ export function JurisExplorer({
     });
   };
 
+  const toggleSourceFilter = (sourceId: LawSourceId) => {
+    setSelectedSources((current) => {
+      if (current.includes(sourceId)) {
+        return current.filter((entry) => entry !== sourceId);
+      }
+
+      return [...current, sourceId];
+    });
+  };
+
+  const toggleCategoryFilter = (categoryId: LawCategory) => {
+    setSelectedCategories((current) => {
+      if (current.includes(categoryId)) {
+        return current.filter((entry) => entry !== categoryId);
+      }
+
+      return [...current, categoryId];
+    });
+  };
+
+  const selectAllSources = () => {
+    setSelectedSources(sourceFilterOptions.map((option) => option.value));
+  };
+
+  const clearSources = () => {
+    setSelectedSources([]);
+  };
+
+  const selectAllCategories = () => {
+    setSelectedCategories(categoryFilterOptions.map((option) => option.value));
+  };
+
+  const clearCategories = () => {
+    setSelectedCategories([]);
+  };
+
+  const rememberExplorerScroll = () => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const snapshot: ScrollRestoreState = {
+      path: backHref,
+      scrollY: window.scrollY,
+      savedAt: new Date().toISOString(),
+    };
+
+    window.sessionStorage.setItem(EXPLORER_SCROLL_KEY, JSON.stringify(snapshot));
+  };
+
   return (
     <div className="relative mx-auto flex w-full max-w-7xl flex-col gap-10 px-4 pb-16 pt-8 sm:px-8">
       {/* Editorial Hero */}
@@ -421,49 +705,45 @@ export function JurisExplorer({
           </div>
         </label>
 
-        <label className="block w-full">
+        <div className={`block w-full relative ${sourceMenuOpen ? "z-50" : "z-10"}`} ref={sourceMenuRef}>
           <span className="mb-2 block font-mono text-xs font-bold uppercase tracking-widest text-[var(--color-fg-muted)]">
-            Authority Source
+            Source
           </span>
-          <div className="relative">
-            <select
-              value={source}
-              onChange={(event) => setSource(event.target.value as LawSourceId | "all")}
-              className="h-14 w-full border-2 border-[var(--color-fg-primary)] bg-[var(--color-surface-1)] px-4 font-mono text-sm text-[var(--color-fg-primary)] outline-none focus:brutal-shadow focus:bg-[var(--color-surface-0)] transition-all appearance-none rounded-none cursor-pointer uppercase font-bold"
-            >
-              {sourceOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-[var(--color-fg-primary)]">
-              <svg className="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M5.516 7.548c0.436-0.446 1.043-0.481 1.576 0l2.908 2.89 2.908-2.89c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615l-3.695 3.695c-0.218 0.223-0.502 0.335-0.787 0.335s-0.569-0.112-0.789-0.335l-3.695-3.695c-0.408-0.418-0.436-1.17 0-1.615z"/></svg>
-            </div>
-          </div>
-        </label>
+          <MultiSelectDropdown
+            buttonLabel={sourceSummaryLabel}
+            isOpen={sourceMenuOpen}
+            onToggle={() => setSourceMenuOpen((current) => !current)}
+            options={sourceFilterOptions.map((option) => ({
+              label: option.label,
+              value: option.value,
+            }))}
+            selectedValues={new Set(selectedSources)}
+            onToggleValue={(value) => toggleSourceFilter(value as LawSourceId)}
+            onClear={clearSources}
+            onSelectAll={selectAllSources}
+            emptyHint="All sources included"
+          />
+        </div>
 
-        <label className="block w-full">
+        <div className={`block w-full relative ${categoryMenuOpen ? "z-50" : "z-10"}`} ref={categoryMenuRef}>
           <span className="mb-2 block font-mono text-xs font-bold uppercase tracking-widest text-[var(--color-fg-muted)]">
             Classification
           </span>
-          <div className="relative">
-            <select
-              value={category}
-              onChange={(event) => setCategory(event.target.value as LawCategory | "all")}
-              className="h-14 w-full border-2 border-[var(--color-fg-primary)] bg-[var(--color-surface-1)] px-4 font-mono text-sm text-[var(--color-fg-primary)] outline-none focus:brutal-shadow focus:bg-[var(--color-surface-0)] transition-all appearance-none rounded-none cursor-pointer uppercase font-bold"
-            >
-              {categoryOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {normalizeLabel(option.label)}
-                </option>
-              ))}
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-[var(--color-fg-primary)]">
-              <svg className="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M5.516 7.548c0.436-0.446 1.043-0.481 1.576 0l2.908 2.89 2.908-2.89c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615l-3.695 3.695c-0.218 0.223-0.502 0.335-0.787 0.335s-0.569-0.112-0.789-0.335l-3.695-3.695c-0.408-0.418-0.436-1.17 0-1.615z"/></svg>
-            </div>
-          </div>
-        </label>
+          <MultiSelectDropdown
+            buttonLabel={categorySummaryLabel}
+            isOpen={categoryMenuOpen}
+            onToggle={() => setCategoryMenuOpen((current) => !current)}
+            options={categoryFilterOptions.map((option) => ({
+              label: normalizeLabel(option.label),
+              value: option.value,
+            }))}
+            selectedValues={new Set(selectedCategories)}
+            onToggleValue={(value) => toggleCategoryFilter(value as LawCategory)}
+            onClear={clearCategories}
+            onSelectAll={selectAllCategories}
+            emptyHint="All classifications included"
+          />
+        </div>
 
         <div className="md:col-span-3 flex flex-col gap-2 border-l-4 border-[var(--color-accent)] bg-[var(--color-surface-1)] px-4 py-3">
           <label className="inline-flex cursor-pointer items-center gap-3 font-mono text-xs font-bold uppercase tracking-widest text-[var(--color-fg-primary)]">
@@ -491,6 +771,10 @@ export function JurisExplorer({
         </Link>
       </div>
 
+      <p className="font-mono text-[11px] uppercase tracking-wide text-[var(--color-fg-muted)] border-l-4 border-[var(--color-fg-primary)] bg-[var(--color-surface-1)] px-3 py-2">
+        Status Guide: Recently Verified, Live API Feed, Needs Recheck, or Source Currently Blocked.
+      </p>
+
       <section className="grid gap-12 lg:grid-cols-[1fr_320px]">
         {/* Results Container */}
         <div className="space-y-6">
@@ -516,9 +800,14 @@ export function JurisExplorer({
                 (law.fullTextPreview && law.fullTextPreview !== law.summary
                   ? law.fullTextPreview.slice(0, 320)
                   : undefined);
-              const readerHref = query.trim()
-                ? `/laws/${law.id}?q=${encodeURIComponent(query.trim())}`
-                : `/laws/${law.id}`;
+              const readerParams = new URLSearchParams();
+
+              if (query.trim()) {
+                readerParams.set("q", query.trim());
+              }
+
+              readerParams.set("back", backHref);
+              const readerHref = `/laws/${law.id}?${readerParams.toString()}`;
 
               return (
                 <motion.article
@@ -536,8 +825,11 @@ export function JurisExplorer({
                     <span className="border-2 border-[var(--color-accent)] bg-[var(--color-surface-0)] px-3 py-1.5 text-[var(--color-accent)] brutal-shadow shadow-sm">
                       {normalizeLabel(law.category)}
                     </span>
-                    <span className={`px-3 py-1.5 border-2 shadow-sm ${freshnessTone(law.freshness)}`}>
-                      STATUS: {law.freshness}
+                    <span
+                      title={freshnessDescription(law.freshness)}
+                      className={`px-3 py-1.5 border-2 shadow-sm ${freshnessTone(law.freshness)}`}
+                    >
+                      STATUS: {freshnessLabel(law.freshness)}
                     </span>
                   </div>
 
@@ -567,15 +859,12 @@ export function JurisExplorer({
                         ENACTED: {law.enactedOn}
                       </span>
                     )}
-                    <span className="flex items-center gap-2">
-                      <span className="inline-block w-2.5 h-2.5 bg-blue-600 rounded-full"></span>
-                      AUTHORITY RATING: {law.authorityLevel}/100
-                    </span>
                   </div>
 
                   <div className="flex flex-wrap gap-4">
                     <Link
                       href={readerHref}
+                      onClick={rememberExplorerScroll}
                       className="inline-flex items-center gap-2 border-2 border-[var(--color-accent)] bg-[var(--color-accent)] px-5 py-2.5 font-mono text-xs font-bold uppercase text-[var(--color-surface-0)] transition-transform hover:-translate-y-1 hover:brutal-shadow"
                     >
                       Read in Juris
@@ -673,9 +962,9 @@ export function JurisExplorer({
           </Panel>
           
           <Panel
-            title="Data Health"
+            title="Source Health"
             icon={<ShieldCheck className="h-5 w-5" aria-hidden="true" />}
-            subtitle="Ingestion Integrity"
+            subtitle="Freshness, checks, and text coverage"
           >
             <div className="space-y-4">
               {sourceCoverage.map((sourceInfo) => (
@@ -684,12 +973,21 @@ export function JurisExplorer({
                   className="border-2 border-[var(--color-fg-primary)] bg-[var(--color-surface-1)] p-4 text-sm brutal-shadow hover:-translate-y-1 transition-transform"
                 >
                   <p className="font-bold font-sans tracking-tight leading-none text-base">{sourceInfo.name}</p>
-                  <p className="mt-4 font-mono text-xs font-bold uppercase text-[var(--color-fg-muted)] flex justify-between bg-[var(--color-surface-2)] px-2 py-1">
-                    <span>MODE: {sourceInfo.mode}</span>
-                    <span className="text-[var(--color-accent)]">SCORE: {sourceInfo.reliabilityScore}</span>
+                  <p className="mt-3 font-mono text-xs font-bold uppercase text-[var(--color-fg-muted)] flex justify-between bg-[var(--color-surface-2)] px-2 py-1">
+                    <span>Source Mode: {sourceInfo.mode}</span>
+                    <span className="text-[var(--color-accent)]">Health: {sourceInfo.healthScore}</span>
                   </p>
+
                   <div className="mt-3 h-2 w-full bg-[var(--color-surface-2)] border border-[var(--color-fg-primary)]">
-                    <div className="h-full bg-[var(--color-fg-primary)]" style={{ width: `${sourceInfo.reliabilityScore}%` }}></div>
+                    <div className="h-full bg-[var(--color-fg-primary)]" style={{ width: `${sourceInfo.healthScore}%` }}></div>
+                  </div>
+
+                  <div className="mt-3 space-y-1 font-mono text-[11px] font-bold uppercase tracking-wide text-[var(--color-fg-muted)]">
+                    <p>Indexed: {sourceInfo.indexedCount.toLocaleString()}</p>
+                    <p>Fresh/API: {formatPercent(sourceInfo.freshRate)}</p>
+                    <p>Recently Checked (45d): {formatPercent(sourceInfo.recentVerificationRate)}</p>
+                    <p>Text Coverage: {formatPercent(sourceInfo.textCoverageRate)}</p>
+                    <p>Blocked: {formatPercent(sourceInfo.blockedRate)}</p>
                   </div>
                 </div>
               ))}
@@ -697,6 +995,92 @@ export function JurisExplorer({
           </Panel>
         </aside>
       </section>
+    </div>
+  );
+}
+
+function MultiSelectDropdown({
+  buttonLabel,
+  isOpen,
+  onToggle,
+  options,
+  selectedValues,
+  onToggleValue,
+  onSelectAll,
+  onClear,
+  emptyHint,
+}: {
+  buttonLabel: string;
+  isOpen: boolean;
+  onToggle: () => void;
+  options: Array<{ label: string; value: string }>;
+  selectedValues: Set<string>;
+  onToggleValue: (value: string) => void;
+  onSelectAll: () => void;
+  onClear: () => void;
+  emptyHint: string;
+}) {
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        onClick={onToggle}
+        className="flex h-14 w-full items-center justify-between border-2 border-[var(--color-fg-primary)] bg-[var(--color-surface-1)] px-4 font-mono text-left text-sm font-bold uppercase text-[var(--color-fg-primary)] transition-all hover:bg-[var(--color-surface-0)] focus:brutal-shadow"
+      >
+        <span className="truncate">{buttonLabel}</span>
+        <svg
+          className={`h-4 w-4 shrink-0 fill-current transition-transform ${isOpen ? "rotate-180" : "rotate-0"}`}
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          aria-hidden="true"
+        >
+          <path d="M5.516 7.548c0.436-0.446 1.043-0.481 1.576 0l2.908 2.89 2.908-2.89c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615l-3.695 3.695c-0.218 0.223-0.502 0.335-0.787 0.335s-0.569-0.112-0.789-0.335l-3.695-3.695c-0.408-0.418-0.436-1.17 0-1.615z" />
+        </svg>
+      </button>
+
+      {isOpen ? (
+        <div className="absolute z-30 mt-2 max-h-80 w-full overflow-hidden border-2 border-[var(--color-fg-primary)] bg-[var(--color-surface-0)] brutal-shadow">
+          <div className="flex items-center justify-between border-b-2 border-[var(--color-fg-primary)] bg-[var(--color-surface-1)] px-2 py-2">
+            <button
+              type="button"
+              onClick={onSelectAll}
+              className="border border-[var(--color-fg-primary)] bg-[var(--color-surface-0)] px-2 py-1 font-mono text-[10px] font-bold uppercase text-[var(--color-fg-primary)]"
+            >
+              Select all
+            </button>
+            <button
+              type="button"
+              onClick={onClear}
+              className="border border-[var(--color-fg-primary)] bg-[var(--color-surface-0)] px-2 py-1 font-mono text-[10px] font-bold uppercase text-[var(--color-fg-primary)]"
+            >
+              Clear
+            </button>
+          </div>
+
+          <div className="max-h-60 overflow-y-auto p-2">
+            {options.map((option) => (
+              <label
+                key={option.value}
+                className="mb-1 flex cursor-pointer items-center gap-2 border border-transparent px-2 py-1 font-mono text-xs font-bold uppercase text-[var(--color-fg-primary)] hover:border-[var(--color-fg-primary)] hover:bg-[var(--color-surface-1)]"
+              >
+                <input
+                  type="checkbox"
+                  checked={selectedValues.has(option.value)}
+                  onChange={() => onToggleValue(option.value)}
+                  className="h-4 w-4 border-2 border-[var(--color-fg-primary)] accent-[var(--color-accent)]"
+                />
+                <span className="leading-tight">{option.label}</span>
+              </label>
+            ))}
+          </div>
+
+          {!selectedValues.size ? (
+            <p className="border-t border-[var(--color-fg-primary)] px-3 py-2 font-mono text-[10px] font-bold uppercase tracking-wide text-[var(--color-fg-muted)]">
+              {emptyHint}
+            </p>
+          ) : null}
+        </div>
+      ) : null}
     </div>
   );
 }

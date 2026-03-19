@@ -1,4 +1,5 @@
 import * as cheerio from "cheerio";
+import type { AnyNode } from "domhandler";
 
 import type { LawRecord } from "../../types/law";
 
@@ -259,7 +260,7 @@ function pickBestPdfUrl(candidates: string[]): string | undefined {
     .sort((left, right) => scorePdfUrl(right) - scorePdfUrl(left) || left.length - right.length)[0];
 }
 
-function extractFeedMarkup(node: cheerio.Cheerio<cheerio.Element>): string {
+function extractFeedMarkup(node: cheerio.Cheerio<AnyNode>): string {
   const descriptionNode = node.find("description").first();
   const encodedNode = node.find("content\\:encoded").first();
 

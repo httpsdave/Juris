@@ -7,6 +7,7 @@ import type {
   LawSearchQuery,
   LawSearchResult,
   LawSourceId,
+  SourceHealthMetrics,
 } from "@/types/law";
 
 const records = [...((scrapedRecords as LawRecord[]) ?? []), ...((seedRecords as LawRecord[]) ?? [])];
@@ -50,6 +51,9 @@ interface SearchSignal {
   primaryMatches: number;
   expandedMatches: number;
 }
+
+const RECENT_VERIFICATION_WINDOW_DAYS = 45;
+const DAY_IN_MS = 24 * 60 * 60 * 1000;
 
 function normalizeForSearch(input?: string): string {
   if (!input) {
@@ -188,6 +192,48 @@ function sortByDate(a?: string, b?: string): number {
   return new Date(b).getTime() - new Date(a).getTime();
 }
 
+function toTimestamp(input?: string): number {
+  if (!input) {
+    return 0;
+  }
+
+  const parsed = new Date(input).getTime();
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function toRate(count: number, total: number): number {
+  if (!total) {
+    return 0;
+  }
+
+  return (count / total) * 100;
+}
+
+function clampPercent(value: number): number {
+  if (!Number.isFinite(value)) {
+    return 0;
+  }
+
+  return Math.max(0, Math.min(100, Math.round(value)));
+}
+
+function hasUsableText(record: LawRecord): boolean {
+  return Boolean(
+    (record.fullText && !isNoisyReaderText(record.fullText)) ||
+      record.fullTextPreview,
+  );
+}
+
+function isRecentlyVerified(record: LawRecord): boolean {
+  const verifiedAt = toTimestamp(record.lastVerifiedAt);
+
+  if (!verifiedAt) {
+    return false;
+  }
+
+  return Date.now() - verifiedAt <= RECENT_VERIFICATION_WINDOW_DAYS * DAY_IN_MS;
+}
+
 function isNoisyReaderText(text?: string): boolean {
   if (!text) {
     return false;
@@ -282,8 +328,18 @@ export function getLawById(id: string): LawRecord | undefined {
 export function searchLaws(query: LawSearchQuery): LawSearchResult {
   const limit = Math.min(Math.max(Number(query.limit) || 20, 1), 100);
   const offset = Math.max(Number(query.offset) || 0, 0);
-  const source = query.source && query.source !== "all" ? query.source : undefined;
-  const category = query.category && query.category !== "all" ? query.category : undefined;
+  const selectedSources = Array.from(
+    new Set([
+      ...(query.sources ?? []),
+      ...(query.source && query.source !== "all" ? [query.source] : []),
+    ]),
+  );
+  const selectedCategories = Array.from(
+    new Set([
+      ...(query.categories ?? []),
+      ...(query.category && query.category !== "all" ? [query.category] : []),
+    ]),
+  );
   const broadMode = query.broad === true;
   const normalizedQuery = normalizeForSearch(query.q);
   const tokens = tokenize(query.q);
@@ -302,11 +358,11 @@ export function searchLaws(query: LawSearchQuery): LawSearchResult {
 
   const ranked = laws
     .filter((record) => {
-      if (source && record.source !== source) {
+      if (selectedSources.length && !selectedSources.includes(record.source)) {
         return false;
       }
 
-      if (category && record.category !== category) {
+      if (selectedCategories.length && !selectedCategories.includes(record.category)) {
         return false;
       }
 
@@ -355,16 +411,55 @@ export function searchLaws(query: LawSearchQuery): LawSearchResult {
 
 export function getSourceCoverage() {
   const laws = getAllLaws();
-  const bySource = new Map<LawSourceId, number>();
+  const bySource = new Map<LawSourceId, LawRecord[]>();
 
   for (const law of laws) {
-    bySource.set(law.source, (bySource.get(law.source) ?? 0) + 1);
+    const current = bySource.get(law.source) ?? [];
+    current.push(law);
+    bySource.set(law.source, current);
   }
 
-  return Object.values(sourceProfiles).map((profile) => ({
-    ...profile,
-    indexedCount: bySource.get(profile.id) ?? 0,
-  }));
+  return Object.values(sourceProfiles).map((profile) => {
+    const sourceRecords = bySource.get(profile.id) ?? [];
+    const indexedCount = sourceRecords.length;
+
+    const freshCount = sourceRecords.filter(
+      (record) => record.freshness === "fresh" || record.freshness === "api",
+    ).length;
+    const blockedCount = sourceRecords.filter(
+      (record) => record.freshness === "blocked",
+    ).length;
+    const recentVerificationCount = sourceRecords.filter(isRecentlyVerified).length;
+    const textCoverageCount = sourceRecords.filter(hasUsableText).length;
+
+    const freshRate = clampPercent(toRate(freshCount, indexedCount));
+    const blockedRate = clampPercent(toRate(blockedCount, indexedCount));
+    const recentVerificationRate = clampPercent(
+      toRate(recentVerificationCount, indexedCount),
+    );
+    const textCoverageRate = clampPercent(toRate(textCoverageCount, indexedCount));
+
+    const healthScore = clampPercent(
+      freshRate * 0.4 +
+        recentVerificationRate * 0.25 +
+        textCoverageRate * 0.2 +
+        (100 - blockedRate) * 0.15,
+    );
+
+    const metrics: SourceHealthMetrics = {
+      indexedCount,
+      healthScore,
+      freshRate,
+      recentVerificationRate,
+      textCoverageRate,
+      blockedRate,
+    };
+
+    return {
+      ...profile,
+      ...metrics,
+    };
+  });
 }
 
 export function getCategoryOptions(): Array<{ label: string; value: LawCategory | "all" }> {

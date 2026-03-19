@@ -28,31 +28,82 @@ const broadSchema = z
   .union([z.literal("true"), z.literal("false"), z.literal("1"), z.literal("0")])
   .transform((value) => value === "true" || value === "1");
 
-const querySchema = z.object({
-  q: z.string().optional(),
-  source: z.union([z.literal("all"), sourceSchema]).optional(),
-  category: z.union([z.literal("all"), categorySchema]).optional(),
-  broad: broadSchema.optional(),
-  limit: z.coerce.number().int().positive().max(100).optional(),
-  offset: z.coerce.number().int().min(0).optional(),
-});
+const limitSchema = z.coerce.number().int().positive().max(100);
+const offsetSchema = z.coerce.number().int().min(0);
+const optionalBroadSchema = broadSchema.optional();
+const optionalLimitSchema = limitSchema.optional();
+const optionalOffsetSchema = offsetSchema.optional();
+const optionalSourcesSchema = z.array(sourceSchema).optional();
+const optionalCategoriesSchema = z.array(categorySchema).optional();
+
+function parseMultiValueParam(searchParams: URLSearchParams, key: string): string[] {
+  return searchParams
+    .getAll(key)
+    .flatMap((value) => value.split(","))
+    .map((value) => value.trim())
+    .filter(Boolean);
+}
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
-  const parsed = querySchema.safeParse(Object.fromEntries(url.searchParams.entries()));
+  const q = url.searchParams.get("q") ?? undefined;
 
-  if (!parsed.success) {
+  const broadParam = url.searchParams.get("broad");
+  const broadParsed = optionalBroadSchema.safeParse(broadParam ?? undefined);
+
+  const limitParam = url.searchParams.get("limit");
+  const limitParsed = optionalLimitSchema.safeParse(limitParam ?? undefined);
+
+  const offsetParam = url.searchParams.get("offset");
+  const offsetParsed = optionalOffsetSchema.safeParse(offsetParam ?? undefined);
+
+  const sourceValues = parseMultiValueParam(url.searchParams, "source");
+  const includeAllSources = sourceValues.includes("all");
+  const sourceParsed = optionalSourcesSchema.safeParse(
+    includeAllSources
+      ? undefined
+      : sourceValues.length
+        ? sourceValues
+        : undefined,
+  );
+
+  const categoryValues = parseMultiValueParam(url.searchParams, "category");
+  const includeAllCategories = categoryValues.includes("all");
+  const categoryParsed = optionalCategoriesSchema.safeParse(
+    includeAllCategories
+      ? undefined
+      : categoryValues.length
+        ? categoryValues
+        : undefined,
+  );
+
+  if (!broadParsed.success || !limitParsed.success || !offsetParsed.success || !sourceParsed.success || !categoryParsed.success) {
+    const issues = [
+      ...(broadParsed.success ? [] : broadParsed.error.issues),
+      ...(limitParsed.success ? [] : limitParsed.error.issues),
+      ...(offsetParsed.success ? [] : offsetParsed.error.issues),
+      ...(sourceParsed.success ? [] : sourceParsed.error.issues),
+      ...(categoryParsed.success ? [] : categoryParsed.error.issues),
+    ];
+
     return NextResponse.json(
       {
         success: false,
         error: "Invalid search query",
-        issues: parsed.error.issues,
+        issues,
       },
       { status: 400 },
     );
   }
 
-  const result = searchLaws(parsed.data);
+  const result = searchLaws({
+    q,
+    broad: broadParsed.data,
+    limit: limitParsed.data,
+    offset: offsetParsed.data,
+    sources: sourceParsed.data,
+    categories: categoryParsed.data,
+  });
 
   return NextResponse.json({
     success: true,

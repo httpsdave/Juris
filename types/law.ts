@@ -56,10 +56,21 @@ export interface SourceProfile {
 export interface LawSearchQuery {
   q?: string;
   source?: LawSourceId | "all";
+  sources?: LawSourceId[];
   category?: LawCategory | "all";
+  categories?: LawCategory[];
   broad?: boolean;
   limit?: number;
   offset?: number;
+}
+
+export interface SourceHealthMetrics {
+  indexedCount: number;
+  healthScore: number;
+  freshRate: number;
+  recentVerificationRate: number;
+  textCoverageRate: number;
+  blockedRate: number;
 }
 
 export interface LawSearchResult {

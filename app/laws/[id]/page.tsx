@@ -10,6 +10,7 @@ interface LawReaderPageProps {
   }>;
   searchParams: Promise<{
     q?: string;
+    back?: string;
   }>;
 }
 
@@ -204,10 +205,30 @@ function isNoisyReaderText(text?: string): boolean {
   return hasOgHeaderNoise && trailingNoise;
 }
 
+function resolveBackHref(rawBack?: string): string {
+  if (!rawBack) {
+    return "/";
+  }
+
+  if (!rawBack.startsWith("/")) {
+    return "/";
+  }
+
+  if (rawBack.startsWith("//")) {
+    return "/";
+  }
+
+  return rawBack;
+}
+
 export default async function LawReaderPage({ params, searchParams }: LawReaderPageProps) {
   const [{ id: rawId }, resolvedSearchParams] = await Promise.all([params, searchParams]);
   const id = decodeURIComponent(rawId ?? "");
   const query = typeof resolvedSearchParams.q === "string" ? resolvedSearchParams.q : "";
+  const backHref =
+    typeof resolvedSearchParams.back === "string"
+      ? resolveBackHref(resolvedSearchParams.back)
+      : "/";
   const searchTerms = buildSearchTerms(query);
 
   const law = getLawById(id);
@@ -236,7 +257,7 @@ export default async function LawReaderPage({ params, searchParams }: LawReaderP
     <main className="mx-auto min-h-screen w-full max-w-5xl px-4 pb-20 pt-10 sm:px-8">
       <div className="mb-8 flex flex-wrap items-center justify-between gap-3">
         <Link
-          href="/"
+          href={backHref}
           className="inline-flex items-center gap-2 border-2 border-[var(--color-fg-primary)] bg-[var(--color-surface-1)] px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-[var(--color-fg-primary)] transition-transform hover:-translate-y-1 hover:brutal-shadow"
         >
           <ArrowLeft className="h-4 w-4" aria-hidden="true" />
