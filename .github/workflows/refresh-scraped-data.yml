@@ -1,0 +1,78 @@
+name: Refresh Scraped Data
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Daily at 02:30 Asia/Manila (18:30 UTC)
+    - cron: "30 18 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: scrape-data-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh-data:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.13.1
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run scraper (with retries)
+        run: |
+          set -euo pipefail
+          attempts=0
+          max_attempts=3
+
+          until [ "$attempts" -ge "$max_attempts" ]; do
+            attempts=$((attempts + 1))
+            echo "Scrape attempt $attempts/$max_attempts"
+
+            if npm run scrape:all; then
+              break
+            fi
+
+            if [ "$attempts" -ge "$max_attempts" ]; then
+              echo "Scrape failed after $max_attempts attempts"
+              exit 1
+            fi
+
+            sleep 30
+          done
+
+      - name: Check for data changes
+        id: changes
+        run: |
+          if git diff --quiet -- data/laws.scraped.json data/scrape-report.json data/scrape-checkpoint.json; then
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit and push refreshed data
+        if: steps.changes.outputs.has_changes == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/laws.scraped.json data/scrape-report.json data/scrape-checkpoint.json
+          git commit -m "chore(data): refresh legal dataset"
+          git push
+
+      - name: No data changes
+        if: steps.changes.outputs.has_changes != 'true'
+        run: echo "No data updates detected."

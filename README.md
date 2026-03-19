@@ -39,3 +39,25 @@ See [docs/data-sources.md](docs/data-sources.md) for source details and accuracy
 - Multiple versions of the same law are merged intelligently; official sources take precedence.
 - Blocked sources (e.g., HTTP 403) are flagged, not hidden.
 - Noisy or low-confidence text is automatically filtered.
+
+## Automated Data Refresh (Vercel-safe)
+
+Juris currently serves from repository JSON data (`data/laws.scraped.json`), so the most reliable production setup is:
+
+1. Run scrapes on GitHub Actions (not inside Vercel functions).
+2. Commit refreshed data files only when they change.
+3. Let Vercel auto-redeploy from that commit.
+
+A scheduled workflow is included at `.github/workflows/refresh-scraped-data.yml`.
+
+What it does:
+- Runs daily at `02:30` Asia/Manila (`18:30` UTC) and on manual trigger.
+- Retries scrape runs up to 3 times to reduce transient network/source failures.
+- Commits only these files when changed:
+	- `data/laws.scraped.json`
+	- `data/scrape-report.json`
+	- `data/scrape-checkpoint.json`
+- Pushes changes back to the repository, triggering Vercel deployment automatically.
+
+Recommended repository setting:
+- Ensure Actions has write access to repository contents (`Settings -> Actions -> General -> Workflow permissions -> Read and write permissions`).
