@@ -8,11 +8,11 @@ import {
   BookMarked,
   Clock3,
   Database,
-  Scale,
   Search,
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
+import { ScaleIcon } from "@heroicons/react/24/outline";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -650,7 +650,7 @@ export function JurisExplorer({
         <div className="flex flex-col md:flex-row">
           <div className="p-8 md:p-12 w-full md:w-2/3 border-b-2 md:border-b-0 md:border-r-2 border-[#333333] space-y-6">
             <p className="inline-flex items-center gap-2 font-mono text-sm tracking-widest text-[var(--color-accent)] font-bold uppercase">
-              <Scale className="h-5 w-5" aria-hidden="true" />
+              <ScaleIcon className="h-5 w-5" strokeWidth={1.5} aria-hidden="true" />
               Philippine Legal Database
             </p>
             <h1 className="text-4xl sm:text-6xl lg:text-[4.5rem]">
