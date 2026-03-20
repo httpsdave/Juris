@@ -1,10 +1,52 @@
 import { NextResponse } from "next/server";
 
-const ALLOWED_HOST_SUFFIXES = ["officialgazette.gov.ph"];
+import { getAllSourceProfiles } from "@/lib/source-registry";
+
 const MAX_PDF_BYTES = 25 * 1024 * 1024;
 
+function normalizeHost(hostname: string): string {
+  return hostname.trim().toLowerCase().replace(/^www\./, "");
+}
+
+function parseExtraAllowedHostSuffixes(): string[] {
+  const raw = process.env.LAW_PDF_PROXY_ALLOWED_HOST_SUFFIXES;
+
+  if (!raw) {
+    return [];
+  }
+
+  return raw
+    .split(",")
+    .map((entry) => normalizeHost(entry))
+    .filter((entry) => /^[a-z0-9.-]+$/.test(entry));
+}
+
+function buildAllowedHostSuffixes(): string[] {
+  const suffixes = new Set<string>(["officialgazette.gov.ph"]);
+
+  for (const profile of getAllSourceProfiles()) {
+    try {
+      const hostname = normalizeHost(new URL(profile.baseUrl).hostname);
+
+      if (hostname) {
+        suffixes.add(hostname);
+      }
+    } catch {
+      continue;
+    }
+  }
+
+  for (const suffix of parseExtraAllowedHostSuffixes()) {
+    suffixes.add(suffix);
+  }
+
+  return Array.from(suffixes);
+}
+
+const ALLOWED_HOST_SUFFIXES = buildAllowedHostSuffixes();
+
 function isAllowedHost(hostname: string): boolean {
-  const normalized = hostname.toLowerCase();
+  const normalized = normalizeHost(hostname);
 
   return ALLOWED_HOST_SUFFIXES.some(
     (suffix) => normalized === suffix || normalized.endsWith(`.${suffix}`),
@@ -76,10 +118,15 @@ export async function GET(request: Request) {
     });
 
     if (!upstream.ok) {
+      const upstreamError =
+        upstream.status === 404
+          ? "Upstream PDF not found (404). This source entry may not publish a PDF file."
+          : `Upstream request failed (${upstream.status})`;
+
       return NextResponse.json(
         {
           success: false,
-          error: `Upstream request failed (${upstream.status})`,
+          error: upstreamError,
         },
         { status: upstream.status },
       );
@@ -110,8 +157,11 @@ export async function GET(request: Request) {
     }
 
     const headers = new Headers();
+    const normalizedHost = normalizeHost(targetUrl.hostname).replace(/[^a-z0-9.-]/g, "");
+    const fileLabel = normalizedHost || "source";
+
     headers.set("content-type", "application/pdf");
-    headers.set("content-disposition", "inline; filename=\"official-gazette-source.pdf\"");
+    headers.set("content-disposition", `inline; filename=\"${fileLabel}-source.pdf\"`);
     headers.set("cache-control", "public, max-age=21600, s-maxage=21600");
     headers.set("x-content-type-options", "nosniff");
 

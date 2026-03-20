@@ -1,18 +1,27 @@
 {
-  "startedAt": "2026-03-19T19:29:29.805Z",
-  "finishedAt": "2026-03-19T19:31:24.983Z",
-  "previousRecords": 10510,
-  "runRecords": 2069,
+  "startedAt": "2026-03-20T06:13:50.659Z",
+  "finishedAt": "2026-03-20T06:15:09.385Z",
+  "previousRecords": 11710,
+  "runRecords": 10685,
   "sources": [
     {
       "source": "official_gazette",
-      "count": 0,
+      "count": 10,
       "warnings": [
         "https://www.officialgazette.gov.ph/section/republic-acts/: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/republic-acts/",
         "https://www.officialgazette.gov.ph/: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/",
         "Official Gazette RSS ingest (https://www.officialgazette.gov.ph/section/republic-acts/feed/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/republic-acts/feed/",
-        "Official Gazette RSS ingest (https://www.officialgazette.gov.ph/feed/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/feed/",
-        "No records parsed from Official Gazette selectors."
+        "Official Gazette article parse failed (https://www.officialgazette.gov.ph/2026/03/19/doe-department-circular-no-dc2026-03-0010/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/2026/03/19/doe-department-circular-no-dc2026-03-0010/",
+        "Official Gazette article parse failed (https://www.officialgazette.gov.ph/2026/03/18/proclamation-no-1195-s-2026-2/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/2026/03/18/proclamation-no-1195-s-2026-2/",
+        "Official Gazette article parse failed (https://www.officialgazette.gov.ph/2026/03/12/proclamation-no-1192-s-2026/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/2026/03/12/proclamation-no-1192-s-2026/",
+        "Official Gazette article parse failed (https://www.officialgazette.gov.ph/2026/03/12/proclamation-no-1191-s-2026/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/2026/03/12/proclamation-no-1191-s-2026/",
+        "Official Gazette article parse failed (https://www.officialgazette.gov.ph/2026/03/12/proclamation-no-1190-s-2026/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/2026/03/12/proclamation-no-1190-s-2026/",
+        "Official Gazette article parse failed (https://www.officialgazette.gov.ph/2026/03/12/proclamation-no-1189-s-2026/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/2026/03/12/proclamation-no-1189-s-2026/",
+        "Official Gazette article parse failed (https://www.officialgazette.gov.ph/2026/03/09/proclamation-no-1188-s-2026/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/2026/03/09/proclamation-no-1188-s-2026/",
+        "Official Gazette article parse failed (https://www.officialgazette.gov.ph/2026/03/09/proclamation-no-1187-s-2026/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/2026/03/09/proclamation-no-1187-s-2026/",
+        "Official Gazette article parse failed (https://www.officialgazette.gov.ph/2026/03/09/proclamation-no-1186-s-2026/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/2026/03/09/proclamation-no-1186-s-2026/",
+        "Official Gazette article parse failed (https://www.officialgazette.gov.ph/2026/03/06/memorandum-circular-no-114-s-2026/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/2026/03/06/memorandum-circular-no-114-s-2026/",
+        "Official Gazette PDF discovery found no embedded source PDFs in sampled records."
       ]
     },
     {
@@ -22,7 +31,7 @@
     },
     {
       "source": "lawphil",
-      "count": 1,
+      "count": 9000,
       "warnings": []
     },
     {
@@ -43,5 +52,5 @@
       "warnings": []
     }
   ],
-  "totalRecords": 11710
+  "totalRecords": 21516
 }

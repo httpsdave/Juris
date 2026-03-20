@@ -205,6 +205,90 @@ function isNoisyReaderText(text?: string): boolean {
   return hasOgHeaderNoise && trailingNoise;
 }
 
+function looksLikePdfUrl(value: string): boolean {
+  return /\.pdf(?:$|[?#])/i.test(value);
+}
+
+function isPdfResponseContentType(contentType: string | null, url: string): boolean {
+  const normalized = (contentType ?? "").toLowerCase();
+
+  if (!normalized) {
+    return looksLikePdfUrl(url);
+  }
+
+  return (
+    normalized.includes("application/pdf") ||
+    normalized.includes("application/octet-stream") ||
+    looksLikePdfUrl(url)
+  );
+}
+
+async function resolveReachableSourcePdfUrl(rawUrl?: string): Promise<string | undefined> {
+  if (!rawUrl) {
+    return undefined;
+  }
+
+  let parsed: URL;
+
+  try {
+    parsed = new URL(rawUrl);
+  } catch {
+    return undefined;
+  }
+
+  if (!parsed.protocol.startsWith("http") || !looksLikePdfUrl(`${parsed.pathname}${parsed.search}`)) {
+    return undefined;
+  }
+
+  const requestHeaders = {
+    "user-agent":
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36",
+    accept: "application/pdf,application/octet-stream;q=0.9,*/*;q=0.5",
+  };
+
+  try {
+    const headResponse = await fetch(parsed.toString(), {
+      method: "HEAD",
+      headers: requestHeaders,
+      cache: "force-cache",
+      next: { revalidate: 21600 },
+    });
+
+    if (headResponse.ok && isPdfResponseContentType(headResponse.headers.get("content-type"), parsed.toString())) {
+      return parsed.toString();
+    }
+
+    if (![403, 405, 501].includes(headResponse.status)) {
+      return undefined;
+    }
+  } catch {
+    return undefined;
+  }
+
+  try {
+    const rangeResponse = await fetch(parsed.toString(), {
+      method: "GET",
+      headers: {
+        ...requestHeaders,
+        range: "bytes=0-1023",
+      },
+      cache: "no-store",
+    });
+
+    if (!rangeResponse.ok) {
+      return undefined;
+    }
+
+    if (!isPdfResponseContentType(rangeResponse.headers.get("content-type"), parsed.toString())) {
+      return undefined;
+    }
+
+    return parsed.toString();
+  } catch {
+    return undefined;
+  }
+}
+
 function decodeBackHref(rawBack: string): string {
   try {
     return decodeURIComponent(rawBack);
@@ -251,9 +335,12 @@ export default async function LawReaderPage({ params, searchParams }: LawReaderP
   const readableText = preferredBodyText || law.fullTextPreview || law.summary;
   const paragraphs = toParagraphs(readableText);
   const hasScrapedBody = Boolean(preferredBodyText && preferredBodyText.length > 200);
-  const hasSourcePdf = Boolean(law.sourcePdfUrl);
+  const declaredSourcePdfUrl = law.sourcePdfUrl;
+  const reachableSourcePdfUrl = await resolveReachableSourcePdfUrl(declaredSourcePdfUrl);
+  const hasSourcePdf = Boolean(reachableSourcePdfUrl);
+  const hasDeclaredSourcePdf = Boolean(declaredSourcePdfUrl);
   const sourcePdfProxyUrl = hasSourcePdf
-    ? `/api/laws/pdf?url=${encodeURIComponent(law.sourcePdfUrl ?? "")}`
+    ? `/api/laws/pdf?url=${encodeURIComponent(reachableSourcePdfUrl ?? "")}`
     : undefined;
   const readerModeLabel = hasScrapedBody
     ? hasSourcePdf
@@ -336,6 +423,10 @@ export default async function LawReaderPage({ params, searchParams }: LawReaderP
           {hasSourcePdf ? (
             <span className="border-2 border-[var(--color-fg-primary)] bg-[var(--color-surface-2)] px-2.5 py-1 text-[var(--color-fg-primary)]">
               Document: PDF available
+            </span>
+          ) : hasDeclaredSourcePdf ? (
+            <span className="border-2 border-[var(--color-fg-primary)] bg-[var(--color-surface-2)] px-2.5 py-1 text-[var(--color-fg-primary)]">
+              Document: PDF unavailable upstream
             </span>
           ) : null}
         </div>
