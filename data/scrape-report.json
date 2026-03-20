@@ -1,17 +1,18 @@
 {
-  "startedAt": "2026-03-19T10:01:16.239Z",
-  "finishedAt": "2026-03-19T10:03:04.638Z",
-  "previousRecords": 9310,
-  "runRecords": 2089,
+  "startedAt": "2026-03-19T19:29:29.805Z",
+  "finishedAt": "2026-03-19T19:31:24.983Z",
+  "previousRecords": 10510,
+  "runRecords": 2069,
   "sources": [
     {
       "source": "official_gazette",
-      "count": 20,
+      "count": 0,
       "warnings": [
-        "Official Gazette article parse failed (https://www.officialgazette.gov.ph/2025/10/23/republic-act-no-12313/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/2025/10/23/republic-act-no-12313/",
-        "Official Gazette article parse failed (https://www.officialgazette.gov.ph/2025/10/22/implementing-guidelines-of-executive-order-no-95-s-2025/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/2025/10/22/implementing-guidelines-of-executive-order-no-95-s-2025/",
-        "Official Gazette article parse failed (https://www.officialgazette.gov.ph/2025/10/03/republic-act-no-12310/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/2025/10/03/republic-act-no-12310/",
-        "Official Gazette article parse failed (https://www.officialgazette.gov.ph/2025/09/18/republic-act-no-12306/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/2025/09/18/republic-act-no-12306/"
+        "https://www.officialgazette.gov.ph/section/republic-acts/: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/republic-acts/",
+        "https://www.officialgazette.gov.ph/: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/",
+        "Official Gazette RSS ingest (https://www.officialgazette.gov.ph/section/republic-acts/feed/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/republic-acts/feed/",
+        "Official Gazette RSS ingest (https://www.officialgazette.gov.ph/feed/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/feed/",
+        "No records parsed from Official Gazette selectors."
       ]
     },
     {
@@ -42,5 +43,5 @@
       "warnings": []
     }
   ],
-  "totalRecords": 10510
+  "totalRecords": 11710
 }
