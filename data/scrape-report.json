@@ -1,17 +1,18 @@
 {
-  "startedAt": "2026-03-20T13:09:52.988Z",
-  "finishedAt": "2026-03-20T13:17:04.669Z",
-  "previousRecords": 29068,
-  "runRecords": 15625,
+  "startedAt": "2026-03-20T19:21:46.095Z",
+  "finishedAt": "2026-03-20T19:25:15.580Z",
+  "previousRecords": 29022,
+  "runRecords": 15605,
   "sources": [
     {
       "source": "official_gazette",
-      "count": 20,
+      "count": 0,
       "warnings": [
-        "Official Gazette article parse failed (https://www.officialgazette.gov.ph/2025/10/23/republic-act-no-12313/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/2025/10/23/republic-act-no-12313/",
-        "Official Gazette article parse failed (https://www.officialgazette.gov.ph/2025/10/22/implementing-guidelines-of-executive-order-no-95-s-2025/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/2025/10/22/implementing-guidelines-of-executive-order-no-95-s-2025/",
-        "Official Gazette article parse failed (https://www.officialgazette.gov.ph/2025/10/03/republic-act-no-12310/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/2025/10/03/republic-act-no-12310/",
-        "Official Gazette article parse failed (https://www.officialgazette.gov.ph/2025/09/18/republic-act-no-12306/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/2025/09/18/republic-act-no-12306/"
+        "https://www.officialgazette.gov.ph/section/republic-acts/: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/republic-acts/",
+        "https://www.officialgazette.gov.ph/: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/",
+        "Official Gazette RSS ingest (https://www.officialgazette.gov.ph/section/republic-acts/feed/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/republic-acts/feed/",
+        "Official Gazette RSS ingest (https://www.officialgazette.gov.ph/feed/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/feed/",
+        "No records parsed from Official Gazette selectors."
       ]
     },
     {
