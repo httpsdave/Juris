@@ -58,11 +58,50 @@ const BOOKMARK_KEY = "juris.bookmarks.v1";
 const READ_LATER_KEY = "juris.readLater.v1";
 const EXPLORER_SCROLL_KEY = "juris.explorer.scroll.v1";
 const SEARCH_STOP_WORDS = new Set(["a", "an", "and", "are", "as", "at", "be", "by", "for", "from", "in", "into", "is", "it", "of", "on", "or", "that", "the", "this", "to", "with"]);
+const RESULTS_PER_PAGE = 12;
+
+type PaginationToken = number | "left-ellipsis" | "right-ellipsis";
 
 interface ScrollRestoreState {
   path: string;
   scrollY: number;
   savedAt: string;
+}
+
+function parsePageParam(value: string | null): number {
+  const parsed = Number(value);
+
+  if (!Number.isInteger(parsed) || parsed < 1) {
+    return 1;
+  }
+
+  return parsed;
+}
+
+function buildPaginationTokens(currentPage: number, totalPages: number): PaginationToken[] {
+  if (totalPages <= 7) {
+    return Array.from({ length: totalPages }, (_, index) => index + 1);
+  }
+
+  const start = Math.max(2, currentPage - 1);
+  const end = Math.min(totalPages - 1, currentPage + 1);
+  const tokens: PaginationToken[] = [1];
+
+  if (start > 2) {
+    tokens.push("left-ellipsis");
+  }
+
+  for (let page = start; page <= end; page += 1) {
+    tokens.push(page);
+  }
+
+  if (end < totalPages - 1) {
+    tokens.push("right-ellipsis");
+  }
+
+  tokens.push(totalPages);
+
+  return tokens;
 }
 
 function normalizeLabel(input: string): string {
@@ -258,6 +297,7 @@ export function JurisExplorer({
   const [filtersReady, setFiltersReady] = useState(false);
   const [hasFetchedOnce, setHasFetchedOnce] = useState(false);
   const [laws, setLaws] = useState<LawRecord[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -268,6 +308,7 @@ export function JurisExplorer({
   const hasRestoredScrollRef = useRef(false);
   const sourceMenuRef = useRef<HTMLDivElement | null>(null);
   const categoryMenuRef = useRef<HTMLDivElement | null>(null);
+  const resultsSectionRef = useRef<HTMLDivElement | null>(null);
   const sourceFilterOptions = useMemo(
     () =>
       sourceOptions.filter(
@@ -291,6 +332,14 @@ export function JurisExplorer({
     [categoryFilterOptions],
   );
   const searchTerms = useMemo(() => buildSearchTerms(query), [query]);
+  const totalPages = useMemo(() => Math.max(1, Math.ceil(total / RESULTS_PER_PAGE)), [total]);
+  const paginationTokens = useMemo(
+    () => buildPaginationTokens(currentPage, totalPages),
+    [currentPage, totalPages],
+  );
+  const showPagination = total > RESULTS_PER_PAGE;
+  const pageRangeStart = total ? (currentPage - 1) * RESULTS_PER_PAGE + 1 : 0;
+  const pageRangeEnd = total ? Math.min(total, currentPage * RESULTS_PER_PAGE) : 0;
   const sourceSummaryLabel = useMemo(() => {
     if (!selectedSources.length) {
       return "All sources";
@@ -332,9 +381,13 @@ export function JurisExplorer({
       params.set("broad", "true");
     }
 
+    if (currentPage > 1) {
+      params.set("page", String(currentPage));
+    }
+
     const search = params.toString();
     return search ? `/?${search}` : "/";
-  }, [broadMode, query, selectedCategories, selectedSources]);
+  }, [broadMode, currentPage, query, selectedCategories, selectedSources]);
 
   useEffect(() => {
     setBookmarks(loadIdSet(BOOKMARK_KEY));
@@ -349,6 +402,7 @@ export function JurisExplorer({
     const params = new URLSearchParams(window.location.search);
     const queryFromUrl = params.get("q") ?? "";
     const broadFromUrl = params.get("broad");
+    const pageFromUrl = parsePageParam(params.get("page"));
     const sourceFromUrl = params
       .getAll("source")
       .flatMap((value) => value.split(","))
@@ -363,6 +417,7 @@ export function JurisExplorer({
     initialFilterHydrationRef.current = true;
     setQuery(queryFromUrl);
     setBroadMode(broadFromUrl === "true" || broadFromUrl === "1");
+    setCurrentPage(pageFromUrl);
     setSelectedSources(Array.from(new Set(sourceFromUrl)));
     setSelectedCategories(Array.from(new Set(categoryFromUrl)));
     setFiltersReady(true);
@@ -391,6 +446,10 @@ export function JurisExplorer({
       params.set("broad", "true");
     }
 
+    if (currentPage > 1) {
+      params.set("page", String(currentPage));
+    }
+
     const search = params.toString();
     const nextUrl = search ? `/?${search}` : "/";
     const currentUrl = `${window.location.pathname}${window.location.search}`;
@@ -398,7 +457,7 @@ export function JurisExplorer({
     if (currentUrl !== nextUrl) {
       window.history.replaceState(window.history.state, "", nextUrl);
     }
-  }, [broadMode, filtersReady, query, selectedCategories, selectedSources]);
+  }, [broadMode, currentPage, filtersReady, query, selectedCategories, selectedSources]);
 
   useEffect(() => {
     const onDocumentClick = (event: MouseEvent) => {
@@ -457,6 +516,16 @@ export function JurisExplorer({
       return;
     }
 
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, filtersReady, totalPages]);
+
+  useEffect(() => {
+    if (!filtersReady) {
+      return;
+    }
+
     const controller = new AbortController();
 
     const timeout = setTimeout(async () => {
@@ -480,8 +549,8 @@ export function JurisExplorer({
 
         url.searchParams.set("broad", broadMode ? "true" : "false");
 
-        url.searchParams.set("limit", "30");
-        url.searchParams.set("offset", "0");
+        url.searchParams.set("limit", String(RESULTS_PER_PAGE));
+        url.searchParams.set("offset", String((currentPage - 1) * RESULTS_PER_PAGE));
 
         const response = await fetch(url.toString(), {
           signal: controller.signal,
@@ -515,7 +584,7 @@ export function JurisExplorer({
       clearTimeout(timeout);
       controller.abort();
     };
-  }, [broadMode, filtersReady, query, selectedCategories, selectedSources]);
+  }, [broadMode, currentPage, filtersReady, query, selectedCategories, selectedSources]);
 
   useEffect(() => {
     let active = true;
@@ -594,6 +663,7 @@ export function JurisExplorer({
   };
 
   const toggleSourceFilter = (sourceId: LawSourceId) => {
+    setCurrentPage(1);
     setSelectedSources((current) => {
       if (current.includes(sourceId)) {
         return current.filter((entry) => entry !== sourceId);
@@ -604,6 +674,7 @@ export function JurisExplorer({
   };
 
   const toggleCategoryFilter = (categoryId: LawCategory) => {
+    setCurrentPage(1);
     setSelectedCategories((current) => {
       if (current.includes(categoryId)) {
         return current.filter((entry) => entry !== categoryId);
@@ -614,19 +685,39 @@ export function JurisExplorer({
   };
 
   const selectAllSources = () => {
+    setCurrentPage(1);
     setSelectedSources(sourceFilterOptions.map((option) => option.value));
   };
 
   const clearSources = () => {
+    setCurrentPage(1);
     setSelectedSources([]);
   };
 
   const selectAllCategories = () => {
+    setCurrentPage(1);
     setSelectedCategories(categoryFilterOptions.map((option) => option.value));
   };
 
   const clearCategories = () => {
+    setCurrentPage(1);
     setSelectedCategories([]);
+  };
+
+  const goToPage = (page: number) => {
+    const nextPage = Math.min(Math.max(page, 1), totalPages);
+
+    if (nextPage === currentPage) {
+      return;
+    }
+
+    setCurrentPage(nextPage);
+
+    if (typeof window !== "undefined") {
+      window.requestAnimationFrame(() => {
+        resultsSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    }
   };
 
   const rememberExplorerScroll = () => {
@@ -698,7 +789,10 @@ export function JurisExplorer({
             <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[var(--color-fg-primary)]" aria-hidden="true" />
             <input
               value={query}
-              onChange={(event) => setQuery(event.target.value)}
+              onChange={(event) => {
+                setQuery(event.target.value);
+                setCurrentPage(1);
+              }}
               placeholder="Search explicitly by title or keyword..."
               className="h-14 w-full border-2 border-[var(--color-fg-primary)] bg-[var(--color-surface-1)] pl-12 pr-4 font-mono text-sm text-[var(--color-fg-primary)] outline-none placeholder:text-[var(--color-fg-muted)] focus:brutal-shadow focus:bg-[var(--color-surface-0)] transition-all"
             />
@@ -750,7 +844,10 @@ export function JurisExplorer({
             <input
               type="checkbox"
               checked={broadMode}
-              onChange={(event) => setBroadMode(event.target.checked)}
+              onChange={(event) => {
+                setBroadMode(event.target.checked);
+                setCurrentPage(1);
+              }}
               className="h-4 w-4 border-2 border-[var(--color-fg-primary)] accent-[var(--color-accent)]"
             />
             Enable Broad Matches (Synonyms + Related Terms)
@@ -777,11 +874,34 @@ export function JurisExplorer({
 
       <section className="grid gap-12 lg:grid-cols-[1fr_320px]">
         {/* Results Container */}
-        <div className="space-y-6 min-w-0">
+        <div ref={resultsSectionRef} className="space-y-6 min-w-0">
           {error ? (
             <div className="border-2 border-[#E23126] bg-[#FFB8B3] p-6 font-mono text-sm text-[#E23126] brutal-shadow dark:text-red-900">
               SYSTEM ERROR: {error}
             </div>
+          ) : null}
+
+          {!error && total > 0 ? (
+            <div className="border-2 border-[var(--color-fg-primary)] bg-[var(--color-surface-1)] px-4 py-3">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <p className="font-mono text-[11px] font-bold uppercase tracking-widest text-[var(--color-fg-muted)]">
+                  Showing {pageRangeStart.toLocaleString()}-{pageRangeEnd.toLocaleString()} of {total.toLocaleString()} matches
+                </p>
+                <p className="font-mono text-[11px] font-bold uppercase tracking-widest text-[var(--color-fg-muted)]">
+                  Page {currentPage} of {totalPages}
+                </p>
+              </div>
+            </div>
+          ) : null}
+
+          {!error && showPagination ? (
+            <PaginationControls
+              currentPage={currentPage}
+              totalPages={totalPages}
+              tokens={paginationTokens}
+              loading={loading}
+              onPageChange={goToPage}
+            />
           ) : null}
 
           {!error && !laws.length && !loading ? (
@@ -907,6 +1027,16 @@ export function JurisExplorer({
               );
             })}
           </AnimatePresence>
+
+          {!error && showPagination ? (
+            <PaginationControls
+              currentPage={currentPage}
+              totalPages={totalPages}
+              tokens={paginationTokens}
+              loading={loading}
+              onPageChange={goToPage}
+            />
+          ) : null}
         </div>
 
         {/* Sidebar / Arsenal */}
@@ -1082,6 +1212,79 @@ function MultiSelectDropdown({
         </div>
       ) : null}
     </div>
+  );
+}
+
+function PaginationControls({
+  currentPage,
+  totalPages,
+  tokens,
+  loading,
+  onPageChange,
+}: {
+  currentPage: number;
+  totalPages: number;
+  tokens: PaginationToken[];
+  loading: boolean;
+  onPageChange: (page: number) => void;
+}) {
+  const baseButtonClass =
+    "inline-flex min-h-9 min-w-9 items-center justify-center border-2 px-3 py-1.5 font-mono text-[11px] font-bold uppercase tracking-widest transition-all";
+
+  return (
+    <nav
+      aria-label="Results pagination"
+      className="border-2 border-[var(--color-fg-primary)] bg-[var(--color-surface-0)] px-3 py-3 sm:px-4"
+    >
+      <div className="flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={loading || currentPage <= 1}
+          className={`${baseButtonClass} border-[var(--color-fg-primary)] bg-[var(--color-surface-1)] text-[var(--color-fg-primary)] hover:-translate-y-0.5 hover:brutal-shadow disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0 disabled:hover:shadow-none`}
+        >
+          Prev
+        </button>
+
+        {tokens.map((token, index) => {
+          if (typeof token !== "number") {
+            return (
+              <span
+                key={`${token}-${index}`}
+                className="inline-flex min-h-9 min-w-9 items-center justify-center border-2 border-dashed border-[var(--color-fg-muted)] px-2 font-mono text-sm font-bold text-[var(--color-fg-muted)]"
+                aria-hidden="true"
+              >
+                ...
+              </span>
+            );
+          }
+
+          const isActive = token === currentPage;
+
+          return (
+            <button
+              key={token}
+              type="button"
+              onClick={() => onPageChange(token)}
+              disabled={loading || isActive}
+              aria-current={isActive ? "page" : undefined}
+              className={`${baseButtonClass} ${isActive ? "border-[var(--color-accent)] bg-[var(--color-accent)] text-[var(--color-surface-0)]" : "border-[var(--color-fg-primary)] bg-[var(--color-surface-1)] text-[var(--color-fg-primary)] hover:-translate-y-0.5 hover:brutal-shadow"} disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-y-0 disabled:hover:shadow-none`}
+            >
+              {token}
+            </button>
+          );
+        })}
+
+        <button
+          type="button"
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={loading || currentPage >= totalPages}
+          className={`${baseButtonClass} border-[var(--color-fg-primary)] bg-[var(--color-surface-1)] text-[var(--color-fg-primary)] hover:-translate-y-0.5 hover:brutal-shadow disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0 disabled:hover:shadow-none`}
+        >
+          Next
+        </button>
+      </div>
+    </nav>
   );
 }
 
