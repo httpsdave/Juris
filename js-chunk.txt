@@ -1,0 +1,9 @@
+        <button
+          type="button"
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={loading || currentPage >= totalPages}
+          className={`${baseButtonClass} text-[var(--color-fg-primary)] hover:text-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:text-[var(--color-fg-primary)]`}
+}
+
+function Panel({
+  title,

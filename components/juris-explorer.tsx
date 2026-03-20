@@ -512,14 +512,14 @@ export function JurisExplorer({
   }, [filtersReady, hasFetchedOnce]);
 
   useEffect(() => {
-    if (!filtersReady) {
+    if (!filtersReady || !hasFetchedOnce) {
       return;
     }
 
     if (currentPage > totalPages) {
       setCurrentPage(totalPages);
     }
-  }, [currentPage, filtersReady, totalPages]);
+  }, [currentPage, filtersReady, hasFetchedOnce, totalPages]);
 
   useEffect(() => {
     if (!filtersReady) {
@@ -1232,11 +1232,7 @@ function PaginationControls({
     "inline-flex min-h-9 min-w-9 items-center justify-center border-2 px-3 py-1.5 font-mono text-[11px] font-bold uppercase tracking-widest transition-all";
 
   return (
-    <nav
-      aria-label="Results pagination"
-      className="border-2 border-[var(--color-fg-primary)] bg-[var(--color-surface-0)] px-3 py-3 sm:px-4"
-    >
-      <div className="flex flex-wrap items-center gap-2">
+    <div className="flex flex-wrap items-center gap-2" aria-label="Results pagination">
         <button
           type="button"
           onClick={() => onPageChange(currentPage - 1)}
@@ -1283,8 +1279,7 @@ function PaginationControls({
         >
           Next
         </button>
-      </div>
-    </nav>
+    </div>
   );
 }
 

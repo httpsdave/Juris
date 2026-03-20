@@ -205,20 +205,30 @@ function isNoisyReaderText(text?: string): boolean {
   return hasOgHeaderNoise && trailingNoise;
 }
 
+function decodeBackHref(rawBack: string): string {
+  try {
+    return decodeURIComponent(rawBack);
+  } catch {
+    return rawBack;
+  }
+}
+
 function resolveBackHref(rawBack?: string): string {
   if (!rawBack) {
     return "/";
   }
 
-  if (!rawBack.startsWith("/")) {
+  const candidate = decodeBackHref(rawBack.trim());
+
+  if (!candidate.startsWith("/")) {
     return "/";
   }
 
-  if (rawBack.startsWith("//")) {
+  if (candidate.startsWith("//")) {
     return "/";
   }
 
-  return rawBack;
+  return candidate;
 }
 
 export default async function LawReaderPage({ params, searchParams }: LawReaderPageProps) {
