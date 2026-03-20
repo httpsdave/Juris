@@ -1,5 +1,4 @@
-import { JurisExplorer } from "@/components/juris-explorer";
-import { getCategoryOptions, getSourceCoverage } from "@/lib/law-repository";
+import { JurisExplorer } from "@/components/juris-explorer";import { ScrollToTop } from "@/components/scroll-to-top";import { getCategoryOptions, getSourceCoverage } from "@/lib/law-repository";
 import { getAllSourceProfiles } from "@/lib/source-registry";
 
 function formatLabel(value: string): string {
@@ -28,6 +27,7 @@ export default function HomePage() {
         sourceOptions={sourceOptions}
         categoryOptions={categoryOptions}
       />
+      <ScrollToTop />
     </main>
   );
 }
