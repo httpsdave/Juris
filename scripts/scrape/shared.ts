@@ -172,6 +172,16 @@ function getPreferredSelectors(sourceUrl: string): string[] {
     if (hostname.includes("officialgazette.gov.ph")) {
       return ["article .entry-content", "article .post-content", ".entry-content", ".post-content", "article"];
     }
+
+    if (hostname.includes("chanrobles.com")) {
+      return [
+        ".mainContent .topcontent",
+        ".mainContent .content",
+        ".mainContent",
+        "div[align='justify']",
+        "td[align='justify']",
+      ];
+    }
   } catch {
     return [];
   }
@@ -181,10 +191,10 @@ function getPreferredSelectors(sourceUrl: string): string[] {
 
 function trimLeadingBoilerplate(text: string): string {
   const leadingNoise =
-    /(toggle posts|click the image to search|view printer friendly version|libraryservices\.sc@judiciary\.gov\.ph|foreign supreme courts|about official gazette|feedback form|privacy policy|frequently asked questions|government links|managed by ict division)/i;
+    /(toggle posts|click the image to search|view printer friendly version|libraryservices\.sc@judiciary\.gov\.ph|foreign supreme courts|about official gazette|feedback form|privacy policy|frequently asked questions|government links|managed by ict division|chanrobles virtual law library|supreme court decisions|search for www\.chanrobles\.com|please click here for the latest|home\s*>\s*chanrobles)/i;
 
   const legalStart =
-    /(\[\s*(republic act no\.?|proclamation no\.?|executive order no\.?|memorandum circular no\.?|irr of republic act no\.?)|republic act no\.?|proclamation no\.?|executive order no\.?|memorandum circular no\.?|an act\b|be it enacted|section\s+1\.?|sec\.\s*1\.?)/i;
+    /(\[\s*(republic act no\.?|proclamation no\.?|executive order no\.?|memorandum circular no\.?|irr of republic act no\.?)|republic act no\.?|proclamation no\.?|executive order no\.?|memorandum circular no\.?|presidential decree no\.?|batas pambansa blg\.?|commonwealth act no\.?|letter of instructions no\.?|administrative order no\.?|general order no\.?|act no\.?|an act\b|be it enacted|section\s+1\.?|sec\.\s*1\.?|(first|second|third)\s+division|en\s+banc|(?:g\.r\.|a\.m\.|a\.c\.|b\.m\.|bar matter)\s*(?:nos?\.?)?\s*\d)/i;
 
   const earlyWindow = text.slice(0, 2600);
 
@@ -235,19 +245,44 @@ function trimTrailingBoilerplate(text: string): string {
   return text.slice(0, cutIndex);
 }
 
+function trimChanroblesLead(text: string): string {
+  const startPattern =
+    /(?:^|\n)\s*((?:first|second|third)\s+division|en\s+banc|(?:g\.r\.|a\.m\.|a\.c\.|b\.m\.|bar matter)\s*(?:nos?\.?)?\s*\d|republic act no\.?\s*\d|presidential decree no\.?\s*\d|executive order no\.?\s*\d|batas pambansa blg\.?\s*\d|commonwealth act no\.?\s*\d|letter of instructions no\.?\s*\d|administrative order no\.?\s*\d|general order no\.?\s*\d|act no\.?\s*\d)/i;
+
+  const matched = text.match(startPattern);
+
+  if (!matched || matched.index === undefined) {
+    return text;
+  }
+
+  if (matched.index === 0 || matched.index > 5200) {
+    return text;
+  }
+
+  return text.slice(matched.index).trim();
+}
+
 function cleanupExtractedText(text: string): string {
   const cleaned = text
     .replace(/\bToggle posts\b/gi, "")
     .replace(/\bA\s+A\+\s+A\+\+\b/gi, "")
     .replace(/\bCLICK THE IMAGE TO SEARCH\b/gi, "")
     .replace(/\bView printer friendly version\b/gi, "")
-    .replace(/\bReader mode:\s*Captured Source Text\b/gi, "");
+    .replace(/\bReader mode:\s*Captured Source Text\b/gi, "")
+    .replace(/\bchanroblesvirtualawlibrary\b/gi, "")
+    .replace(/\bchanrobles\s+virtual\s+law\s+library\b/gi, "")
+    .replace(/\bsearch\s+for\s+www\.chanrobles\.com\b/gi, "")
+    .replace(/\bplease\s+click\s+here\s+for\s+the\s+latest[^\n]{0,120}\b/gi, "")
+    .replace(/\bhome\s*>\s*chanrobles\s+virtual\s+law\s+library[^\n]*\b/gi, "")
+    .replace(/(^|\n)\s*-->\s*(?=\n|$)/g, "$1")
+    .replace(/(^|\n)\s*>+\s*(?=\n|$)/g, "$1");
 
   const normalized = normalizeDocumentWhitespace(cleaned);
   const withoutLeadingBoilerplate = trimLeadingBoilerplate(normalized);
   const withoutTrailingBoilerplate = trimTrailingBoilerplate(withoutLeadingBoilerplate);
+  const chanroblesTrimmedLead = trimChanroblesLead(withoutTrailingBoilerplate);
 
-  return normalizeDocumentWhitespace(withoutTrailingBoilerplate);
+  return normalizeDocumentWhitespace(chanroblesTrimmedLead);
 }
 
 function scoreCandidateText(text: string): number {
@@ -257,7 +292,7 @@ function scoreCandidateText(text: string): number {
 
   const noiseMatches =
     text.match(
-      /(toggle posts|click the image to search|libraryservices\.sc@judiciary\.gov\.ph|about official gazette|feedback form|privacy policy|frequently asked questions|government links)/gi,
+      /(toggle posts|click the image to search|libraryservices\.sc@judiciary\.gov\.ph|about official gazette|feedback form|privacy policy|frequently asked questions|government links|chanrobles virtual law library|search for www\.chanrobles\.com|please click here for the latest)/gi,
     )?.length ?? 0;
 
   return text.length - noiseMatches * 180;

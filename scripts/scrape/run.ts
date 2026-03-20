@@ -28,12 +28,16 @@ function isNoisyReaderText(text?: string): boolean {
   const normalized = text.toLowerCase();
   const earlyWindow = normalized.slice(0, 2600);
   const hasOgHeaderNoise = earlyWindow.includes("about official gazette");
+  const hasChanroblesHeaderNoise =
+    earlyWindow.includes("chanrobles virtual law library") ||
+    earlyWindow.includes("search for www.chanrobles.com") ||
+    earlyWindow.includes("please click here for the latest");
   const trailingNoise =
     /(feedback form|privacy policy|frequently asked questions|government links|managed by ict division|all content is in the public domain unless otherwise stated)/i.test(
       normalized,
     );
 
-  return hasOgHeaderNoise && trailingNoise;
+  return (hasOgHeaderNoise && trailingNoise) || hasChanroblesHeaderNoise;
 }
 
 function pickBestText(...candidates: Array<string | undefined>): string | undefined {
@@ -113,6 +117,20 @@ function dedupe(records: LawRecord[]): LawRecord[] {
   return Array.from(byKey.values());
 }
 
+function isLegacyChanroblesTopicRecord(record: LawRecord): boolean {
+  if (record.source !== "chanrobles") {
+    return false;
+  }
+
+  const hasLegacyTag = record.tags.some((tag) => tag.trim().toLowerCase() === "topic index");
+
+  if (hasLegacyTag) {
+    return true;
+  }
+
+  return /^topic index entry from chanrobles virtual law library:/i.test(record.summary);
+}
+
 async function readExistingRecords(filePath: string): Promise<LawRecord[]> {
   try {
     const raw = await readFile(filePath, "utf8");
@@ -146,7 +164,9 @@ async function run() {
 
   const outputPath = path.join(dataDir, "laws.scraped.json");
   const previousRecords = await readExistingRecords(outputPath);
-  const allRecords = dedupe([...runRecords, ...previousRecords]);
+  const allRecords = dedupe([...runRecords, ...previousRecords]).filter(
+    (record) => !isLegacyChanroblesTopicRecord(record),
+  );
 
   const report = {
     startedAt: startedAt.toISOString(),
