@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowLeft, Scale, ShieldCheck, Zap } from "lucide-react";
 
 export default function AboutPage() {
@@ -61,6 +62,37 @@ export default function AboutPage() {
             Some official sites provide clean infrastructure; others require aggressive extraction from legacy HTML, and some outright block automated public access.
             Juris treats ingestion as an auditable pipeline: <strong className="text-[var(--color-accent)]">when a source is blocked or stale, that status is boldly shown—not hidden.</strong> The friction of the state&apos;s infrastructure is part of the record.
           </p>
+        </div>
+      </section>
+
+      <section className="space-y-4">
+        <p className="inline-flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-widest text-[var(--color-fg-muted)] border-b-2 border-dashed border-[var(--color-fg-primary)] pb-2">
+          Credits
+        </p>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <Image
+            src="https://github.com/httpsdave.png"
+            alt="httpsdave"
+            width={72}
+            height={72}
+            className="border-2 border-[var(--color-fg-primary)] bg-[var(--color-surface-0)]"
+          />
+          <div className="flex-1">
+            <h3 className="text-lg font-black uppercase text-[var(--color-fg-primary)] mb-1">
+              Built by <span className="lowercase">httpsdave</span>
+            </h3>
+            <p className="font-mono text-xs text-[var(--color-fg-muted)] mb-3 max-w-2xl">
+              Juris is developed and maintained as a public-interest project to make legal information accessible and discoverable for everyone.
+            </p>
+            <a
+              href="https://github.com/httpsdave"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 border-2 border-[var(--color-fg-primary)] bg-[var(--color-surface-0)] hover:bg-[var(--color-accent)] hover:border-[var(--color-accent)] text-[var(--color-fg-primary)] hover:text-[var(--color-surface-0)] px-3 py-1.5 font-mono text-[10px] font-bold uppercase tracking-widest transition-all"
+            >
+              View on GitHub
+            </a>
+          </div>
         </div>
       </section>
     </main>
