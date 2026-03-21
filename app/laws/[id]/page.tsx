@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowUpRight, FileText, Scale } from "lucide-react";
 
 import { getLawById } from "@/lib/law-repository";
+import { ScrollToTop } from "@/components/scroll-to-top";
 
 interface LawReaderPageProps {
   params: Promise<{
@@ -492,6 +493,8 @@ export default async function LawReaderPage({ params, searchParams }: LawReaderP
           )}
         </article>
       </section>
+
+      <ScrollToTop />
     </main>
   );
 }
