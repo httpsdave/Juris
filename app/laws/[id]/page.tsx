@@ -417,34 +417,15 @@ export default async function LawReaderPage({ params, searchParams }: LawReaderP
           </p>
         ) : null}
 
-        <div className="mt-6 flex flex-wrap items-center gap-2 font-mono text-xs font-bold uppercase">
-          <span className="border-2 border-[var(--color-fg-primary)] bg-[var(--color-surface-2)] px-2.5 py-1 text-[var(--color-fg-primary)]">
-            Source: {law.source.replaceAll("_", " ")}
-          </span>
-          <span className="border-2 border-[var(--color-fg-primary)] bg-[var(--color-surface-2)] px-2.5 py-1 text-[var(--color-fg-primary)]">
-            Category: {law.category.replaceAll("_", " ")}
-          </span>
-          {law.lawNumber ? (
-            <span className="border-2 border-[var(--color-fg-primary)] bg-[var(--color-surface-2)] px-2.5 py-1 text-[var(--color-fg-primary)]">
-              Ref: {law.lawNumber}
-            </span>
-          ) : null}
-          <span className="border-2 border-[var(--color-fg-primary)] bg-[var(--color-surface-2)] px-2.5 py-1 text-[var(--color-fg-primary)]">
-            Enacted: {formatDate(law.enactedOn)}
-          </span>
-          <span className="border-2 border-[var(--color-fg-primary)] bg-[var(--color-surface-2)] px-2.5 py-1 text-[var(--color-fg-primary)]">
-            Authority: {law.authorityLevel}/100
-          </span>
-          {hasSourcePdf ? (
-            <span className="border-2 border-[var(--color-fg-primary)] bg-[var(--color-surface-2)] px-2.5 py-1 text-[var(--color-fg-primary)]">
-              Document: PDF available
-            </span>
-          ) : hasDeclaredSourcePdf ? (
-            <span className="border-2 border-[var(--color-fg-primary)] bg-[var(--color-surface-2)] px-2.5 py-1 text-[var(--color-fg-primary)]">
-              Document: PDF unavailable upstream
-            </span>
-          ) : null}
-        </div>
+        <p className="mt-6 font-mono text-xs font-bold uppercase tracking-wide text-[var(--color-fg-primary)]">
+          SOURCE: {law.source.replaceAll("_", " ")} | CATEGORY: {law.category.replaceAll("_", " ")}
+          {law.lawNumber ? ` | REF: ${law.lawNumber}` : ""} | ENACTED: {formatDate(law.enactedOn)}
+          {hasSourcePdf
+            ? " | DOCUMENT: PDF AVAILABLE"
+            : hasDeclaredSourcePdf
+              ? " | DOCUMENT: PDF UNAVAILABLE UPSTREAM"
+              : ""}
+        </p>
       </section>
 
       {hasSourcePdf && sourcePdfProxyUrl ? (
