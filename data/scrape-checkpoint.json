@@ -1,29 +1,29 @@
 {
   "judiciaryStart": 0,
-  "openCongressOffset": 19200,
+  "openCongressOffset": 20400,
   "congressCursor": {
     "hb:20": {
-      "nextNumber": 34,
+      "nextNumber": 67,
       "consecutiveMisses": 0
     },
     "hb:19": {
-      "nextNumber": 34,
+      "nextNumber": 67,
       "consecutiveMisses": 0
     },
     "hb:18": {
-      "nextNumber": 34,
+      "nextNumber": 67,
       "consecutiveMisses": 0
     },
     "hb:17": {
-      "nextNumber": 34,
+      "nextNumber": 67,
       "consecutiveMisses": 0
     },
     "hb:16": {
-      "nextNumber": 37,
+      "nextNumber": 70,
       "consecutiveMisses": 0
     },
     "hb:15": {
-      "nextNumber": 40,
+      "nextNumber": 77,
       "consecutiveMisses": 0
     },
     "hb:14": {
@@ -43,8 +43,8 @@
       "consecutiveMisses": 20
     },
     "hb:13": {
-      "nextNumber": 68,
-      "consecutiveMisses": 0
+      "nextNumber": 99,
+      "consecutiveMisses": 20
     },
     "hb:12": {
       "nextNumber": 1,
@@ -125,7 +125,19 @@
     "cr:8": {
       "nextNumber": 1,
       "consecutiveMisses": 20
+    },
+    "hr:13": {
+      "nextNumber": 83,
+      "consecutiveMisses": 20
+    },
+    "ra:13": {
+      "nextNumber": 1,
+      "consecutiveMisses": 20
+    },
+    "cr:13": {
+      "nextNumber": 1,
+      "consecutiveMisses": 20
     }
   },
-  "updatedAt": "2026-03-21T06:31:56.315Z"
+  "updatedAt": "2026-03-21T07:10:21.192Z"
 }

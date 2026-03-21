@@ -91,11 +91,42 @@ function mergeRecords(preferred: LawRecord, secondary: LawRecord): LawRecord {
   };
 }
 
+function extractCongressNumber(record: LawRecord): string | undefined {
+  const fromTitle = record.title.match(/\(congress\s+(\d+)\)/i)?.[1];
+
+  if (fromTitle) {
+    return fromTitle;
+  }
+
+  const related = record.relatedDocumentIds ?? [];
+
+  for (const value of related) {
+    const matched = value.match(/^[a-z]+-(\d+)-\d+$/i)?.[1];
+
+    if (matched) {
+      return matched;
+    }
+  }
+
+  return undefined;
+}
+
+function buildDedupeKey(record: LawRecord): string {
+  const identity = (record.lawNumber ?? record.title).trim().toLowerCase();
+
+  if (record.source !== "congress") {
+    return `${record.source}:${identity}`;
+  }
+
+  const congress = extractCongressNumber(record);
+  return `${record.source}:${identity}:${congress ?? "unknown"}`;
+}
+
 function dedupe(records: LawRecord[]): LawRecord[] {
   const byKey = new Map<string, LawRecord>();
 
   for (const record of records) {
-    const key = `${record.source}:${(record.lawNumber ?? record.title).trim().toLowerCase()}`;
+    const key = buildDedupeKey(record);
 
     if (!byKey.has(key)) {
       byKey.set(key, record);
