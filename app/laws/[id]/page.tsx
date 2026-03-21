@@ -171,6 +171,20 @@ function toParagraphs(text: string): string[] {
   return chunkLongParagraph(flattened);
 }
 
+function sanitizeReaderNoise(text?: string): string {
+  if (!text) {
+    return "";
+  }
+
+  return text
+    .replace(/\b\d+\s+of\s+\d+\b/gi, " ")
+    .replace(/^\s*(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\s+\d{1,2},\s+\d{4}\s+\d{1,2}:\d{2}\s*(am|pm)\s*$/gim, " ")
+    .replace(/[ \t]*\n[ \t]*/g, " ")
+    .replace(/(?:\s*-\s*){4,}/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function formatDate(isoDate?: string): string {
   if (!isoDate) {
     return "Date unavailable";
@@ -332,7 +346,7 @@ export default async function LawReaderPage({ params, searchParams }: LawReaderP
   }
 
   const preferredBodyText = law.fullText && !isNoisyReaderText(law.fullText) ? law.fullText : undefined;
-  const readableText = preferredBodyText || law.fullTextPreview || law.summary;
+  const readableText = sanitizeReaderNoise(preferredBodyText || law.fullTextPreview || law.summary);
   const paragraphs = toParagraphs(readableText);
   const hasScrapedBody = Boolean(preferredBodyText && preferredBodyText.length > 200);
   const declaredSourcePdfUrl = law.sourcePdfUrl;

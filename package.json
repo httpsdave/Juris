@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "scrape:all": "tsx scripts/scrape/run.ts",
+    "scrape:congress": "tsx scripts/scrape/congress.ts --run",
     "scrape:open-congress": "tsx scripts/scrape/open-congress.ts --run"
   },
   "dependencies": {

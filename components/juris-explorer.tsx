@@ -204,6 +204,20 @@ function buildMatchExcerpt(text: string | undefined, terms: string[], radius = 1
   return `${prefix}${text.slice(start, end).trim()}${suffix}`;
 }
 
+function sanitizeReaderNoise(text?: string): string {
+  if (!text) {
+    return "";
+  }
+
+  return text
+    .replace(/\b\d+\s+of\s+\d+\b/gi, " ")
+    .replace(/^\s*(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\s+\d{1,2},\s+\d{4}\s+\d{1,2}:\d{2}\s*(am|pm)\s*$/gim, " ")
+    .replace(/[ \t]*\n[ \t]*/g, " ")
+    .replace(/(?:\s*-\s*){4,}/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function freshnessTone(status: FreshnessStatus) {
   if (status === "fresh") {
     return "bg-[var(--color-surface-1)] text-[#097969] border border-[#097969]";
@@ -914,11 +928,13 @@ export function JurisExplorer({
             {laws.map((law, index) => {
               const isBookmarked = bookmarks.has(law.id);
               const isReadLater = readLater.has(law.id);
-              const matchExcerpt = buildMatchExcerpt(law.fullText ?? law.fullTextPreview, searchTerms, 170);
+              const excerptSourceText = sanitizeReaderNoise(law.fullText ?? law.fullTextPreview);
+              const previewText = sanitizeReaderNoise(law.fullTextPreview);
+              const matchExcerpt = buildMatchExcerpt(excerptSourceText, searchTerms, 170);
               const excerptText =
                 matchExcerpt ??
-                (law.fullTextPreview && law.fullTextPreview !== law.summary
-                  ? law.fullTextPreview.slice(0, 320)
+                (previewText && previewText !== law.summary
+                  ? previewText.slice(0, 320)
                   : undefined);
               const readerParams = new URLSearchParams();
 

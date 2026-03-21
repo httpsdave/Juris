@@ -40,8 +40,9 @@ export const sourceProfiles: Record<LawSourceId, SourceProfile> = {
     isOfficial: true,
     reliabilityScore: 88,
     accessNotes:
-      "Commonly responds with HTTP 403 to non-browser clients; requires robust anti-block handling.",
-    updateNotes: "Important for bill status but scraping reliability can fluctuate.",
+      "Listing pages can return HTTP 403 to bots; scraper falls back to direct PDF probing in docs.congress.hrep.online using document number patterns.",
+    updateNotes:
+      "Tracks House Bills, Republic Acts, Adopted Resolutions, and Committee Reports incrementally via checkpoint cursors.",
   },
   judiciary_elibrary: {
     id: "judiciary_elibrary",

@@ -22,7 +22,10 @@ function parseExtraAllowedHostSuffixes(): string[] {
 }
 
 function buildAllowedHostSuffixes(): string[] {
-  const suffixes = new Set<string>(["officialgazette.gov.ph"]);
+  const suffixes = new Set<string>([
+    "officialgazette.gov.ph",
+    "docs.congress.hrep.online",
+  ]);
 
   for (const profile of getAllSourceProfiles()) {
     try {

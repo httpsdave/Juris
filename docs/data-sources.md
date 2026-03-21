@@ -16,7 +16,7 @@ Juris uses a mixed-source ingestion strategy:
 | Lawphil Project | https://lawphil.net/ | Scrape | No | 200 HTML | Broad legal corpus, legacy HTML structure, no public API observed. |
 | Official Gazette | https://www.officialgazette.gov.ph/ | Scrape/Hybrid | Yes | 200 HTML + embedded PDFs | Republic Acts and issuances often embed signed PDF files; scraper captures both listing metadata and source PDF links/text when available. |
 | ChanRobles Virtual Law Library | https://chanrobles.com/virtualibrary1.htm | Scrape | No | 200 HTML | Rich topic-index navigation, useful for discovery, verify against primary sources. |
-| Congress legislative portal | https://www.congress.gov.ph/legis/ | Scrape | Yes | 403 for non-browser automation | Important bill source but may block automated requests; requires resilient crawler strategy. |
+| Congress legislative portal | https://www.congress.gov.ph/legis/ | Scrape | Yes | 403 on listing pages; direct PDF host reachable | Scraper uses resilient fallback via docs.congress.hrep.online URL patterns for House Bills, Republic Acts, Adopted Resolutions, and Committee Reports. |
 | Supreme Court E-Library | https://elibrary.judiciary.gov.ph/republic_acts | Scrape | Yes | 200 HTML | Republic Acts listed in table format with large entry volume. |
 | Open Congress API | https://open-congress-api.bettergov.ph/api/scalar | API | No (community project) | 200 API | Structured API with OpenAPI spec and bill/people/congress endpoints. |
 
@@ -53,6 +53,17 @@ Important paths observed in spec:
    - authority score
    - last verified timestamp
 4. If a source is blocked (for example HTTP 403), mark it blocked in data instead of silently dropping it.
+
+## Congress Resilience Strategy
+
+When `www.congress.gov.ph` listing pages respond with anti-bot 403 checks, Juris uses direct official document URLs on `docs.congress.hrep.online` and probes predictable file patterns:
+
+- House Bills: `legisdocs/basic_<congress>/HBxxxxx.pdf`
+- Adopted Resolutions: `legisdocs/basic_<congress>/HRxxxxx.pdf`
+- Republic Acts: `legisdocs/ra_<congress>/RA<no>.pdf`
+- Committee Reports: `legisdocs/first_<congress>/CRxxxxx.pdf`
+
+The scraper stores per-stream cursors in `data/scrape-checkpoint.json` so large catalogs are crawled incrementally without rescanning from the beginning each run.
 
 ## Notes on Accuracy
 
