@@ -370,9 +370,9 @@ export default async function LawReaderPage({ params, searchParams }: LawReaderP
       <div className="mb-8 flex flex-wrap items-center justify-between gap-3">
         <Link
           href={backHref}
-          className="inline-flex items-center gap-2 border-2 border-[var(--color-fg-primary)] bg-[var(--color-surface-1)] px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-[var(--color-fg-primary)] transition-transform hover:-translate-y-1 hover:brutal-shadow"
+          className="group inline-flex items-center gap-3 font-mono text-xs font-bold uppercase tracking-widest text-[var(--color-fg-muted)] hover:text-[var(--color-accent)] transition-colors"
         >
-          <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+          <ArrowLeft className="h-5 w-5 transition-transform group-hover:-translate-x-1" aria-hidden="true" />
           Back to Search
         </Link>
 
