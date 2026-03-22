@@ -1166,6 +1166,20 @@ function MultiSelectDropdown({
   onClear: () => void;
   emptyHint: string;
 }) {
+  const [clickedButton, setClickedButton] = useState<"select-all" | "clear" | null>(null);
+
+  const handleSelectAll = () => {
+    onSelectAll();
+    setClickedButton("select-all");
+    setTimeout(() => setClickedButton(null), 150);
+  };
+
+  const handleClear = () => {
+    onClear();
+    setClickedButton("clear");
+    setTimeout(() => setClickedButton(null), 150);
+  };
+
   return (
     <div className="relative">
       <button
@@ -1185,19 +1199,23 @@ function MultiSelectDropdown({
       </button>
 
       {isOpen ? (
-        <div className="absolute z-30 mt-2 max-h-80 w-full overflow-hidden border-2 border-[var(--color-fg-primary)] bg-[var(--color-surface-0)] brutal-shadow">
-          <div className="flex items-center justify-between border-b-2 border-[var(--color-fg-primary)] bg-[var(--color-surface-1)] px-2 py-2">
+        <div className="absolute z-30 mt-0 max-h-80 w-full overflow-hidden border-2 border-t-0 border-[var(--color-fg-primary)] bg-[var(--color-surface-0)]">
+          <div className="flex items-center justify-between border-b-2 border-[var(--color-fg-primary)] bg-[var(--color-surface-1)] px-2 py-2 gap-2">
             <button
               type="button"
-              onClick={onSelectAll}
-              className="border border-[var(--color-fg-primary)] bg-[var(--color-surface-0)] px-2 py-1 font-mono text-[10px] font-bold uppercase text-[var(--color-fg-primary)]"
+              onClick={handleSelectAll}
+              className={`font-mono text-[10px] font-bold uppercase transition-colors ${
+                clickedButton === "select-all" ? "text-[#E89B3C]" : "text-[var(--color-fg-primary)]"
+              }`}
             >
               Select all
             </button>
             <button
               type="button"
-              onClick={onClear}
-              className="border border-[var(--color-fg-primary)] bg-[var(--color-surface-0)] px-2 py-1 font-mono text-[10px] font-bold uppercase text-[var(--color-fg-primary)]"
+              onClick={handleClear}
+              className={`font-mono text-[10px] font-bold uppercase transition-colors ${
+                clickedButton === "clear" ? "text-[#E89B3C]" : "text-[var(--color-fg-primary)]"
+              }`}
             >
               Clear
             </button>
