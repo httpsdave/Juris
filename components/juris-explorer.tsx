@@ -771,11 +771,11 @@ export function JurisExplorer({
                 <Database className="h-4 w-4" aria-hidden="true" />
                 Archive Overview
               </h2>
-              <div className="grid grid-cols-2 gap-4">
-                <Metric label="Indexed" value={String(total)} inverted />
+              <div className="grid grid-cols-2 gap-2 sm:gap-4 md:gap-2 lg:gap-4">
+                <Metric label="Indexed" value={total.toLocaleString()} inverted />
                 <Metric label="Sources" value={String(sourceCoverage.filter((entry) => entry.indexedCount > 0).length)} inverted />
-                <Metric label="Saved" value={String(bookmarks.size)} inverted />
-                <Metric label="Queue" value={String(readLater.size)} inverted />
+                <Metric label="Saved" value={bookmarks.size.toLocaleString()} inverted />
+                <Metric label="Queue" value={readLater.size.toLocaleString()} inverted />
               </div>
             </div>
             {openCongressStats ? (
@@ -1319,9 +1319,9 @@ function PaginationControls({
 
 function Metric({ label, value, inverted }: { label: string; value: string; inverted?: boolean }) {
   return (
-    <div className={`p-4 border-2 ${inverted ? "border-[var(--color-surface-0)] bg-[var(--color-accent)] text-[var(--color-surface-0)]" : "border-[var(--color-fg-primary)] bg-[var(--color-surface-1)]"}`}>
-      <p className={`font-mono text-[10px] font-bold uppercase tracking-widest ${inverted ? "text-white opacity-80" : "text-[var(--color-fg-muted)]"}`}>{label}</p>
-      <p className="mt-2 text-3xl font-black">{value}</p>
+    <div className={`p-3 sm:p-4 border-2 min-w-0 flex flex-col justify-center ${inverted ? "border-[var(--color-surface-0)] bg-[var(--color-accent)] text-[var(--color-surface-0)]" : "border-[var(--color-fg-primary)] bg-[var(--color-surface-1)]"}`}>
+      <p className={`font-mono text-[9px] sm:text-[10px] font-bold uppercase tracking-widest truncate ${inverted ? "text-white opacity-80" : "text-[var(--color-fg-muted)]"}`}>{label}</p>
+      <p className="mt-1 sm:mt-2 text-xl sm:text-2xl md:text-xl lg:text-2xl xl:text-3xl font-black tracking-tighter break-all" title={value}>{value}</p>
     </div>
   );
 }
