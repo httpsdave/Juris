@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { Playfair_Display, Bricolage_Grotesque } from "next/font/google";
 import { ScaleIcon } from "@heroicons/react/24/outline";
 import "./globals.css";
@@ -56,6 +57,67 @@ export default function RootLayout({
             </div>
           </header>
           {children}
+          <footer className="border-t-2 border-[var(--color-fg-primary)] bg-[var(--color-surface-1)]">
+            <div className="mx-auto flex w-full max-w-7xl items-start gap-4 px-4 py-3 sm:px-8 sm:gap-6">
+              <section className="flex-1 space-y-2">
+                <h2 className="font-mono text-xs font-bold uppercase tracking-widest text-[var(--color-fg-muted)]">
+                  Sources
+                </h2>
+                <ul className="space-y-1 font-mono text-xs uppercase tracking-wide text-[var(--color-fg-primary)]">
+                  <li>
+                    <a href="https://lawphil.net" target="_blank" rel="noreferrer" className="hover:text-[var(--color-accent)] transition-colors">
+                      Lawphil
+                    </a>
+                  </li>
+                  <li>
+                    <a href="https://www.officialgazette.gov.ph" target="_blank" rel="noreferrer" className="hover:text-[var(--color-accent)] transition-colors">
+                      Official Gazette
+                    </a>
+                  </li>
+                  <li>
+                    <a href="https://www.congress.gov.ph/legis" target="_blank" rel="noreferrer" className="hover:text-[var(--color-accent)] transition-colors">
+                      Congress Legislative Portal
+                    </a>
+                  </li>
+                  <li>
+                    <a href="https://elibrary.judiciary.gov.ph" target="_blank" rel="noreferrer" className="hover:text-[var(--color-accent)] transition-colors">
+                      Supreme Court E-Library
+                    </a>
+                  </li>
+                  <li>
+                    <a href="https://open-congress-api.bettergov.ph" target="_blank" rel="noreferrer" className="hover:text-[var(--color-accent)] transition-colors">
+                      Open Congress API
+                    </a>
+                  </li>
+                </ul>
+              </section>
+
+              <section className="flex shrink-0 items-start gap-3 sm:gap-4 mt-9">
+                <Image
+                  src="https://github.com/httpsdave.png"
+                  alt="httpsdave"
+                  width={48}
+                  height={48}
+                  className="border-2 border-[var(--color-fg-primary)]"
+                />
+                <div className="space-y-1">
+                  <h2 className="font-mono text-xs font-bold uppercase tracking-widest text-[var(--color-fg-muted)]">
+                    Built by
+                  </h2>
+                  <p className="font-mono text-xs uppercase tracking-wide text-[var(--color-fg-primary)]">
+                    <a
+                      href="https://github.com/httpsdave"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-[var(--color-accent)] hover:underline"
+                    >
+                      httpsdave
+                    </a>
+                  </p>
+                </div>
+              </section>
+            </div>
+          </footer>
         </div>
       </body>
     </html>
