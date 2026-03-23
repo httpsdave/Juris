@@ -6,11 +6,13 @@ import {
   Bookmark,
   BookmarkCheck,
   BookMarked,
+  ChevronDown,
   Clock3,
   Database,
   Search,
   ShieldCheck,
   Sparkles,
+  X,
 } from "lucide-react";
 import { ScaleIcon } from "@heroicons/react/24/outline";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -66,6 +68,12 @@ interface ScrollRestoreState {
   path: string;
   scrollY: number;
   savedAt: string;
+}
+
+interface PendingRemoval {
+  list: "bookmark" | "queue";
+  lawId: string;
+  title: string;
 }
 
 function parsePageParam(value: string | null): number {
@@ -218,6 +226,27 @@ function sanitizeReaderNoise(text?: string): string {
     .trim();
 }
 
+function normalizeIdentityPart(input?: string): string {
+  if (!input) {
+    return "";
+  }
+
+  return input
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function getLawIdentity(record: Pick<LawRecord, "category" | "lawNumber" | "title">): string {
+  const numberPart = normalizeIdentityPart(record.lawNumber);
+
+  if (numberPart) {
+    return `${record.category}:${numberPart}`;
+  }
+
+  return `${record.category}:${normalizeIdentityPart(record.title)}`;
+}
+
 function freshnessTone(status: FreshnessStatus) {
   if (status === "fresh") {
     return "bg-[var(--color-surface-1)] text-[#097969] border border-[#097969]";
@@ -297,6 +326,51 @@ function persistIdSet(key: string, values: Set<string>) {
   window.localStorage.setItem(key, JSON.stringify(Array.from(values)));
 }
 
+async function fetchLawsByIds(ids: string[], signal: AbortSignal): Promise<LawRecord[]> {
+  if (typeof window === "undefined") {
+    return [];
+  }
+
+  const uniqueIds = Array.from(new Set(ids.map((value) => value.trim()).filter(Boolean)));
+
+  if (!uniqueIds.length) {
+    return [];
+  }
+
+  const chunkSize = 80;
+  const collected: LawRecord[] = [];
+
+  for (let index = 0; index < uniqueIds.length; index += chunkSize) {
+    const batch = uniqueIds.slice(index, index + chunkSize);
+    const url = new URL("/api/laws", window.location.origin);
+
+    url.searchParams.set("limit", String(Math.max(1, batch.length)));
+    batch.forEach((id) => {
+      url.searchParams.append("id", id);
+    });
+
+    const response = await fetch(url.toString(), {
+      signal,
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      throw new Error(`Saved laws request failed with status ${response.status}`);
+    }
+
+    const payload = (await response.json()) as LawApiResponse;
+
+    if (!payload.success || !Array.isArray(payload.data)) {
+      throw new Error("Saved laws endpoint returned an unsuccessful response");
+    }
+
+    collected.push(...payload.data);
+  }
+
+  const byId = new Map(collected.map((record) => [record.id, record]));
+  return uniqueIds.map((id) => byId.get(id)).filter((record): record is LawRecord => Boolean(record));
+}
+
 export function JurisExplorer({
   sourceOptions,
   categoryOptions,
@@ -317,12 +391,16 @@ export function JurisExplorer({
   const [error, setError] = useState<string | null>(null);
   const [bookmarks, setBookmarks] = useState<Set<string>>(new Set());
   const [readLater, setReadLater] = useState<Set<string>>(new Set());
+  const [savedLawMap, setSavedLawMap] = useState<Map<string, LawRecord>>(new Map());
+  const [pendingRemoval, setPendingRemoval] = useState<PendingRemoval | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [openCongressStats, setOpenCongressStats] = useState<OpenCongressStatsResponse["data"]>();
   const initialFilterHydrationRef = useRef(false);
   const hasRestoredScrollRef = useRef(false);
   const sourceMenuRef = useRef<HTMLDivElement | null>(null);
   const categoryMenuRef = useRef<HTMLDivElement | null>(null);
   const resultsSectionRef = useRef<HTMLDivElement | null>(null);
+  const toastTimeoutRef = useRef<number | null>(null);
   const sourceFilterOptions = useMemo(
     () =>
       sourceOptions.filter(
@@ -406,6 +484,14 @@ export function JurisExplorer({
   useEffect(() => {
     setBookmarks(loadIdSet(BOOKMARK_KEY));
     setReadLater(loadIdSet(READ_LATER_KEY));
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (toastTimeoutRef.current !== null) {
+        window.clearTimeout(toastTimeoutRef.current);
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -634,26 +720,126 @@ export function JurisExplorer({
     return new Map(laws.map((law) => [law.id, law]));
   }, [laws]);
 
+  const trackedSavedIds = useMemo(
+    () => Array.from(new Set([...bookmarks, ...readLater])),
+    [bookmarks, readLater],
+  );
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    const loadSavedLaws = async () => {
+      if (!trackedSavedIds.length) {
+        setSavedLawMap(new Map());
+        return;
+      }
+
+      try {
+        const resolvedLaws = await fetchLawsByIds(trackedSavedIds, controller.signal);
+
+        if (controller.signal.aborted) {
+          return;
+        }
+
+        const nextMap = new Map<string, LawRecord>();
+
+        for (const law of resolvedLaws) {
+          nextMap.set(law.id, law);
+        }
+
+        setSavedLawMap(nextMap);
+
+        const availableIds = new Set(nextMap.keys());
+
+        setBookmarks((current) => {
+          const next = new Set(Array.from(current).filter((id) => availableIds.has(id)));
+
+          if (next.size === current.size) {
+            return current;
+          }
+
+          persistIdSet(BOOKMARK_KEY, next);
+          return next;
+        });
+
+        setReadLater((current) => {
+          const next = new Set(Array.from(current).filter((id) => availableIds.has(id)));
+
+          if (next.size === current.size) {
+            return current;
+          }
+
+          persistIdSet(READ_LATER_KEY, next);
+          return next;
+        });
+      } catch (err) {
+        if ((err as Error).name === "AbortError") {
+          return;
+        }
+      }
+    };
+
+    void loadSavedLaws();
+
+    return () => {
+      controller.abort();
+    };
+  }, [trackedSavedIds]);
+
   const bookmarkedLaws = useMemo(() => {
     return Array.from(bookmarks)
-      .map((id) => lawMap.get(id))
+      .map((id) => savedLawMap.get(id) ?? lawMap.get(id))
       .filter((entry): entry is LawRecord => Boolean(entry));
-  }, [bookmarks, lawMap]);
+  }, [bookmarks, lawMap, savedLawMap]);
 
   const readLaterLaws = useMemo(() => {
     return Array.from(readLater)
-      .map((id) => lawMap.get(id))
+      .map((id) => savedLawMap.get(id) ?? lawMap.get(id))
       .filter((entry): entry is LawRecord => Boolean(entry));
-  }, [readLater, lawMap]);
+  }, [lawMap, readLater, savedLawMap]);
 
-  const toggleBookmark = (lawId: string) => {
+  const bookmarkedIdentitySet = useMemo(() => {
+    return new Set(bookmarkedLaws.map((law) => getLawIdentity(law)));
+  }, [bookmarkedLaws]);
+
+  const readLaterIdentitySet = useMemo(() => {
+    return new Set(readLaterLaws.map((law) => getLawIdentity(law)));
+  }, [readLaterLaws]);
+
+  const showSaveToast = (message: string) => {
+    setToastMessage(message);
+
+    if (toastTimeoutRef.current !== null) {
+      window.clearTimeout(toastTimeoutRef.current);
+    }
+
+    toastTimeoutRef.current = window.setTimeout(() => {
+      setToastMessage(null);
+      toastTimeoutRef.current = null;
+    }, 2000);
+  };
+
+  const toggleBookmark = (law: LawRecord) => {
     setBookmarks((current) => {
       const next = new Set(current);
+      const targetIdentity = getLawIdentity(law);
+      const matchingIds = Array.from(current).filter((id) => {
+        const record = savedLawMap.get(id) ?? lawMap.get(id);
 
-      if (next.has(lawId)) {
-        next.delete(lawId);
+        if (!record) {
+          return id === law.id;
+        }
+
+        return getLawIdentity(record) === targetIdentity;
+      });
+
+      if (matchingIds.length) {
+        matchingIds.forEach((id) => {
+          next.delete(id);
+        });
       } else {
-        next.add(lawId);
+        next.add(law.id);
+        showSaveToast("Saved to registry");
       }
 
       persistIdSet(BOOKMARK_KEY, next);
@@ -661,19 +847,71 @@ export function JurisExplorer({
     });
   };
 
-  const toggleReadLater = (lawId: string) => {
+  const toggleReadLater = (law: LawRecord) => {
     setReadLater((current) => {
       const next = new Set(current);
+      const targetIdentity = getLawIdentity(law);
+      const matchingIds = Array.from(current).filter((id) => {
+        const record = savedLawMap.get(id) ?? lawMap.get(id);
 
-      if (next.has(lawId)) {
-        next.delete(lawId);
+        if (!record) {
+          return id === law.id;
+        }
+
+        return getLawIdentity(record) === targetIdentity;
+      });
+
+      if (matchingIds.length) {
+        matchingIds.forEach((id) => {
+          next.delete(id);
+        });
       } else {
-        next.add(lawId);
+        next.add(law.id);
       }
 
       persistIdSet(READ_LATER_KEY, next);
       return next;
     });
+  };
+
+  const removeBookmarkById = (lawId: string) => {
+    setBookmarks((current) => {
+      if (!current.has(lawId)) {
+        return current;
+      }
+
+      const next = new Set(current);
+      next.delete(lawId);
+      persistIdSet(BOOKMARK_KEY, next);
+      return next;
+    });
+  };
+
+  const removeReadLaterById = (lawId: string) => {
+    setReadLater((current) => {
+      if (!current.has(lawId)) {
+        return current;
+      }
+
+      const next = new Set(current);
+      next.delete(lawId);
+      persistIdSet(READ_LATER_KEY, next);
+      return next;
+    });
+  };
+
+  const confirmPendingRemoval = () => {
+    if (!pendingRemoval) {
+      return;
+    }
+
+    if (pendingRemoval.list === "bookmark") {
+      removeBookmarkById(pendingRemoval.lawId);
+    } else {
+      removeReadLaterById(pendingRemoval.lawId);
+    }
+
+    setPendingRemoval(null);
   };
 
   const toggleSourceFilter = (sourceId: LawSourceId) => {
@@ -774,8 +1012,8 @@ export function JurisExplorer({
               <div className="grid grid-cols-2 gap-2 sm:gap-4 md:gap-2 lg:gap-4">
                 <Metric label="Indexed" value={total.toLocaleString()} inverted />
                 <Metric label="Sources" value={String(sourceCoverage.filter((entry) => entry.indexedCount > 0).length)} inverted />
-                <Metric label="Saved" value={bookmarks.size.toLocaleString()} inverted />
-                <Metric label="Queue" value={readLater.size.toLocaleString()} inverted />
+                <Metric label="Saved" value={bookmarkedLaws.length.toLocaleString()} inverted />
+                <Metric label="Queue" value={readLaterLaws.length.toLocaleString()} inverted />
               </div>
             </div>
             {openCongressStats ? (
@@ -926,8 +1164,9 @@ export function JurisExplorer({
 
           <AnimatePresence>
             {laws.map((law, index) => {
-              const isBookmarked = bookmarks.has(law.id);
-              const isReadLater = readLater.has(law.id);
+              const lawIdentity = getLawIdentity(law);
+              const isBookmarked = bookmarks.has(law.id) || bookmarkedIdentitySet.has(lawIdentity);
+              const isReadLater = readLater.has(law.id) || readLaterIdentitySet.has(lawIdentity);
               const excerptSourceText = sanitizeReaderNoise(law.fullText ?? law.fullTextPreview);
               const previewText = sanitizeReaderNoise(law.fullTextPreview);
               const matchExcerpt = buildMatchExcerpt(excerptSourceText, searchTerms, 170);
@@ -1019,7 +1258,7 @@ export function JurisExplorer({
 
                     <button
                       type="button"
-                      onClick={() => toggleBookmark(law.id)}
+                      onClick={() => toggleBookmark(law)}
                       className={`inline-flex w-full sm:w-auto justify-center items-center gap-2 border-2 px-4 sm:px-5 py-2.5 font-mono text-xs font-bold uppercase transition-transform hover:-translate-y-1 hover:brutal-shadow ${isBookmarked ? "bg-[var(--color-accent)] text-[var(--color-surface-0)] border-[var(--color-accent)]" : "bg-[var(--color-surface-1)] text-[var(--color-fg-primary)] border-[var(--color-fg-primary)]"}`}
                     >
                       {isBookmarked ? (
@@ -1032,7 +1271,7 @@ export function JurisExplorer({
 
                     <button
                       type="button"
-                      onClick={() => toggleReadLater(law.id)}
+                      onClick={() => toggleReadLater(law)}
                       className={`inline-flex w-full sm:w-auto justify-center items-center gap-2 border-2 px-4 sm:px-5 py-2.5 font-mono text-xs font-bold uppercase transition-transform hover:-translate-y-1 hover:brutal-shadow ${isReadLater ? "bg-[var(--color-fg-primary)] text-[var(--color-surface-0)] border-[var(--color-fg-primary)]" : "bg-[var(--color-surface-1)] text-[var(--color-fg-primary)] border-[var(--color-fg-primary)]"}`}
                     >
                       <Clock3 className="h-4 w-4 shrink-0" aria-hidden="true" />
@@ -1067,15 +1306,31 @@ export function JurisExplorer({
                 {bookmarkedLaws.slice(0, 8).map((law) => (
                   <li key={law.id} className="border-b-2 border-dashed border-[var(--color-fg-primary)] pb-4 hover:pl-2 transition-all">
                     <p className="font-bold text-sm leading-snug text-[var(--color-fg-primary)]">{law.title}</p>
-                    <a
-                      href={law.sourceUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="mt-3 inline-flex items-center gap-2 font-mono text-xs font-bold uppercase bg-[var(--color-accent)] text-[var(--color-surface-0)] px-2 py-1 transition-transform hover:-translate-y-0.5 brutal-shadow shadow-sm"
-                    >
-                      Read Archive
-                      <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
-                    </a>
+                    <div className="mt-3 flex flex-wrap items-center gap-2">
+                      <a
+                        href={law.sourceUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-2 font-mono text-xs font-bold uppercase bg-[var(--color-accent)] text-[var(--color-surface-0)] px-2 py-1 shadow-sm transition-transform hover:-translate-y-px"
+                      >
+                        Read Archive
+                        <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
+                      </a>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setPendingRemoval({
+                            list: "bookmark",
+                            lawId: law.id,
+                            title: law.title,
+                          })
+                        }
+                        aria-label={`Remove ${law.title} from registry`}
+                        className="inline-flex h-7 w-7 items-center justify-center border border-[var(--color-fg-primary)] text-[var(--color-fg-primary)] hover:bg-[var(--color-surface-2)]"
+                      >
+                        <X className="h-3.5 w-3.5" aria-hidden="true" />
+                      </button>
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -1096,7 +1351,23 @@ export function JurisExplorer({
                 {readLaterLaws.slice(0, 8).map((law) => (
                   <li key={law.id} className="border-l-4 border-[var(--color-fg-primary)] pl-3 bg-[var(--color-surface-1)] py-2 pr-2">
                     <p className="font-bold text-[var(--color-fg-primary)] truncate" title={law.title}>{law.title}</p>
-                    <p className="mt-1 text-[var(--color-fg-muted)] uppercase text-[10px] tracking-widest">{normalizeLabel(law.source)}</p>
+                    <div className="mt-1 flex items-center justify-between gap-2">
+                      <p className="text-[var(--color-fg-muted)] uppercase text-[10px] tracking-widest">{normalizeLabel(law.source)}</p>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setPendingRemoval({
+                            list: "queue",
+                            lawId: law.id,
+                            title: law.title,
+                          })
+                        }
+                        aria-label={`Remove ${law.title} from queue`}
+                        className="inline-flex h-6 w-6 items-center justify-center border border-[var(--color-fg-primary)] text-[var(--color-fg-primary)] hover:bg-[var(--color-surface-2)]"
+                      >
+                        <X className="h-3 w-3" aria-hidden="true" />
+                      </button>
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -1111,6 +1382,8 @@ export function JurisExplorer({
             title="Source Health"
             icon={<ShieldCheck className="h-5 w-5" aria-hidden="true" />}
             subtitle="Freshness, checks, and text coverage"
+            collapsible
+            collapsedByDefault
           >
             <div className="space-y-4">
               {sourceCoverage.map((sourceInfo) => (
@@ -1141,6 +1414,43 @@ export function JurisExplorer({
           </Panel>
         </aside>
       </section>
+
+      {toastMessage ? (
+        <div className="pointer-events-none fixed top-4 left-1/2 z-[70] w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 sm:left-auto sm:right-4 sm:w-auto sm:translate-x-0">
+          <div className="border-2 border-[var(--color-accent)] bg-[var(--color-accent)] px-4 py-2 font-mono text-xs font-bold uppercase text-[var(--color-surface-0)] shadow-md">
+            {toastMessage}
+          </div>
+        </div>
+      ) : null}
+
+      {pendingRemoval ? (
+        <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/55 px-4">
+          <div className="w-full max-w-md border-2 border-[var(--color-fg-primary)] bg-[var(--color-surface-0)] p-5 brutal-shadow">
+            <h3 className="font-mono text-sm font-bold uppercase tracking-widest text-[var(--color-fg-primary)]">
+              Confirm removal
+            </h3>
+            <p className="mt-3 font-sans text-sm text-[var(--color-fg-muted)]">
+              Remove <span className="font-bold text-[var(--color-fg-primary)]">{pendingRemoval.title}</span> from {pendingRemoval.list === "bookmark" ? "Registry" : "Queue"}?
+            </p>
+            <div className="mt-5 flex items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setPendingRemoval(null)}
+                className="border-2 border-[var(--color-fg-primary)] px-3 py-2 font-mono text-xs font-bold uppercase text-[var(--color-fg-primary)] hover:bg-[var(--color-surface-1)]"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={confirmPendingRemoval}
+                className="border-2 border-[var(--color-accent)] bg-[var(--color-accent)] px-3 py-2 font-mono text-xs font-bold uppercase text-[var(--color-surface-0)]"
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -1331,20 +1641,60 @@ function Panel({
   icon,
   subtitle,
   children,
+  collapsible = false,
+  collapsedByDefault = false,
 }: {
   title: string;
   icon: React.ReactNode;
   subtitle: string;
   children: React.ReactNode;
+  collapsible?: boolean;
+  collapsedByDefault?: boolean;
 }) {
+  const [isExpanded, setIsExpanded] = useState(!collapsedByDefault);
+
+  const toggleExpanded = () => {
+    if (!collapsible) {
+      return;
+    }
+
+    setIsExpanded((current) => !current);
+  };
+
   return (
     <section className="border-2 border-[var(--color-fg-primary)] bg-[var(--color-surface-0)] p-6">
-      <h2 className="mb-2 inline-flex items-center gap-3 font-mono text-sm font-bold uppercase tracking-widest text-[var(--color-fg-primary)] border-b-4 border-[var(--color-fg-primary)] pb-3 w-full">
-        {icon}
-        {title}
-      </h2>
-      <p className="mb-6 font-sans text-xs font-bold uppercase tracking-widest text-[var(--color-fg-muted)] mt-2">{subtitle}</p>
-      {children}
+      {collapsible ? (
+        <button
+          type="button"
+          onClick={toggleExpanded}
+          className="mb-2 inline-flex w-full items-center justify-between gap-3 border-b-4 border-[var(--color-fg-primary)] pb-3 text-left font-mono text-sm font-bold uppercase tracking-widest text-[var(--color-fg-primary)] cursor-pointer"
+          aria-expanded={isExpanded}
+        >
+          <span className="inline-flex items-center gap-3">
+            {icon}
+            {title}
+          </span>
+          <ChevronDown className={`h-4 w-4 transition-transform ${isExpanded ? "rotate-180" : "rotate-0"}`} aria-hidden="true" />
+        </button>
+      ) : (
+        <h2 className="mb-2 inline-flex items-center gap-3 font-mono text-sm font-bold uppercase tracking-widest text-[var(--color-fg-primary)] border-b-4 border-[var(--color-fg-primary)] pb-3 w-full">
+          {icon}
+          {title}
+        </h2>
+      )}
+      <p className={`font-sans text-xs font-bold uppercase tracking-widest text-[var(--color-fg-muted)] mt-2 ${isExpanded ? "mb-6" : "mb-0"}`}>{subtitle}</p>
+      <AnimatePresence>
+        {isExpanded ? (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+          >
+            {children}
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </section>
   );
 }

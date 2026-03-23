@@ -55,6 +55,7 @@ export interface SourceProfile {
 
 export interface LawSearchQuery {
   q?: string;
+  ids?: string[];
   source?: LawSourceId | "all";
   sources?: LawSourceId[];
   category?: LawCategory | "all";

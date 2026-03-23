@@ -35,6 +35,7 @@ const optionalLimitSchema = limitSchema.optional();
 const optionalOffsetSchema = offsetSchema.optional();
 const optionalSourcesSchema = z.array(sourceSchema).optional();
 const optionalCategoriesSchema = z.array(categorySchema).optional();
+const optionalIdsSchema = z.array(z.string().min(1).max(120)).max(500).optional();
 
 function parseMultiValueParam(searchParams: URLSearchParams, key: string): string[] {
   return searchParams
@@ -77,13 +78,17 @@ export async function GET(request: Request) {
         : undefined,
   );
 
-  if (!broadParsed.success || !limitParsed.success || !offsetParsed.success || !sourceParsed.success || !categoryParsed.success) {
+  const idValues = parseMultiValueParam(url.searchParams, "id");
+  const idsParsed = optionalIdsSchema.safeParse(idValues.length ? idValues : undefined);
+
+  if (!broadParsed.success || !limitParsed.success || !offsetParsed.success || !sourceParsed.success || !categoryParsed.success || !idsParsed.success) {
     const issues = [
       ...(broadParsed.success ? [] : broadParsed.error.issues),
       ...(limitParsed.success ? [] : limitParsed.error.issues),
       ...(offsetParsed.success ? [] : offsetParsed.error.issues),
       ...(sourceParsed.success ? [] : sourceParsed.error.issues),
       ...(categoryParsed.success ? [] : categoryParsed.error.issues),
+      ...(idsParsed.success ? [] : idsParsed.error.issues),
     ];
 
     return NextResponse.json(
@@ -103,6 +108,7 @@ export async function GET(request: Request) {
     offset: offsetParsed.data,
     sources: sourceParsed.data,
     categories: categoryParsed.data,
+    ids: idsParsed.data,
   });
 
   return NextResponse.json({

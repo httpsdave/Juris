@@ -328,6 +328,10 @@ export function getLawById(id: string): LawRecord | undefined {
 export function searchLaws(query: LawSearchQuery): LawSearchResult {
   const limit = Math.min(Math.max(Number(query.limit) || 20, 1), 100);
   const offset = Math.max(Number(query.offset) || 0, 0);
+  const selectedIds = Array.from(
+    new Set((query.ids ?? []).map((value) => value.trim()).filter(Boolean)),
+  );
+  const selectedIdSet = selectedIds.length ? new Set(selectedIds) : null;
   const selectedSources = Array.from(
     new Set([
       ...(query.sources ?? []),
@@ -358,6 +362,10 @@ export function searchLaws(query: LawSearchQuery): LawSearchResult {
 
   const ranked = laws
     .filter((record) => {
+      if (selectedIdSet && !selectedIdSet.has(record.id)) {
+        return false;
+      }
+
       if (selectedSources.length && !selectedSources.includes(record.source)) {
         return false;
       }
