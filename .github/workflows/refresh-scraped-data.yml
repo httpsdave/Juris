@@ -17,6 +17,11 @@ jobs:
   refresh-data:
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    env:
+      # Temporary backfill tuning; reduce after coverage stabilizes.
+      JUDICIARY_MAX_RECORDS_PER_RUN: "13000"
+      CONGRESS_MAX_RECORDS_PER_RUN: "900"
+      CONGRESS_MAX_PROBES_PER_STREAM: "260"
 
     steps:
       - name: Check out repository

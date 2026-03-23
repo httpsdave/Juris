@@ -16,8 +16,8 @@ const SOURCE_URL = "https://elibrary.judiciary.gov.ph/republic_acts";
 const FETCH_ENDPOINT = "https://elibrary.judiciary.gov.ph/republic_acts/fetch_ra";
 const PAGE_SIZE = Math.min(Math.max(Number(process.env.JUDICIARY_PAGE_SIZE ?? 120), 50), 300);
 const MAX_RECORDS_PER_RUN = Math.min(
-  Math.max(Number(process.env.JUDICIARY_MAX_RECORDS_PER_RUN ?? 900), PAGE_SIZE),
-  6000,
+  Math.max(Number(process.env.JUDICIARY_MAX_RECORDS_PER_RUN ?? 13000), PAGE_SIZE),
+  30000,
 );
 const MAX_PAGES_PER_RUN = Math.min(Math.max(Number(process.env.JUDICIARY_MAX_PAGES_PER_RUN ?? 16), 1), 80);
 
@@ -152,6 +152,10 @@ export async function scrapeJudiciaryElibrary(): Promise<ScrapeResult> {
       }
 
       for (const row of rows) {
+        if (records.length >= MAX_RECORDS_PER_RUN) {
+          break;
+        }
+
         pushRowRecord(records, seen, row);
       }
 
@@ -159,6 +163,13 @@ export async function scrapeJudiciaryElibrary(): Promise<ScrapeResult> {
       draw += 1;
 
       if (rows.length < PAGE_SIZE) {
+        start = 0;
+        break;
+      }
+
+      // Some E-Library responses ignore start/length and return the full catalog in one response.
+      // When that happens, advancing start by rows.length would immediately reset to 0 and we can stop.
+      if (rows.length > PAGE_SIZE && typeof totalAvailable === "number" && rows.length >= totalAvailable) {
         start = 0;
         break;
       }
@@ -241,7 +252,7 @@ export async function scrapeJudiciaryElibrary(): Promise<ScrapeResult> {
 
     return {
       source: "judiciary_elibrary",
-      records: records.slice(0, MAX_RECORDS_PER_RUN),
+      records,
       warnings,
     };
   } catch (error) {

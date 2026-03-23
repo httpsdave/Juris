@@ -22,6 +22,10 @@ const MAX_CONSECUTIVE_MISSES = Math.min(
   Math.max(Number(process.env.CONGRESS_MAX_CONSECUTIVE_MISSES ?? 20), 3),
   80,
 );
+const MAX_DOCUMENT_NUMBER_PER_STREAM = Math.min(
+  Math.max(Number(process.env.CONGRESS_MAX_DOCUMENT_NUMBER_PER_STREAM ?? 60000), 2000),
+  200000,
+);
 const CONGRESS_PDF_RECORD_LIMIT = Math.min(
   Math.max(Number(process.env.CONGRESS_PDF_TEXT_RECORD_LIMIT ?? 40), 0),
   250,
@@ -502,6 +506,12 @@ export async function scrapeCongressPortal(): Promise<ScrapeResult> {
 
         let nextNumber = Math.max(1, initialNext);
         let consecutiveMisses = Math.max(0, savedState?.consecutiveMisses ?? 0);
+
+        if (consecutiveMisses >= MAX_CONSECUTIVE_MISSES) {
+          // Allow a fresh scan window in future runs instead of permanently starving this stream.
+          consecutiveMisses = 0;
+        }
+
         let lastHitNextNumber: number | undefined;
         let probes = 0;
         let recordsAddedForFamily = 0;
@@ -555,19 +565,23 @@ export async function scrapeCongressPortal(): Promise<ScrapeResult> {
             }
 
             nextNumber += 1;
+            if (nextNumber > MAX_DOCUMENT_NUMBER_PER_STREAM) {
+              nextNumber = 1;
+            }
             consecutiveMisses = 0;
             lastHitNextNumber = nextNumber;
             continue;
           }
 
           nextNumber += 1;
+          if (nextNumber > MAX_DOCUMENT_NUMBER_PER_STREAM) {
+            nextNumber = 1;
+          }
           consecutiveMisses += 1;
         }
 
         if (lastHitNextNumber !== undefined) {
           nextNumber = lastHitNextNumber;
-        } else if (consecutiveMisses >= MAX_CONSECUTIVE_MISSES) {
-          nextNumber = initialNext;
         }
 
         nextCongressCursor[key] = {
