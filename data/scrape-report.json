@@ -1,28 +1,18 @@
 {
-  "startedAt": "2026-03-23T03:58:07.242Z",
-  "finishedAt": "2026-03-23T04:05:36.073Z",
-  "previousRecords": 29496,
-  "runRecords": 27276,
+  "startedAt": "2026-03-23T19:29:38.733Z",
+  "finishedAt": "2026-03-23T19:55:25.470Z",
+  "previousRecords": 41154,
+  "runRecords": 27558,
   "sources": [
     {
       "source": "official_gazette",
-      "count": 10,
+      "count": 0,
       "warnings": [
         "https://www.officialgazette.gov.ph/section/republic-acts/: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/republic-acts/",
         "https://www.officialgazette.gov.ph/: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/",
         "Official Gazette RSS ingest (https://www.officialgazette.gov.ph/section/republic-acts/feed/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/republic-acts/feed/",
-        "No detail page text extracted for official gazette; keeping listing-level metadata.",
-        "Official Gazette article parse failed (https://www.officialgazette.gov.ph/2026/03/19/doe-department-circular-no-dc2026-03-0010/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/2026/03/19/doe-department-circular-no-dc2026-03-0010/",
-        "Official Gazette article parse failed (https://www.officialgazette.gov.ph/2026/03/18/proclamation-no-1195-s-2026-2/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/2026/03/18/proclamation-no-1195-s-2026-2/",
-        "Official Gazette article parse failed (https://www.officialgazette.gov.ph/2026/03/12/proclamation-no-1192-s-2026/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/2026/03/12/proclamation-no-1192-s-2026/",
-        "Official Gazette article parse failed (https://www.officialgazette.gov.ph/2026/03/12/proclamation-no-1191-s-2026/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/2026/03/12/proclamation-no-1191-s-2026/",
-        "Official Gazette article parse failed (https://www.officialgazette.gov.ph/2026/03/12/proclamation-no-1190-s-2026/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/2026/03/12/proclamation-no-1190-s-2026/",
-        "Official Gazette article parse failed (https://www.officialgazette.gov.ph/2026/03/12/proclamation-no-1189-s-2026/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/2026/03/12/proclamation-no-1189-s-2026/",
-        "Official Gazette article parse failed (https://www.officialgazette.gov.ph/2026/03/09/proclamation-no-1188-s-2026/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/2026/03/09/proclamation-no-1188-s-2026/",
-        "Official Gazette article parse failed (https://www.officialgazette.gov.ph/2026/03/09/proclamation-no-1187-s-2026/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/2026/03/09/proclamation-no-1187-s-2026/",
-        "Official Gazette article parse failed (https://www.officialgazette.gov.ph/2026/03/09/proclamation-no-1186-s-2026/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/2026/03/09/proclamation-no-1186-s-2026/",
-        "Official Gazette article parse failed (https://www.officialgazette.gov.ph/2026/03/06/memorandum-circular-no-114-s-2026/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/2026/03/06/memorandum-circular-no-114-s-2026/",
-        "Official Gazette PDF discovery found no embedded source PDFs in sampled records."
+        "Official Gazette RSS ingest (https://www.officialgazette.gov.ph/feed/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/feed/",
+        "No records parsed from Official Gazette selectors."
       ]
     },
     {
@@ -44,10 +34,9 @@
     },
     {
       "source": "congress",
-      "count": 198,
+      "count": 490,
       "warnings": [
-        "Congress listing pages returned HTTP 403. Falling back to direct PDF probing on docs.congress.hrep.online.",
-        "Congress PDF links were discovered but yielded no extractable text in sampled records."
+        "Congress listing pages returned HTTP 403. Falling back to direct PDF probing on docs.congress.hrep.online."
       ]
     },
     {
@@ -56,5 +45,5 @@
       "warnings": []
     }
   ],
-  "totalRecords": 41154
+  "totalRecords": 41644
 }
