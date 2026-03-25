@@ -5,6 +5,7 @@ export interface ScrapeCheckpointState {
   judiciaryStart: number;
   openCongressOffset: number;
   congressCursor: Record<string, { nextNumber: number; consecutiveMisses: number }>;
+  officialGazetteCursor: Record<string, { nextPage: number; blockedUntil?: string }>;
   updatedAt: string;
 }
 
@@ -12,8 +13,45 @@ const DEFAULT_CHECKPOINT: ScrapeCheckpointState = {
   judiciaryStart: 0,
   openCongressOffset: 0,
   congressCursor: {},
+  officialGazetteCursor: {},
   updatedAt: new Date(0).toISOString(),
 };
+
+function sanitizeOfficialGazetteCursor(
+  input: unknown,
+): Record<string, { nextPage: number; blockedUntil?: string }> {
+  if (!input || typeof input !== "object" || Array.isArray(input)) {
+    return {};
+  }
+
+  const parsed = input as Record<string, unknown>;
+  const cursor: Record<string, { nextPage: number; blockedUntil?: string }> = {};
+
+  for (const [key, value] of Object.entries(parsed)) {
+    if (!value || typeof value !== "object" || Array.isArray(value)) {
+      continue;
+    }
+
+    const state = value as { nextPage?: unknown; blockedUntil?: unknown };
+    const nextPage =
+      typeof state.nextPage === "number" && Number.isFinite(state.nextPage)
+        ? Math.max(1, Math.floor(state.nextPage))
+        : undefined;
+
+    if (nextPage === undefined) {
+      continue;
+    }
+
+    const blockedUntil =
+      typeof state.blockedUntil === "string" && state.blockedUntil.length > 0
+        ? state.blockedUntil
+        : undefined;
+
+    cursor[key] = blockedUntil ? { nextPage, blockedUntil } : { nextPage };
+  }
+
+  return cursor;
+}
 
 function sanitizeCongressCursor(
   input: unknown,
@@ -67,6 +105,7 @@ export async function loadScrapeCheckpoint(): Promise<ScrapeCheckpointState> {
           ? Math.max(0, Math.floor(parsed.openCongressOffset))
           : DEFAULT_CHECKPOINT.openCongressOffset,
       congressCursor: sanitizeCongressCursor(parsed.congressCursor),
+      officialGazetteCursor: sanitizeOfficialGazetteCursor(parsed.officialGazetteCursor),
       updatedAt:
         typeof parsed.updatedAt === "string" && parsed.updatedAt.length > 0
           ? parsed.updatedAt
@@ -83,6 +122,10 @@ export async function patchScrapeCheckpoint(
   const current = await loadScrapeCheckpoint();
   const nextCongressCursor =
     patch.congressCursor === undefined ? current.congressCursor : sanitizeCongressCursor(patch.congressCursor);
+  const nextOfficialGazetteCursor =
+    patch.officialGazetteCursor === undefined
+      ? current.officialGazetteCursor
+      : sanitizeOfficialGazetteCursor(patch.officialGazetteCursor);
 
   const next: ScrapeCheckpointState = {
     ...current,
@@ -96,6 +139,7 @@ export async function patchScrapeCheckpoint(
         ? Math.max(0, Math.floor(patch.openCongressOffset))
         : current.openCongressOffset,
     congressCursor: nextCongressCursor,
+    officialGazetteCursor: nextOfficialGazetteCursor,
     updatedAt: new Date().toISOString(),
   };
 

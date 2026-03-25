@@ -15,35 +15,81 @@ import {
   ScrapeResult,
   toLawId,
 } from "./shared";
+import { loadScrapeCheckpoint, patchScrapeCheckpoint } from "./checkpoint";
 
-const SECTION_URL = "https://www.officialgazette.gov.ph/section/republic-acts/";
 const FALLBACK_URL = "https://www.officialgazette.gov.ph/";
-const SECTION_FEED_URL = "https://www.officialgazette.gov.ph/section/republic-acts/feed/";
 const GENERAL_FEED_URL = "https://www.officialgazette.gov.ph/feed/";
-const OG_PDF_RECORD_LIMIT = 70;
-const OG_PDF_MIN_TEXT_LENGTH = 260;
-const OG_PDF_MAX_TEXT_LENGTH = 30000;
-const PDF_FETCH_MAX_BYTES = 24 * 1024 * 1024;
+const OG_MAX_PAGES_PER_SECTION = Math.max(1, Number(process.env.OG_MAX_PAGES_PER_SECTION ?? "2500"));
+const OG_MAX_PAGES_PER_RUN = Math.max(1, Number(process.env.OG_MAX_PAGES_PER_RUN ?? "120"));
+const OG_EMPTY_PAGE_STREAK_LIMIT = Math.max(1, Number(process.env.OG_EMPTY_PAGE_STREAK_LIMIT ?? "2"));
+const OG_MAX_TOTAL_RECORDS = Math.max(0, Number(process.env.OG_MAX_TOTAL_RECORDS ?? "0"));
+const OG_REQUEST_DELAY_MS = Math.max(0, Number(process.env.OG_REQUEST_DELAY_MS ?? "250"));
+const OG_429_MAX_RETRIES = Math.max(0, Number(process.env.OG_429_MAX_RETRIES ?? "6"));
+const OG_429_INITIAL_BACKOFF_MS = Math.max(100, Number(process.env.OG_429_INITIAL_BACKOFF_MS ?? "1200"));
+const OG_429_MAX_BACKOFF_MS = Math.max(1000, Number(process.env.OG_429_MAX_BACKOFF_MS ?? "15000"));
+const OG_429_SECTION_COOLDOWN_MINUTES = Math.max(5, Number(process.env.OG_429_SECTION_COOLDOWN_MINUTES ?? "120"));
 const MAX_INLINE_WARNINGS = 14;
 const PDF_QUERY_KEYS = ["url", "file", "src", "document", "doc", "download", "attachment"] as const;
 
-interface PdfParseLegacyResult {
-  text?: string;
-  numpages?: number;
+interface OfficialGazetteSection {
+  label: string;
+  key: string;
+  sectionUrl: string;
+  feedUrl: string;
+  category: LawRecord["category"];
+  defaultTags: string[];
 }
 
-type PdfParseLegacyFn = (data: Buffer) => Promise<PdfParseLegacyResult>;
-
-interface PdfParseV2Instance {
-  getText: () => Promise<{ text?: string } | string>;
-  destroy?: () => Promise<void>;
-}
-
-type PdfParseV2Ctor = new (options: { data: Buffer }) => PdfParseV2Instance;
-
-type PdfTextExtractor = (data: Buffer) => Promise<{ text: string; pageCount?: number } | undefined>;
-
-let cachedPdfTextExtractor: PdfTextExtractor | null | undefined;
+const OG_SECTIONS: OfficialGazetteSection[] = [
+  {
+    label: "republic acts",
+    key: "republic_acts",
+    sectionUrl: "https://www.officialgazette.gov.ph/section/republic-acts/",
+    feedUrl: "https://www.officialgazette.gov.ph/section/republic-acts/feed/",
+    category: "republic_act",
+    defaultTags: ["official gazette", "philippines", "republic act"],
+  },
+  {
+    label: "executive orders",
+    key: "executive_orders",
+    sectionUrl: "https://www.officialgazette.gov.ph/section/executive-orders/",
+    feedUrl: "https://www.officialgazette.gov.ph/section/executive-orders/feed/",
+    category: "executive_issuance",
+    defaultTags: ["official gazette", "philippines", "executive order"],
+  },
+  {
+    label: "proclamations",
+    key: "proclamations",
+    sectionUrl: "https://www.officialgazette.gov.ph/section/proclamations/",
+    feedUrl: "https://www.officialgazette.gov.ph/section/proclamations/feed/",
+    category: "executive_issuance",
+    defaultTags: ["official gazette", "philippines", "proclamation"],
+  },
+  {
+    label: "administrative orders",
+    key: "administrative_orders",
+    sectionUrl: "https://www.officialgazette.gov.ph/section/laws/executive-issuances/administrative-orders/",
+    feedUrl: "https://www.officialgazette.gov.ph/section/laws/executive-issuances/administrative-orders/feed/",
+    category: "executive_issuance",
+    defaultTags: ["official gazette", "philippines", "administrative order"],
+  },
+  {
+    label: "memorandum circulars",
+    key: "memorandum_circulars",
+    sectionUrl: "https://www.officialgazette.gov.ph/section/laws/executive-issuances/memorandum-circulars/",
+    feedUrl: "https://www.officialgazette.gov.ph/section/laws/executive-issuances/memorandum-circulars/feed/",
+    category: "executive_issuance",
+    defaultTags: ["official gazette", "philippines", "memorandum circular"],
+  },
+  {
+    label: "memorandum orders",
+    key: "memorandum_orders",
+    sectionUrl: "https://www.officialgazette.gov.ph/section/laws/executive-issuances/memorandum-orders/",
+    feedUrl: "https://www.officialgazette.gov.ph/section/laws/executive-issuances/memorandum-orders/feed/",
+    category: "executive_issuance",
+    defaultTags: ["official gazette", "philippines", "memorandum order"],
+  },
+];
 
 function pushLimitedWarning(warnings: string[], message: string) {
   if (warnings.length >= MAX_INLINE_WARNINGS) {
@@ -53,55 +99,14 @@ function pushLimitedWarning(warnings: string[], message: string) {
   warnings.push(message);
 }
 
-function truncateAtWord(text: string, maxLength: number): string {
-  if (text.length <= maxLength) {
-    return text;
+function sleep(ms: number): Promise<void> {
+  if (ms <= 0) {
+    return Promise.resolve();
   }
 
-  const chunk = text.slice(0, maxLength);
-  const lastSpace = chunk.lastIndexOf(" ");
-
-  if (lastSpace < Math.floor(maxLength * 0.6)) {
-    return `${chunk.trim()}...`;
-  }
-
-  return `${chunk.slice(0, lastSpace).trim()}...`;
-}
-
-function summaryLooksGeneric(summary: string): boolean {
-  const normalized = normalizeWhitespace(summary.toLowerCase());
-
-  if (!normalized || normalized.length < 80) {
-    return true;
-  }
-
-  return /^(discovered from|primary publication listing|about official gazette)/i.test(normalized);
-}
-
-function summarizeText(text: string, maxLength = 320): string {
-  const cleaned = normalizeWhitespace(text);
-
-  if (!cleaned) {
-    return "";
-  }
-
-  const sentenceMatch = cleaned.match(/.{80,320}?[.!?](\s|$)/);
-
-  if (sentenceMatch?.[0]) {
-    return truncateAtWord(sentenceMatch[0].trim(), maxLength);
-  }
-
-  return truncateAtWord(cleaned, maxLength);
-}
-
-function normalizePdfText(text: string): string {
-  return text
-    .replace(/\u00a0/g, " ")
-    .replace(/\r/g, "\n")
-    .replace(/[ \t]+/g, " ")
-    .replace(/[ \t]*\n[ \t]*/g, "\n")
-    .replace(/\n{3,}/g, "\n\n")
-    .trim();
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
 }
 
 function safeDecodeURIComponent(input: string): string {
@@ -282,132 +287,10 @@ function extractPdfFromFeedMarkup(feedMarkup: string, articleUrl: string): strin
   return pickBestPdfUrl(candidates);
 }
 
-async function fetchPdfBinary(pdfUrl: string): Promise<Buffer> {
-  const response = await fetch(pdfUrl, {
-    headers: {
-      "user-agent":
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36",
-      accept: "application/pdf,application/octet-stream;q=0.9,*/*;q=0.5",
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error(`Request failed: ${response.status} ${response.statusText}`);
-  }
-
-  const announcedContentLength = Number(response.headers.get("content-length") ?? "0");
-
-  if (Number.isFinite(announcedContentLength) && announcedContentLength > PDF_FETCH_MAX_BYTES) {
-    throw new Error(`PDF exceeds max size limit (${announcedContentLength} bytes).`);
-  }
-
-  const binary = Buffer.from(await response.arrayBuffer());
-
-  if (!binary.length) {
-    throw new Error("PDF response body was empty.");
-  }
-
-  if (binary.length > PDF_FETCH_MAX_BYTES) {
-    throw new Error(`PDF exceeds max size limit (${binary.length} bytes).`);
-  }
-
-  const contentType = (response.headers.get("content-type") ?? "").toLowerCase();
-  const hasPdfMagicHeader = binary.subarray(0, 4).toString("utf8") === "%PDF";
-
-  if (!hasPdfMagicHeader && !contentType.includes("application/pdf")) {
-    throw new Error(`Expected PDF content but got ${contentType || "unknown content type"}.`);
-  }
-
-  return binary;
-}
-
-async function getPdfTextExtractor(warnings: string[]): Promise<PdfTextExtractor | null> {
-  if (cachedPdfTextExtractor !== undefined) {
-    return cachedPdfTextExtractor;
-  }
-
-  try {
-    const pdfParseModule = await import("pdf-parse");
-    const defaultExport = (pdfParseModule as { default?: unknown }).default;
-
-    if (typeof defaultExport === "function") {
-      const parseLegacy = defaultExport as PdfParseLegacyFn;
-
-      cachedPdfTextExtractor = async (data: Buffer) => {
-        const parsed = await parseLegacy(data);
-        const text = normalizePdfText(parsed?.text ?? "");
-
-        if (!text) {
-          return undefined;
-        }
-
-        return {
-          text,
-          pageCount: parsed?.numpages,
-        };
-      };
-
-      return cachedPdfTextExtractor;
-    }
-
-    const parserCtor = (pdfParseModule as { PDFParse?: unknown }).PDFParse;
-
-    if (typeof parserCtor === "function") {
-      const PdfParser = parserCtor as PdfParseV2Ctor;
-
-      cachedPdfTextExtractor = async (data: Buffer) => {
-        const parser = new PdfParser({ data });
-
-        try {
-          const parsed = await parser.getText();
-          const text = normalizePdfText(typeof parsed === "string" ? parsed : parsed?.text ?? "");
-
-          if (!text) {
-            return undefined;
-          }
-
-          return { text };
-        } finally {
-          if (parser.destroy) {
-            await parser.destroy().catch(() => undefined);
-          }
-        }
-      };
-
-      return cachedPdfTextExtractor;
-    }
-
-    cachedPdfTextExtractor = null;
-    pushLimitedWarning(warnings, "Official Gazette PDF extraction is unavailable: unsupported pdf-parse export shape.");
-    return null;
-  } catch (error) {
-    cachedPdfTextExtractor = null;
-    pushLimitedWarning(
-      warnings,
-      `Official Gazette PDF extraction is unavailable: ${error instanceof Error ? error.message : "Unknown parser load error"}`,
-    );
-    return null;
-  }
-}
-
-async function extractTextFromPdf(pdfUrl: string, warnings: string[]): Promise<string | undefined> {
-  const extractor = await getPdfTextExtractor(warnings);
-
-  if (!extractor) {
-    return undefined;
-  }
-
-  const binary = await fetchPdfBinary(pdfUrl);
-  const parsed = await extractor(binary);
-
-  return parsed?.text;
-}
-
 async function enrichOfficialGazetteWithPdf(records: LawRecord[], warnings: string[]) {
   let pdfLinkedCount = 0;
-  let pdfTextCount = 0;
 
-  for (const record of records.slice(0, OG_PDF_RECORD_LIMIT)) {
+  for (const record of records) {
     if (!/^https?:\/\//i.test(record.sourceUrl)) {
       continue;
     }
@@ -439,120 +322,286 @@ async function enrichOfficialGazetteWithPdf(records: LawRecord[], warnings: stri
     if (!record.tags.includes("source pdf")) {
       record.tags = [...record.tags, "source pdf"];
     }
-
-    try {
-      const pdfText = await extractTextFromPdf(sourcePdfUrl, warnings);
-
-      if (!pdfText || pdfText.length < OG_PDF_MIN_TEXT_LENGTH) {
-        continue;
-      }
-
-      const fullText = truncateAtWord(pdfText, OG_PDF_MAX_TEXT_LENGTH);
-      record.fullText = fullText;
-      record.fullTextPreview = truncateAtWord(fullText, 600);
-
-      if (summaryLooksGeneric(record.summary)) {
-        const summary = summarizeText(fullText, 320);
-
-        if (summary) {
-          record.summary = summary;
-        }
-      }
-
-      if (!record.tags.includes("pdf text")) {
-        record.tags = [...record.tags, "pdf text"];
-      }
-
-      pdfTextCount += 1;
-    } catch (error) {
-      pushLimitedWarning(
-        warnings,
-        `Official Gazette PDF extraction failed for ${record.title}: ${error instanceof Error ? error.message : "Unknown parse error"}`,
-      );
-    }
   }
 
   if (!pdfLinkedCount) {
-    warnings.push("Official Gazette PDF discovery found no embedded source PDFs in sampled records.");
-  } else if (!pdfTextCount) {
-    warnings.push(
-      "Official Gazette PDF links were detected, but text extraction returned no readable text; links are still stored for viewer mode.",
-    );
+    warnings.push("Official Gazette PDF discovery found no embedded source PDFs in discovered records.");
   }
 }
 
+function buildPaginatedSectionUrl(sectionUrl: string, pageNumber: number): string {
+  if (pageNumber <= 1) {
+    return sectionUrl;
+  }
+
+  const normalized = sectionUrl.endsWith("/") ? sectionUrl : `${sectionUrl}/`;
+  return `${normalized}page/${pageNumber}/`;
+}
+
 function parseLawNumber(title: string): string | undefined {
-  const matched = title.match(/Republic Act\s+No\.?\s*\d+/i);
-  return matched?.[0];
+  const matched = title.match(
+    /(Republic Act\s+No\.?\s*\d+|Executive Order\s+No\.?\s*\d+|Proclamation\s+No\.?\s*\d+|Administrative Order\s+No\.?\s*\d+|Memorandum (?:Circular|Order)\s+No\.?\s*\d+)/i,
+  );
+
+  return matched?.[0]?.replace(/\s+/g, " ").trim();
+}
+
+function inferCategory(title: string, fallback: LawRecord["category"]): LawRecord["category"] {
+  return /republic\s+act/i.test(title) ? "republic_act" : fallback;
+}
+
+function toSectionRecord(
+  title: string,
+  href: string,
+  rawDate: string,
+  section: OfficialGazetteSection,
+): LawRecord {
+  const lawNumber = parseLawNumber(title);
+
+  return {
+    id: toLawId("og", lawNumber ?? title),
+    title,
+    lawNumber,
+    category: inferCategory(title, section.category),
+    summary: `Discovered from Official Gazette ${section.label} listing: ${title}`,
+    enactedOn: mapDate(rawDate),
+    source: "official_gazette",
+    sourceUrl: href,
+    tags: Array.from(new Set([...section.defaultTags, "laws and issuances"])),
+    fullTextPreview: "Primary publication listing from Official Gazette.",
+    isPrimarySource: true,
+    freshness: "fresh",
+    lastVerifiedAt: nowIso(),
+    authorityLevel: 98,
+  };
+}
+
+function ingestListingPage(
+  $: cheerio.CheerioAPI,
+  pageUrl: string,
+  section: OfficialGazetteSection,
+  seen: Set<string>,
+  records: LawRecord[],
+): number {
+  const before = records.length;
+
+  $("article").each((_, element) => {
+    const article = $(element);
+    const anchorSelectors = ["h2.entry-title a", "h3.entry-title a", "a[rel='bookmark']", "a"];
+    let anchor = article.find(anchorSelectors[0]).first();
+
+    for (const selector of anchorSelectors) {
+      const candidate = article.find(selector).first();
+
+      if (candidate.length) {
+        anchor = candidate;
+        break;
+      }
+    }
+
+    const title = safeText(anchor);
+    const href = absoluteUrl(pageUrl, anchor.attr("href"));
+
+    if (!title || !href.includes("officialgazette.gov.ph")) {
+      return;
+    }
+
+    if (/\/section\//i.test(href) || /\/tag\//i.test(href) || /\/category\//i.test(href)) {
+      return;
+    }
+
+    const key = `${title.toLowerCase()}::${href}`;
+
+    if (seen.has(key)) {
+      return;
+    }
+
+    seen.add(key);
+
+    const rawDate =
+      safeText(article.find("time").first()) ||
+      article.find("time").first().attr("datetime") ||
+      safeText(article.find(".entry-date").first());
+
+    records.push(toSectionRecord(title, href, rawDate, section));
+  });
+
+  return records.length - before;
+}
+
+async function scrapeSectionListings(
+  section: OfficialGazetteSection,
+  seen: Set<string>,
+  records: LawRecord[],
+  warnings: string[],
+  startPage: number,
+) {
+  let emptyStreak = 0;
+  let currentBackoffMs = OG_429_INITIAL_BACKOFF_MS;
+  let pageNumber = startPage;
+  let processedPages = 0;
+
+  while (pageNumber <= OG_MAX_PAGES_PER_SECTION && processedPages < OG_MAX_PAGES_PER_RUN) {
+    if (OG_MAX_TOTAL_RECORDS > 0 && records.length >= OG_MAX_TOTAL_RECORDS) {
+      return { nextPage: pageNumber, stopReason: "max_total_records" as const };
+    }
+
+    const pageUrl = buildPaginatedSectionUrl(section.sectionUrl, pageNumber);
+    let loadedPage = false;
+    let hitRateLimit = false;
+
+    for (let attempt = 0; attempt <= OG_429_MAX_RETRIES; attempt += 1) {
+      try {
+        const $ = await fetchDom(pageUrl);
+        const added = ingestListingPage($, pageUrl, section, seen, records);
+        loadedPage = true;
+        currentBackoffMs = OG_429_INITIAL_BACKOFF_MS;
+
+        if (added === 0) {
+          emptyStreak += 1;
+
+          if (emptyStreak >= OG_EMPTY_PAGE_STREAK_LIMIT) {
+            return { nextPage: 1, stopReason: "section_end" as const };
+          }
+
+          break;
+        }
+
+        emptyStreak = 0;
+        break;
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "Unknown scrape error";
+        const isRateLimited = /429|too many requests/i.test(message);
+        const isNotFound = /404|not found/i.test(message);
+
+        if (isNotFound) {
+          return { nextPage: 1, stopReason: "section_end" as const };
+        }
+
+        if (isRateLimited && attempt < OG_429_MAX_RETRIES) {
+          await sleep(currentBackoffMs);
+          currentBackoffMs = Math.min(
+            OG_429_MAX_BACKOFF_MS,
+            Math.max(OG_429_INITIAL_BACKOFF_MS, Math.floor(currentBackoffMs * 1.7)),
+          );
+          continue;
+        }
+
+        if (isRateLimited) {
+          hitRateLimit = true;
+        }
+
+        pushLimitedWarning(warnings, `${section.label} page ${pageNumber}: ${message}`);
+
+        if (pageNumber === 1) {
+          return {
+            nextPage: pageNumber,
+            stopReason: hitRateLimit ? ("rate_limited" as const) : ("error" as const),
+          };
+        }
+
+        emptyStreak += 1;
+
+        if (emptyStreak >= OG_EMPTY_PAGE_STREAK_LIMIT) {
+          return {
+            nextPage: pageNumber,
+            stopReason: hitRateLimit ? ("rate_limited" as const) : ("error" as const),
+          };
+        }
+
+        break;
+      }
+    }
+
+    if (!loadedPage) {
+      if (hitRateLimit) {
+        return { nextPage: pageNumber, stopReason: "rate_limited" as const };
+      }
+
+      pageNumber += 1;
+      processedPages += 1;
+      continue;
+    }
+
+    if (OG_REQUEST_DELAY_MS > 0) {
+      await sleep(OG_REQUEST_DELAY_MS);
+    }
+
+    pageNumber += 1;
+    processedPages += 1;
+  }
+
+  if (pageNumber > OG_MAX_PAGES_PER_SECTION) {
+    return { nextPage: 1, stopReason: "section_end" as const };
+  }
+
+  return { nextPage: pageNumber, stopReason: "run_budget" as const };
 }
 
 export async function scrapeOfficialGazette(): Promise<ScrapeResult> {
   const warnings: string[] = [];
-  const targets = [SECTION_URL, FALLBACK_URL];
+  const checkpoint = await loadScrapeCheckpoint();
+  const nextCursor = { ...checkpoint.officialGazetteCursor };
 
   const seen = new Set<string>();
   const records: LawRecord[] = [];
 
-  for (const target of targets) {
-    try {
-      const $ = await fetchDom(target);
-      const linkSelectors = ["article h3 a", "article h2 a", "h3.entry-title a", "main a", "a"];
+  const now = Date.now();
 
-      for (const selector of linkSelectors) {
-        $(selector).each((_, element) => {
-          const anchor = $(element);
-          const title = safeText(anchor);
-          const href = absoluteUrl(target, anchor.attr("href"));
+  for (const section of OG_SECTIONS) {
+    const sectionState = checkpoint.officialGazetteCursor[section.key];
+    const blockedUntilValue = sectionState?.blockedUntil;
+    const blockedUntilTs = blockedUntilValue ? new Date(blockedUntilValue).getTime() : 0;
 
-          if (!title || !href.includes("officialgazette.gov.ph")) {
-            return;
-          }
+    if (blockedUntilTs && Number.isFinite(blockedUntilTs) && blockedUntilTs > now) {
+      continue;
+    }
 
-          if (!/republic act|implementing|executive order|proclamation/i.test(title)) {
-            return;
-          }
+    const startPage = Math.max(1, sectionState?.nextPage ?? 1);
+    const outcome = await scrapeSectionListings(section, seen, records, warnings, startPage);
 
-          const key = `${title.toLowerCase()}::${href}`;
+    if (outcome.stopReason === "rate_limited") {
+      const cooldownUntil = new Date(now + OG_429_SECTION_COOLDOWN_MINUTES * 60 * 1000).toISOString();
+      nextCursor[section.key] = {
+        nextPage: Math.max(1, outcome.nextPage),
+        blockedUntil: cooldownUntil,
+      };
+    } else {
+      nextCursor[section.key] = {
+        nextPage: Math.max(1, outcome.nextPage),
+      };
+    }
 
-          if (seen.has(key)) {
-            return;
-          }
-
-          seen.add(key);
-
-          const article = anchor.closest("article");
-          const rawDate =
-            safeText(article.find("time").first()) || safeText(article.find(".entry-date").first());
-          const lawNumber = parseLawNumber(title);
-
-          records.push({
-            id: toLawId("og", lawNumber ?? title),
-            title,
-            lawNumber,
-            category: /republic act/i.test(title) ? "republic_act" : "executive_issuance",
-            summary: `Discovered from Official Gazette listing: ${title}`,
-            enactedOn: mapDate(rawDate),
-            source: "official_gazette",
-            sourceUrl: href,
-            tags: ["official gazette", "philippines", "laws"],
-            fullTextPreview: "Primary publication listing from Official Gazette.",
-            isPrimarySource: true,
-            freshness: "fresh",
-            lastVerifiedAt: nowIso(),
-            authorityLevel: 98,
-          });
-        });
-
-        if (records.length > 0) {
-          break;
-        }
-      }
-    } catch (error) {
-      warnings.push(`${target}: ${error instanceof Error ? error.message : "Unknown scrape error"}`);
+    if (OG_MAX_TOTAL_RECORDS > 0 && records.length >= OG_MAX_TOTAL_RECORDS) {
+      break;
     }
   }
 
-  const feedTargets = [SECTION_FEED_URL, GENERAL_FEED_URL];
+  if (!records.length) {
+    try {
+      const $ = await fetchDom(FALLBACK_URL);
+      ingestListingPage(
+        $,
+        FALLBACK_URL,
+        {
+          label: "homepage",
+          key: "homepage",
+          sectionUrl: FALLBACK_URL,
+          feedUrl: GENERAL_FEED_URL,
+          category: "executive_issuance",
+          defaultTags: ["official gazette", "philippines", "fallback"],
+        },
+        seen,
+        records,
+      );
+    } catch (error) {
+      warnings.push(
+        `${FALLBACK_URL}: ${error instanceof Error ? error.message : "Unknown scrape error"}`,
+      );
+    }
+  }
+
+  const feedTargets = [...OG_SECTIONS.map((section) => section.feedUrl), GENERAL_FEED_URL];
 
   for (const feedUrl of feedTargets) {
     try {
@@ -591,20 +640,21 @@ export async function scrapeOfficialGazette(): Promise<ScrapeResult> {
         seen.add(key);
 
         const lawNumber = parseLawNumber(title);
+        const section = OG_SECTIONS.find((entry) => feedUrl.startsWith(entry.feedUrl));
+        const category = inferCategory(title, section?.category ?? "executive_issuance");
+        const baseTags = section?.defaultTags ?? ["official gazette", "rss", "laws and issuances"];
 
         records.push({
           id: toLawId("og", lawNumber ?? title),
           title,
           lawNumber,
-          category: /republic act/i.test(title) ? "republic_act" : "executive_issuance",
+          category,
           summary: `Discovered from Official Gazette RSS feed: ${title}`,
           enactedOn: mapDate(published),
           source: "official_gazette",
           sourceUrl: recordSourceUrl,
           sourcePdfUrl,
-          tags: sourcePdfUrl
-            ? ["official gazette", "rss", "laws and issuances", "source pdf"]
-            : ["official gazette", "rss", "laws and issuances"],
+          tags: sourcePdfUrl ? [...baseTags, "rss", "source pdf"] : [...baseTags, "rss"],
           fullTextPreview: "Primary publication listing from Official Gazette feed.",
           isPrimarySource: true,
           freshness: "fresh",
@@ -635,9 +685,18 @@ export async function scrapeOfficialGazette(): Promise<ScrapeResult> {
     await enrichOfficialGazetteWithPdf(records, warnings);
   }
 
+  try {
+    await patchScrapeCheckpoint({ officialGazetteCursor: nextCursor });
+  } catch (error) {
+    pushLimitedWarning(
+      warnings,
+      `Unable to persist official gazette checkpoint: ${error instanceof Error ? error.message : "Unknown checkpoint error"}`,
+    );
+  }
+
   return {
     source: "official_gazette",
-    records: records.slice(0, 120),
+    records,
     warnings,
   };
 }

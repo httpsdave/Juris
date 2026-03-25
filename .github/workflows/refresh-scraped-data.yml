@@ -3,8 +3,8 @@ name: Refresh Scraped Data
 on:
   workflow_dispatch:
   schedule:
-    # Daily at 02:30 Asia/Manila (18:30 UTC)
-    - cron: "30 18 * * *"
+    # Twice daily at 02:30 and 14:30 Asia/Manila (18:30 and 06:30 UTC)
+    - cron: "30 18,6 * * *"
 
 permissions:
   contents: write
@@ -16,12 +16,18 @@ concurrency:
 jobs:
   refresh-data:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 75
     env:
       # Temporary backfill tuning; reduce after coverage stabilizes.
       JUDICIARY_MAX_RECORDS_PER_RUN: "13000"
       CONGRESS_MAX_RECORDS_PER_RUN: "900"
       CONGRESS_MAX_PROBES_PER_STREAM: "260"
+      OG_MAX_PAGES_PER_RUN: "140"
+      OG_REQUEST_DELAY_MS: "1200"
+      OG_429_MAX_RETRIES: "8"
+      OG_429_INITIAL_BACKOFF_MS: "2000"
+      OG_429_MAX_BACKOFF_MS: "45000"
+      OG_429_SECTION_COOLDOWN_MINUTES: "180"
 
     steps:
       - name: Check out repository
