@@ -1,13 +1,30 @@
 {
-  "startedAt": "2026-03-25T10:22:43.451Z",
-  "finishedAt": "2026-03-25T10:31:49.428Z",
-  "previousRecords": 42134,
-  "runRecords": 27457,
+  "startedAt": "2026-03-25T19:27:17.867Z",
+  "finishedAt": "2026-03-25T19:45:12.725Z",
+  "previousRecords": 42513,
+  "runRecords": 27558,
   "sources": [
     {
       "source": "official_gazette",
-      "count": 161,
-      "warnings": []
+      "count": 0,
+      "warnings": [
+        "republic acts page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/republic-acts/",
+        "executive orders page 3: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/executive-orders/page/3/",
+        "executive orders page 4: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/executive-orders/page/4/",
+        "proclamations page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/proclamations/",
+        "administrative orders page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/laws/executive-issuances/administrative-orders/",
+        "memorandum circulars page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/laws/executive-issuances/memorandum-circulars/",
+        "memorandum orders page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/laws/executive-issuances/memorandum-orders/",
+        "https://www.officialgazette.gov.ph/: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/",
+        "Official Gazette RSS ingest (https://www.officialgazette.gov.ph/section/republic-acts/feed/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/republic-acts/feed/",
+        "Official Gazette RSS ingest (https://www.officialgazette.gov.ph/section/executive-orders/feed/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/executive-orders/feed/",
+        "Official Gazette RSS ingest (https://www.officialgazette.gov.ph/section/proclamations/feed/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/proclamations/feed/",
+        "Official Gazette RSS ingest (https://www.officialgazette.gov.ph/section/laws/executive-issuances/administrative-orders/feed/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/laws/executive-issuances/administrative-orders/feed/",
+        "Official Gazette RSS ingest (https://www.officialgazette.gov.ph/section/laws/executive-issuances/memorandum-circulars/feed/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/laws/executive-issuances/memorandum-circulars/feed/",
+        "Official Gazette RSS ingest (https://www.officialgazette.gov.ph/section/laws/executive-issuances/memorandum-orders/feed/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/laws/executive-issuances/memorandum-orders/feed/",
+        "Official Gazette RSS ingest (https://www.officialgazette.gov.ph/feed/): Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/feed/",
+        "No records parsed from Official Gazette selectors."
+      ]
     },
     {
       "source": "judiciary_elibrary",
@@ -28,7 +45,7 @@
     },
     {
       "source": "congress",
-      "count": 231,
+      "count": 490,
       "warnings": [
         "Congress listing pages returned HTTP 403. Falling back to direct PDF probing on docs.congress.hrep.online.",
         "Congress PDF links were discovered but yielded no extractable text in sampled records."
@@ -40,5 +57,5 @@
       "warnings": []
     }
   ],
-  "totalRecords": 42513
+  "totalRecords": 43003
 }
