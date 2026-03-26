@@ -1,16 +1,16 @@
 {
-  "startedAt": "2026-03-26T07:43:58.813Z",
-  "finishedAt": "2026-03-26T08:06:16.386Z",
-  "previousRecords": 43003,
-  "runRecords": 27562,
+  "startedAt": "2026-03-26T19:38:55.796Z",
+  "finishedAt": "2026-03-26T19:56:46.005Z",
+  "previousRecords": 44049,
+  "runRecords": 27557,
   "sources": [
     {
       "source": "official_gazette",
       "count": 0,
       "warnings": [
         "republic acts page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/republic-acts/",
-        "executive orders page 4: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/executive-orders/page/4/",
         "executive orders page 5: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/executive-orders/page/5/",
+        "executive orders page 6: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/executive-orders/page/6/",
         "proclamations page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/proclamations/",
         "administrative orders page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/laws/executive-issuances/administrative-orders/",
         "memorandum circulars page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/laws/executive-issuances/memorandum-circulars/",
@@ -34,9 +34,7 @@
     {
       "source": "lawphil",
       "count": 9000,
-      "warnings": [
-        "Lawphil jurisprudence year scrape failed (https://lawphil.net/judjuris/juri2022/juri2022.html): fetch failed"
-      ]
+      "warnings": []
     },
     {
       "source": "chanrobles",
@@ -59,5 +57,5 @@
       "warnings": []
     }
   ],
-  "totalRecords": 44049
+  "totalRecords": 44539
 }
