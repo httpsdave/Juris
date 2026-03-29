@@ -1,16 +1,16 @@
 {
-  "startedAt": "2026-03-28T19:08:04.158Z",
-  "finishedAt": "2026-03-28T19:27:22.708Z",
-  "previousRecords": 46009,
-  "runRecords": 27557,
+  "startedAt": "2026-03-29T07:35:18.528Z",
+  "finishedAt": "2026-03-29T07:55:31.451Z",
+  "previousRecords": 46499,
+  "runRecords": 27558,
   "sources": [
     {
       "source": "official_gazette",
       "count": 0,
       "warnings": [
         "republic acts page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/republic-acts/",
-        "executive orders page 9: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/executive-orders/page/9/",
         "executive orders page 10: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/executive-orders/page/10/",
+        "executive orders page 11: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/executive-orders/page/11/",
         "proclamations page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/proclamations/",
         "administrative orders page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/laws/executive-issuances/administrative-orders/",
         "memorandum circulars page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/laws/executive-issuances/memorandum-circulars/",
@@ -56,5 +56,5 @@
       "warnings": []
     }
   ],
-  "totalRecords": 46499
+  "totalRecords": 46989
 }
