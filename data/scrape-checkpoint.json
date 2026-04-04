@@ -3,127 +3,127 @@
   "openCongressOffset": 48000,
   "congressCursor": {
     "hb:20": {
-      "nextNumber": 1710,
+      "nextNumber": 1780,
       "consecutiveMisses": 0
     },
     "hb:19": {
-      "nextNumber": 1707,
+      "nextNumber": 1777,
       "consecutiveMisses": 0
     },
     "hb:18": {
-      "nextNumber": 1666,
+      "nextNumber": 1736,
       "consecutiveMisses": 0
     },
     "hb:17": {
-      "nextNumber": 1712,
+      "nextNumber": 1782,
       "consecutiveMisses": 0
     },
     "hb:16": {
-      "nextNumber": 1741,
+      "nextNumber": 1812,
       "consecutiveMisses": 0
     },
     "hb:15": {
-      "nextNumber": 2231,
-      "consecutiveMisses": 0
+      "nextNumber": 2312,
+      "consecutiveMisses": 20
     },
     "hb:14": {
-      "nextNumber": 481,
+      "nextNumber": 501,
       "consecutiveMisses": 20
     },
     "hr:14": {
-      "nextNumber": 481,
+      "nextNumber": 501,
       "consecutiveMisses": 20
     },
     "ra:14": {
-      "nextNumber": 481,
+      "nextNumber": 501,
       "consecutiveMisses": 20
     },
     "cr:14": {
-      "nextNumber": 481,
+      "nextNumber": 501,
       "consecutiveMisses": 20
     },
     "hb:13": {
-      "nextNumber": 2075,
+      "nextNumber": 2195,
       "consecutiveMisses": 0
     },
     "hb:12": {
-      "nextNumber": 481,
+      "nextNumber": 501,
       "consecutiveMisses": 20
     },
     "hr:12": {
-      "nextNumber": 481,
+      "nextNumber": 501,
       "consecutiveMisses": 20
     },
     "ra:12": {
-      "nextNumber": 481,
+      "nextNumber": 501,
       "consecutiveMisses": 20
     },
     "cr:12": {
-      "nextNumber": 481,
+      "nextNumber": 501,
       "consecutiveMisses": 20
     },
     "hb:11": {
-      "nextNumber": 481,
+      "nextNumber": 501,
       "consecutiveMisses": 20
     },
     "hr:11": {
-      "nextNumber": 481,
+      "nextNumber": 501,
       "consecutiveMisses": 20
     },
     "ra:11": {
-      "nextNumber": 481,
+      "nextNumber": 501,
       "consecutiveMisses": 20
     },
     "cr:11": {
-      "nextNumber": 481,
+      "nextNumber": 501,
       "consecutiveMisses": 20
     },
     "hb:10": {
-      "nextNumber": 481,
+      "nextNumber": 501,
       "consecutiveMisses": 20
     },
     "hr:10": {
-      "nextNumber": 481,
+      "nextNumber": 501,
       "consecutiveMisses": 20
     },
     "ra:10": {
-      "nextNumber": 481,
+      "nextNumber": 501,
       "consecutiveMisses": 20
     },
     "cr:10": {
-      "nextNumber": 481,
+      "nextNumber": 501,
       "consecutiveMisses": 20
     },
     "hb:9": {
-      "nextNumber": 481,
+      "nextNumber": 501,
       "consecutiveMisses": 20
     },
     "hr:9": {
-      "nextNumber": 481,
+      "nextNumber": 501,
       "consecutiveMisses": 20
     },
     "ra:9": {
-      "nextNumber": 481,
+      "nextNumber": 501,
       "consecutiveMisses": 20
     },
     "cr:9": {
-      "nextNumber": 481,
+      "nextNumber": 501,
       "consecutiveMisses": 20
     },
     "hb:8": {
-      "nextNumber": 481,
+      "nextNumber": 501,
       "consecutiveMisses": 20
     },
     "hr:8": {
-      "nextNumber": 481,
+      "nextNumber": 501,
       "consecutiveMisses": 20
     },
     "ra:8": {
-      "nextNumber": 481,
+      "nextNumber": 501,
       "consecutiveMisses": 20
     },
     "cr:8": {
-      "nextNumber": 481,
+      "nextNumber": 501,
       "consecutiveMisses": 20
     },
     "hr:13": {
@@ -143,15 +143,15 @@
       "consecutiveMisses": 0
     },
     "hr:15": {
-      "nextNumber": 81,
+      "nextNumber": 101,
       "consecutiveMisses": 20
     },
     "ra:15": {
-      "nextNumber": 81,
+      "nextNumber": 101,
       "consecutiveMisses": 20
     },
     "cr:15": {
-      "nextNumber": 81,
+      "nextNumber": 101,
       "consecutiveMisses": 20
     }
   },
@@ -160,7 +160,7 @@
       "nextPage": 1
     },
     "executive_orders": {
-      "nextPage": 23
+      "nextPage": 24
     },
     "proclamations": {
       "nextPage": 1
@@ -175,5 +175,5 @@
       "nextPage": 1
     }
   },
-  "updatedAt": "2026-04-04T07:58:55.182Z"
+  "updatedAt": "2026-04-04T19:33:52.728Z"
 }
