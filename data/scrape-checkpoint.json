@@ -1,141 +1,141 @@
 {
   "judiciaryStart": 0,
-  "openCongressOffset": 61200,
+  "openCongressOffset": 62400,
   "congressCursor": {
     "hb:20": {
-      "nextNumber": 2625,
+      "nextNumber": 2696,
       "consecutiveMisses": 0
     },
     "hb:19": {
-      "nextNumber": 2617,
+      "nextNumber": 2687,
       "consecutiveMisses": 0
     },
     "hb:18": {
-      "nextNumber": 2577,
+      "nextNumber": 2647,
       "consecutiveMisses": 0
     },
     "hb:17": {
-      "nextNumber": 2623,
+      "nextNumber": 2693,
       "consecutiveMisses": 0
     },
     "hb:16": {
-      "nextNumber": 2664,
+      "nextNumber": 2734,
       "consecutiveMisses": 0
     },
     "hb:15": {
-      "nextNumber": 3591,
+      "nextNumber": 3718,
       "consecutiveMisses": 0
     },
     "hb:14": {
-      "nextNumber": 741,
+      "nextNumber": 761,
       "consecutiveMisses": 20
     },
     "hr:14": {
-      "nextNumber": 741,
+      "nextNumber": 761,
       "consecutiveMisses": 20
     },
     "ra:14": {
-      "nextNumber": 741,
+      "nextNumber": 761,
       "consecutiveMisses": 20
     },
     "cr:14": {
-      "nextNumber": 741,
+      "nextNumber": 761,
       "consecutiveMisses": 20
     },
     "hb:13": {
-      "nextNumber": 3321,
+      "nextNumber": 3340,
       "consecutiveMisses": 20
     },
     "hb:12": {
-      "nextNumber": 741,
+      "nextNumber": 761,
       "consecutiveMisses": 20
     },
     "hr:12": {
-      "nextNumber": 741,
+      "nextNumber": 761,
       "consecutiveMisses": 20
     },
     "ra:12": {
-      "nextNumber": 741,
+      "nextNumber": 761,
       "consecutiveMisses": 20
     },
     "cr:12": {
-      "nextNumber": 741,
+      "nextNumber": 761,
       "consecutiveMisses": 20
     },
     "hb:11": {
-      "nextNumber": 741,
+      "nextNumber": 761,
       "consecutiveMisses": 20
     },
     "hr:11": {
-      "nextNumber": 741,
+      "nextNumber": 761,
       "consecutiveMisses": 20
     },
     "ra:11": {
-      "nextNumber": 741,
+      "nextNumber": 761,
       "consecutiveMisses": 20
     },
     "cr:11": {
-      "nextNumber": 741,
+      "nextNumber": 761,
       "consecutiveMisses": 20
     },
     "hb:10": {
-      "nextNumber": 741,
+      "nextNumber": 761,
       "consecutiveMisses": 20
     },
     "hr:10": {
-      "nextNumber": 741,
+      "nextNumber": 761,
       "consecutiveMisses": 20
     },
     "ra:10": {
-      "nextNumber": 741,
+      "nextNumber": 761,
       "consecutiveMisses": 20
     },
     "cr:10": {
-      "nextNumber": 741,
+      "nextNumber": 761,
       "consecutiveMisses": 20
     },
     "hb:9": {
-      "nextNumber": 741,
+      "nextNumber": 761,
       "consecutiveMisses": 20
     },
     "hr:9": {
-      "nextNumber": 741,
+      "nextNumber": 761,
       "consecutiveMisses": 20
     },
     "ra:9": {
-      "nextNumber": 741,
+      "nextNumber": 761,
       "consecutiveMisses": 20
     },
     "cr:9": {
-      "nextNumber": 741,
+      "nextNumber": 761,
       "consecutiveMisses": 20
     },
     "hb:8": {
-      "nextNumber": 741,
+      "nextNumber": 761,
       "consecutiveMisses": 20
     },
     "hr:8": {
-      "nextNumber": 741,
+      "nextNumber": 761,
       "consecutiveMisses": 20
     },
     "ra:8": {
-      "nextNumber": 741,
+      "nextNumber": 761,
       "consecutiveMisses": 20
     },
     "cr:8": {
-      "nextNumber": 741,
+      "nextNumber": 761,
       "consecutiveMisses": 20
     },
     "hr:13": {
-      "nextNumber": 131,
+      "nextNumber": 151,
       "consecutiveMisses": 20
     },
     "ra:13": {
-      "nextNumber": 61,
+      "nextNumber": 81,
       "consecutiveMisses": 20
     },
     "cr:13": {
-      "nextNumber": 61,
+      "nextNumber": 81,
       "consecutiveMisses": 20
     },
     "hr:18": {
@@ -160,7 +160,7 @@
       "nextPage": 1
     },
     "executive_orders": {
-      "nextPage": 36
+      "nextPage": 37
     },
     "proclamations": {
       "nextPage": 1
@@ -175,5 +175,5 @@
       "nextPage": 1
     }
   },
-  "updatedAt": "2026-04-10T19:53:16.282Z"
+  "updatedAt": "2026-04-11T07:57:32.370Z"
 }
