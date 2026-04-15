@@ -1,16 +1,16 @@
 {
-  "startedAt": "2026-04-15T08:15:01.272Z",
-  "finishedAt": "2026-04-15T08:42:28.025Z",
-  "previousRecords": 62523,
-  "runRecords": 26528,
+  "startedAt": "2026-04-15T19:50:19.311Z",
+  "finishedAt": "2026-04-15T20:10:38.211Z",
+  "previousRecords": 62887,
+  "runRecords": 27490,
   "sources": [
     {
       "source": "official_gazette",
       "count": 0,
       "warnings": [
         "republic acts page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/republic-acts/",
-        "executive orders page 44: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/executive-orders/page/44/",
         "executive orders page 45: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/executive-orders/page/45/",
+        "executive orders page 46: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/executive-orders/page/46/",
         "proclamations page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/proclamations/",
         "administrative orders page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/laws/executive-issuances/administrative-orders/",
         "memorandum circulars page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/laws/executive-issuances/memorandum-circulars/",
@@ -38,15 +38,14 @@
     },
     {
       "source": "chanrobles",
-      "count": 4343,
+      "count": 5243,
       "warnings": [
-        "ChanRobles jurisprudence root scrape failed: Request failed: 525 <none> for https://chanrobles.com/scdecisions/",
-        "ChanRobles Republic Acts entry scrape failed (https://chanrobles.com/republicacts/): Request failed: 522 <none> for https://chanrobles.com/republicacts/"
+        "ChanRobles jurisprudence had 16 year page(s) without month-level case listings."
       ]
     },
     {
       "source": "congress",
-      "count": 350,
+      "count": 420,
       "warnings": [
         "Congress listing pages returned HTTP 403. Falling back to direct PDF probing on docs.congress.hrep.online."
       ]
@@ -57,5 +56,5 @@
       "warnings": []
     }
   ],
-  "totalRecords": 62887
+  "totalRecords": 63307
 }
