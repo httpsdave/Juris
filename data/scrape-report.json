@@ -1,16 +1,16 @@
 {
-  "startedAt": "2026-04-16T08:15:45.213Z",
-  "finishedAt": "2026-04-16T08:46:52.526Z",
-  "previousRecords": 63307,
-  "runRecords": 18868,
+  "startedAt": "2026-04-16T19:46:46.620Z",
+  "finishedAt": "2026-04-16T20:08:04.580Z",
+  "previousRecords": 63706,
+  "runRecords": 27421,
   "sources": [
     {
       "source": "official_gazette",
       "count": 0,
       "warnings": [
         "republic acts page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/republic-acts/",
-        "executive orders page 46: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/executive-orders/page/46/",
         "executive orders page 47: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/executive-orders/page/47/",
+        "executive orders page 48: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/executive-orders/page/48/",
         "proclamations page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/proclamations/",
         "administrative orders page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/laws/executive-issuances/administrative-orders/",
         "memorandum circulars page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/laws/executive-issuances/memorandum-circulars/",
@@ -33,22 +33,8 @@
     },
     {
       "source": "lawphil",
-      "count": 6,
-      "warnings": [
-        "Lawphil Acts scrape failed (https://lawphil.net/statutes/acts/acts.html): fetch failed",
-        "Lawphil Commonwealth Acts scrape failed (https://lawphil.net/statutes/comacts/comacts.html): fetch failed",
-        "Lawphil Batas Pambansa scrape failed (https://lawphil.net/statutes/bataspam/bataspam.html): fetch failed",
-        "Lawphil Republic Acts scrape failed (https://lawphil.net/statutes/repacts/repacts.html): fetch failed",
-        "Lawphil jurisprudence root scrape failed: fetch failed",
-        "Lawphil Executive Orders scrape failed (https://lawphil.net/executive/execord/execord.html): fetch failed",
-        "Lawphil Presidential Decrees scrape failed (https://lawphil.net/statutes/presdecs/legis_pd.html): fetch failed",
-        "Lawphil Administrative Orders scrape failed (https://lawphil.net/executive/ao/ao.html): fetch failed",
-        "Lawphil Memorandum Circulars scrape failed (https://lawphil.net/executive/mc/mc.html): fetch failed",
-        "Lawphil Memorandum Orders scrape failed (https://lawphil.net/executive/mo/mo.html): fetch failed",
-        "Lawphil Proclamations scrape failed (https://lawphil.net/executive/proc/proc.html): fetch failed",
-        "Lawphil General Orders scrape failed (https://lawphil.net/executive/genor/genor.html): fetch failed",
-        "No detail page text extracted for lawphil; keeping listing-level metadata."
-      ]
+      "count": 9000,
+      "warnings": []
     },
     {
       "source": "chanrobles",
@@ -59,7 +45,7 @@
     },
     {
       "source": "congress",
-      "count": 399,
+      "count": 351,
       "warnings": [
         "Congress listing pages returned HTTP 403. Falling back to direct PDF probing on docs.congress.hrep.online."
       ]
@@ -70,5 +56,5 @@
       "warnings": []
     }
   ],
-  "totalRecords": 63706
+  "totalRecords": 64057
 }
