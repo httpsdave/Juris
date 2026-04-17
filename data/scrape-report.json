@@ -1,7 +1,7 @@
 {
-  "startedAt": "2026-04-17T08:14:15.577Z",
-  "finishedAt": "2026-04-17T08:40:46.204Z",
-  "previousRecords": 64057,
+  "startedAt": "2026-04-17T19:40:09.419Z",
+  "finishedAt": "2026-04-17T20:03:13.686Z",
+  "previousRecords": 64477,
   "runRecords": 27490,
   "sources": [
     {
@@ -9,8 +9,8 @@
       "count": 0,
       "warnings": [
         "republic acts page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/republic-acts/",
-        "executive orders page 48: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/executive-orders/page/48/",
         "executive orders page 49: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/executive-orders/page/49/",
+        "executive orders page 50: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/executive-orders/page/50/",
         "proclamations page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/proclamations/",
         "administrative orders page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/laws/executive-issuances/administrative-orders/",
         "memorandum circulars page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/laws/executive-issuances/memorandum-circulars/",
@@ -45,7 +45,7 @@
     },
     {
       "source": "congress",
-      "count": 420,
+      "count": 421,
       "warnings": [
         "Congress listing pages returned HTTP 403. Falling back to direct PDF probing on docs.congress.hrep.online."
       ]
@@ -56,5 +56,5 @@
       "warnings": []
     }
   ],
-  "totalRecords": 64477
+  "totalRecords": 64898
 }
