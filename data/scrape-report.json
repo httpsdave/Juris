@@ -1,16 +1,16 @@
 {
-  "startedAt": "2026-04-24T19:32:04.643Z",
-  "finishedAt": "2026-04-24T20:10:55.786Z",
-  "previousRecords": 70922,
-  "runRecords": 26566,
+  "startedAt": "2026-04-25T07:52:47.875Z",
+  "finishedAt": "2026-04-25T08:20:09.410Z",
+  "previousRecords": 72642,
+  "runRecords": 27417,
   "sources": [
     {
       "source": "official_gazette",
       "count": 0,
       "warnings": [
         "republic acts page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/republic-acts/",
-        "executive orders page 63: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/executive-orders/page/63/",
         "executive orders page 64: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/executive-orders/page/64/",
+        "executive orders page 65: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/executive-orders/page/65/",
         "proclamations page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/proclamations/",
         "administrative orders page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/laws/executive-issuances/administrative-orders/",
         "memorandum circulars page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/laws/executive-issuances/memorandum-circulars/",
@@ -38,31 +38,14 @@
     },
     {
       "source": "chanrobles",
-      "count": 4343,
+      "count": 5243,
       "warnings": [
-        "ChanRobles jurisprudence root scrape failed: Request failed: 522 <none> for https://chanrobles.com/scdecisions/",
-        "ChanRobles Republic Acts entry scrape failed (https://chanrobles.com/republicacts/): Request failed: 522 <none> for https://chanrobles.com/republicacts/",
-        "ChanRobles Republic Acts index scrape failed (https://chanrobles.com/RepublicActs.8801-8850.html): Request failed: 525 <none> for https://chanrobles.com/RepublicActs.8801-8850.html",
-        "ChanRobles Republic Acts index scrape failed (https://chanrobles.com/RepublicActs.8751-8800.html): Request failed: 522 <none> for https://chanrobles.com/RepublicActs.8751-8800.html",
-        "ChanRobles Republic Acts index scrape failed (https://chanrobles.com/RepublicActs.8701-8750.html): Request failed: 525 <none> for https://chanrobles.com/RepublicActs.8701-8750.html",
-        "ChanRobles Republic Acts index scrape failed (https://chanrobles.com/RepublicActs.8651-8700.html): Request failed: 525 <none> for https://chanrobles.com/RepublicActs.8651-8700.html",
-        "ChanRobles Presidential Decrees index scrape failed (https://chanrobles.com/presidentialdecrees1951-2000.html): Request failed: 522 <none> for https://chanrobles.com/presidentialdecrees1951-2000.html",
-        "ChanRobles Presidential Decrees index scrape failed (https://chanrobles.com/presidentialdecrees1851-1900.html): Request failed: 522 <none> for https://chanrobles.com/presidentialdecrees1851-1900.html",
-        "ChanRobles Presidential Decrees index scrape failed (https://chanrobles.com/presidentialdecrees1801-1850.html): Request failed: 522 <none> for https://chanrobles.com/presidentialdecrees1801-1850.html",
-        "ChanRobles Presidential Decrees index scrape failed (https://chanrobles.com/presidentialdecrees1601-1650.html): Request failed: 525 <none> for https://chanrobles.com/presidentialdecrees1601-1650.html",
-        "ChanRobles Presidential Decrees index scrape failed (https://chanrobles.com/presidentialdecrees1551-1600.html): Request failed: 525 <none> for https://chanrobles.com/presidentialdecrees1551-1600.html",
-        "ChanRobles Presidential Decrees index scrape failed (https://chanrobles.com/presidentialdecrees1501-1550.html): Request failed: 522 <none> for https://chanrobles.com/presidentialdecrees1501-1550.html",
-        "ChanRobles Presidential Decrees index scrape failed (https://chanrobles.com/presidentialdecrees1451-1500.html): Request failed: 522 <none> for https://chanrobles.com/presidentialdecrees1451-1500.html",
-        "ChanRobles Presidential Decrees index scrape failed (https://chanrobles.com/presidentialdecrees1401-1450.html): Request failed: 522 <none> for https://chanrobles.com/presidentialdecrees1401-1450.html",
-        "ChanRobles Presidential Decrees index scrape failed (https://chanrobles.com/presidentialdecrees1301-1350.html): Request failed: 522 <none> for https://chanrobles.com/presidentialdecrees1301-1350.html",
-        "ChanRobles Presidential Decrees index scrape failed (https://chanrobles.com/presidentialdecrees1251-1300.html): Request failed: 525 <none> for https://chanrobles.com/presidentialdecrees1251-1300.html",
-        "ChanRobles Batas Pambansa index scrape failed (https://chanrobles.com/BatasPambansaBlg.251-300.html): Request failed: 522 <none> for https://chanrobles.com/BatasPambansaBlg.251-300.html",
-        "ChanRobles Batas Pambansa index scrape failed (https://chanrobles.com/BatasPambansaBlg.201-250.html): Request failed: 522 <none> for https://chanrobles.com/BatasPambansaBlg.201-250.html"
+        "ChanRobles jurisprudence had 16 year page(s) without month-level case listings."
       ]
     },
     {
       "source": "congress",
-      "count": 391,
+      "count": 350,
       "warnings": [
         "Congress listing pages returned HTTP 403. Falling back to direct PDF probing on docs.congress.hrep.online."
       ]
@@ -73,5 +56,5 @@
       "warnings": []
     }
   ],
-  "totalRecords": 72642
+  "totalRecords": 72992
 }
