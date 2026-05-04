@@ -1,5 +1,6 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { gzipSync, gunzipSync } from "node:zlib";
 
 import type { LawRecord } from "../../types/law";
 
@@ -10,6 +11,17 @@ import { scrapeLawphil } from "./lawphil";
 import { scrapeOfficialGazette } from "./official-gazette";
 import { scrapeOpenCongress } from "./open-congress";
 import type { ScrapeResult } from "./shared";
+
+interface ScrapedShardManifest {
+  version: number;
+  generatedAt: string;
+  totalRecords: number;
+  shards: Array<{ year: string; file: string; count: number }>;
+}
+
+const SCRAPED_DIR = path.resolve(process.cwd(), "data", "laws.scraped");
+const MANIFEST_PATH = path.join(SCRAPED_DIR, "manifest.json");
+const LEGACY_OUTPUT_PATH = path.resolve(process.cwd(), "data", "laws.scraped.json");
 
 function toTimestamp(input?: string): number {
   if (!input) {
@@ -162,7 +174,7 @@ function isLegacyChanroblesTopicRecord(record: LawRecord): boolean {
   return /^topic index entry from chanrobles virtual law library:/i.test(record.summary);
 }
 
-async function readExistingRecords(filePath: string): Promise<LawRecord[]> {
+async function readJsonArray(filePath: string): Promise<LawRecord[]> {
   try {
     const raw = await readFile(filePath, "utf8");
     const parsed = JSON.parse(raw);
@@ -175,6 +187,108 @@ async function readExistingRecords(filePath: string): Promise<LawRecord[]> {
   } catch {
     return [];
   }
+}
+
+async function readGzipJsonArray(filePath: string): Promise<LawRecord[]> {
+  try {
+    const raw = await readFile(filePath);
+    const parsed = JSON.parse(gunzipSync(raw).toString("utf8"));
+
+    if (!Array.isArray(parsed)) {
+      return [];
+    }
+
+    return parsed as LawRecord[];
+  } catch {
+    return [];
+  }
+}
+
+async function readShardManifest(): Promise<ScrapedShardManifest | null> {
+  try {
+    const raw = await readFile(MANIFEST_PATH, "utf8");
+    const parsed = JSON.parse(raw) as ScrapedShardManifest;
+
+    if (!parsed || !Array.isArray(parsed.shards)) {
+      return null;
+    }
+
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+async function readShardRecords(manifest: ScrapedShardManifest): Promise<LawRecord[]> {
+  const records: LawRecord[] = [];
+
+  for (const shard of manifest.shards) {
+    if (!shard?.file) {
+      continue;
+    }
+
+    const shardPath = path.join(SCRAPED_DIR, shard.file);
+    records.push(...(await readGzipJsonArray(shardPath)));
+  }
+
+  return records;
+}
+
+async function readExistingRecords(): Promise<LawRecord[]> {
+  const manifest = await readShardManifest();
+
+  if (manifest) {
+    return readShardRecords(manifest);
+  }
+
+  return readJsonArray(LEGACY_OUTPUT_PATH);
+}
+
+function getShardYear(record: LawRecord): string {
+  const value = record.enactedOn?.slice(0, 4) ?? "";
+
+  if (/^\d{4}$/.test(value)) {
+    return value;
+  }
+
+  return "unknown";
+}
+
+async function writeShardData(records: LawRecord[]): Promise<ScrapedShardManifest> {
+  const byYear = new Map<string, LawRecord[]>();
+
+  for (const record of records) {
+    const year = getShardYear(record);
+    const current = byYear.get(year) ?? [];
+    current.push(record);
+    byYear.set(year, current);
+  }
+
+  await mkdir(SCRAPED_DIR, { recursive: true });
+
+  const shards = Array.from(byYear.entries())
+    .sort(([left], [right]) => left.localeCompare(right))
+    .map(([year, entries]) => {
+      const file = `laws-${year}.json.gz`;
+      return { year, file, count: entries.length, entries };
+    });
+
+  for (const shard of shards) {
+    const payload = JSON.stringify(shard.entries);
+    const compressed = gzipSync(Buffer.from(payload, "utf8"));
+    await writeFile(path.join(SCRAPED_DIR, shard.file), compressed);
+  }
+
+  const manifest: ScrapedShardManifest = {
+    version: 1,
+    generatedAt: new Date().toISOString(),
+    totalRecords: records.length,
+    shards: shards.map(({ year, file, count }) => ({ year, file, count })),
+  };
+
+  await writeFile(MANIFEST_PATH, JSON.stringify(manifest, null, 2), "utf8");
+
+  return manifest;
 }
 
 async function run() {
@@ -193,11 +307,12 @@ async function run() {
   const dataDir = path.resolve(process.cwd(), "data");
   await mkdir(dataDir, { recursive: true });
 
-  const outputPath = path.join(dataDir, "laws.scraped.json");
-  const previousRecords = await readExistingRecords(outputPath);
+  const previousRecords = await readExistingRecords();
   const allRecords = dedupe([...runRecords, ...previousRecords]).filter(
     (record) => !isLegacyChanroblesTopicRecord(record),
   );
+
+  const manifest = await writeShardData(allRecords);
 
   const report = {
     startedAt: startedAt.toISOString(),
@@ -210,9 +325,15 @@ async function run() {
       warnings: result.warnings,
     })),
     totalRecords: allRecords.length,
+    shardManifest: {
+      path: "data/laws.scraped/manifest.json",
+      shardCount: manifest.shards.length,
+    },
   };
 
-  await writeFile(outputPath, JSON.stringify(allRecords, null, 2), "utf8");
+  if (process.env.WRITE_COMBINED_LAWS_SCRAPED === "true") {
+    await writeFile(LEGACY_OUTPUT_PATH, JSON.stringify(allRecords, null, 2), "utf8");
+  }
   await writeFile(path.join(dataDir, "scrape-report.json"), JSON.stringify(report, null, 2), "utf8");
 
   console.log(

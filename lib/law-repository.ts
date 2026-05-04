@@ -1,5 +1,10 @@
+import "server-only";
+
+import { existsSync, readFileSync } from "node:fs";
+import path from "node:path";
+import { gunzipSync } from "node:zlib";
+
 import seedRecords from "@/data/laws.sample.json";
-import scrapedRecords from "@/data/laws.scraped.json";
 import { sourceProfiles } from "@/lib/source-registry";
 import type {
   LawCategory,
@@ -10,7 +15,92 @@ import type {
   SourceHealthMetrics,
 } from "@/types/law";
 
-const records = [...((scrapedRecords as LawRecord[]) ?? []), ...((seedRecords as LawRecord[]) ?? [])];
+interface ScrapedShardManifest {
+  version: number;
+  generatedAt: string;
+  totalRecords: number;
+  shards: Array<{ year: string; file: string; count: number }>;
+}
+
+const SCRAPED_DIR = path.resolve(process.cwd(), "data", "laws.scraped");
+const MANIFEST_PATH = path.join(SCRAPED_DIR, "manifest.json");
+const LEGACY_SCRAPED_PATH = path.resolve(process.cwd(), "data", "laws.scraped.json");
+
+function readJsonArray(filePath: string): LawRecord[] {
+  try {
+    const raw = readFileSync(filePath, "utf8");
+    const parsed = JSON.parse(raw);
+
+    if (!Array.isArray(parsed)) {
+      return [];
+    }
+
+    return parsed as LawRecord[];
+  } catch {
+    return [];
+  }
+}
+
+function readGzipJsonArray(filePath: string): LawRecord[] {
+  try {
+    const raw = readFileSync(filePath);
+    const parsed = JSON.parse(gunzipSync(raw).toString("utf8"));
+
+    if (!Array.isArray(parsed)) {
+      return [];
+    }
+
+    return parsed as LawRecord[];
+  } catch {
+    return [];
+  }
+}
+
+function readShardManifest(): ScrapedShardManifest | null {
+  if (!existsSync(MANIFEST_PATH)) {
+    return null;
+  }
+
+  try {
+    const raw = readFileSync(MANIFEST_PATH, "utf8");
+    const parsed = JSON.parse(raw) as ScrapedShardManifest;
+
+    if (!parsed || !Array.isArray(parsed.shards)) {
+      return null;
+    }
+
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+function loadScrapedRecords(): LawRecord[] {
+  const manifest = readShardManifest();
+
+  if (manifest) {
+    const records: LawRecord[] = [];
+
+    for (const shard of manifest.shards) {
+      if (!shard?.file) {
+        continue;
+      }
+
+      const shardPath = path.join(SCRAPED_DIR, shard.file);
+      records.push(...readGzipJsonArray(shardPath));
+    }
+
+    return records;
+  }
+
+  if (existsSync(LEGACY_SCRAPED_PATH)) {
+    return readJsonArray(LEGACY_SCRAPED_PATH);
+  }
+
+  return [];
+}
+
+const records = [...loadScrapedRecords(), ...((seedRecords as LawRecord[]) ?? [])];
 
 const STOP_WORDS = new Set([
   "a",
