@@ -1,0 +1,527 @@
+{
+  "version": 1,
+  "generatedAt": "2026-05-04T09:05:41.130Z",
+  "totalRecords": 78607,
+  "shards": [
+    {
+      "year": "1757",
+      "file": "laws-1757.json.gz",
+      "count": 1
+    },
+    {
+      "year": "1902",
+      "file": "laws-1902.json.gz",
+      "count": 1
+    },
+    {
+      "year": "1923",
+      "file": "laws-1923.json.gz",
+      "count": 52
+    },
+    {
+      "year": "1924",
+      "file": "laws-1924.json.gz",
+      "count": 95
+    },
+    {
+      "year": "1925",
+      "file": "laws-1925.json.gz",
+      "count": 52
+    },
+    {
+      "year": "1926",
+      "file": "laws-1926.json.gz",
+      "count": 76
+    },
+    {
+      "year": "1927",
+      "file": "laws-1927.json.gz",
+      "count": 82
+    },
+    {
+      "year": "1928",
+      "file": "laws-1928.json.gz",
+      "count": 86
+    },
+    {
+      "year": "1929",
+      "file": "laws-1929.json.gz",
+      "count": 159
+    },
+    {
+      "year": "1930",
+      "file": "laws-1930.json.gz",
+      "count": 148
+    },
+    {
+      "year": "1931",
+      "file": "laws-1931.json.gz",
+      "count": 95
+    },
+    {
+      "year": "1932",
+      "file": "laws-1932.json.gz",
+      "count": 123
+    },
+    {
+      "year": "1933",
+      "file": "laws-1933.json.gz",
+      "count": 85
+    },
+    {
+      "year": "1934",
+      "file": "laws-1934.json.gz",
+      "count": 71
+    },
+    {
+      "year": "1935",
+      "file": "laws-1935.json.gz",
+      "count": 98
+    },
+    {
+      "year": "1936",
+      "file": "laws-1936.json.gz",
+      "count": 213
+    },
+    {
+      "year": "1937",
+      "file": "laws-1937.json.gz",
+      "count": 22
+    },
+    {
+      "year": "1938",
+      "file": "laws-1938.json.gz",
+      "count": 160
+    },
+    {
+      "year": "1939",
+      "file": "laws-1939.json.gz",
+      "count": 100
+    },
+    {
+      "year": "1940",
+      "file": "laws-1940.json.gz",
+      "count": 101
+    },
+    {
+      "year": "1941",
+      "file": "laws-1941.json.gz",
+      "count": 58
+    },
+    {
+      "year": "1945",
+      "file": "laws-1945.json.gz",
+      "count": 53
+    },
+    {
+      "year": "1946",
+      "file": "laws-1946.json.gz",
+      "count": 99
+    },
+    {
+      "year": "1947",
+      "file": "laws-1947.json.gz",
+      "count": 107
+    },
+    {
+      "year": "1948",
+      "file": "laws-1948.json.gz",
+      "count": 145
+    },
+    {
+      "year": "1949",
+      "file": "laws-1949.json.gz",
+      "count": 79
+    },
+    {
+      "year": "1950",
+      "file": "laws-1950.json.gz",
+      "count": 167
+    },
+    {
+      "year": "1951",
+      "file": "laws-1951.json.gz",
+      "count": 82
+    },
+    {
+      "year": "1952",
+      "file": "laws-1952.json.gz",
+      "count": 160
+    },
+    {
+      "year": "1953",
+      "file": "laws-1953.json.gz",
+      "count": 138
+    },
+    {
+      "year": "1954",
+      "file": "laws-1954.json.gz",
+      "count": 230
+    },
+    {
+      "year": "1955",
+      "file": "laws-1955.json.gz",
+      "count": 210
+    },
+    {
+      "year": "1956",
+      "file": "laws-1956.json.gz",
+      "count": 201
+    },
+    {
+      "year": "1957",
+      "file": "laws-1957.json.gz",
+      "count": 436
+    },
+    {
+      "year": "1958",
+      "file": "laws-1958.json.gz",
+      "count": 44
+    },
+    {
+      "year": "1959",
+      "file": "laws-1959.json.gz",
+      "count": 523
+    },
+    {
+      "year": "1960",
+      "file": "laws-1960.json.gz",
+      "count": 403
+    },
+    {
+      "year": "1961",
+      "file": "laws-1961.json.gz",
+      "count": 421
+    },
+    {
+      "year": "1962",
+      "file": "laws-1962.json.gz",
+      "count": 63
+    },
+    {
+      "year": "1963",
+      "file": "laws-1963.json.gz",
+      "count": 334
+    },
+    {
+      "year": "1964",
+      "file": "laws-1964.json.gz",
+      "count": 326
+    },
+    {
+      "year": "1965",
+      "file": "laws-1965.json.gz",
+      "count": 469
+    },
+    {
+      "year": "1966",
+      "file": "laws-1966.json.gz",
+      "count": 221
+    },
+    {
+      "year": "1967",
+      "file": "laws-1967.json.gz",
+      "count": 326
+    },
+    {
+      "year": "1968",
+      "file": "laws-1968.json.gz",
+      "count": 266
+    },
+    {
+      "year": "1969",
+      "file": "laws-1969.json.gz",
+      "count": 667
+    },
+    {
+      "year": "1970",
+      "file": "laws-1970.json.gz",
+      "count": 51
+    },
+    {
+      "year": "1971",
+      "file": "laws-1971.json.gz",
+      "count": 252
+    },
+    {
+      "year": "1972",
+      "file": "laws-1972.json.gz",
+      "count": 219
+    },
+    {
+      "year": "1973",
+      "file": "laws-1973.json.gz",
+      "count": 3
+    },
+    {
+      "year": "1974",
+      "file": "laws-1974.json.gz",
+      "count": 17
+    },
+    {
+      "year": "1975",
+      "file": "laws-1975.json.gz",
+      "count": 229
+    },
+    {
+      "year": "1976",
+      "file": "laws-1976.json.gz",
+      "count": 212
+    },
+    {
+      "year": "1977",
+      "file": "laws-1977.json.gz",
+      "count": 271
+    },
+    {
+      "year": "1978",
+      "file": "laws-1978.json.gz",
+      "count": 420
+    },
+    {
+      "year": "1979",
+      "file": "laws-1979.json.gz",
+      "count": 156
+    },
+    {
+      "year": "1980",
+      "file": "laws-1980.json.gz",
+      "count": 163
+    },
+    {
+      "year": "1981",
+      "file": "laws-1981.json.gz",
+      "count": 134
+    },
+    {
+      "year": "1982",
+      "file": "laws-1982.json.gz",
+      "count": 214
+    },
+    {
+      "year": "1983",
+      "file": "laws-1983.json.gz",
+      "count": 339
+    },
+    {
+      "year": "1984",
+      "file": "laws-1984.json.gz",
+      "count": 232
+    },
+    {
+      "year": "1985",
+      "file": "laws-1985.json.gz",
+      "count": 30
+    },
+    {
+      "year": "1986",
+      "file": "laws-1986.json.gz",
+      "count": 3
+    },
+    {
+      "year": "1987",
+      "file": "laws-1987.json.gz",
+      "count": 17
+    },
+    {
+      "year": "1988",
+      "file": "laws-1988.json.gz",
+      "count": 70
+    },
+    {
+      "year": "1989",
+      "file": "laws-1989.json.gz",
+      "count": 159
+    },
+    {
+      "year": "1990",
+      "file": "laws-1990.json.gz",
+      "count": 194
+    },
+    {
+      "year": "1991",
+      "file": "laws-1991.json.gz",
+      "count": 284
+    },
+    {
+      "year": "1992",
+      "file": "laws-1992.json.gz",
+      "count": 519
+    },
+    {
+      "year": "1993",
+      "file": "laws-1993.json.gz",
+      "count": 103
+    },
+    {
+      "year": "1994",
+      "file": "laws-1994.json.gz",
+      "count": 501
+    },
+    {
+      "year": "1995",
+      "file": "laws-1995.json.gz",
+      "count": 1097
+    },
+    {
+      "year": "1996",
+      "file": "laws-1996.json.gz",
+      "count": 1359
+    },
+    {
+      "year": "1997",
+      "file": "laws-1997.json.gz",
+      "count": 1155
+    },
+    {
+      "year": "1998",
+      "file": "laws-1998.json.gz",
+      "count": 3577
+    },
+    {
+      "year": "1999",
+      "file": "laws-1999.json.gz",
+      "count": 57
+    },
+    {
+      "year": "2000",
+      "file": "laws-2000.json.gz",
+      "count": 2246
+    },
+    {
+      "year": "2001",
+      "file": "laws-2001.json.gz",
+      "count": 350
+    },
+    {
+      "year": "2002",
+      "file": "laws-2002.json.gz",
+      "count": 41
+    },
+    {
+      "year": "2003",
+      "file": "laws-2003.json.gz",
+      "count": 123
+    },
+    {
+      "year": "2004",
+      "file": "laws-2004.json.gz",
+      "count": 702
+    },
+    {
+      "year": "2005",
+      "file": "laws-2005.json.gz",
+      "count": 458
+    },
+    {
+      "year": "2006",
+      "file": "laws-2006.json.gz",
+      "count": 606
+    },
+    {
+      "year": "2007",
+      "file": "laws-2007.json.gz",
+      "count": 825
+    },
+    {
+      "year": "2008",
+      "file": "laws-2008.json.gz",
+      "count": 1040
+    },
+    {
+      "year": "2009",
+      "file": "laws-2009.json.gz",
+      "count": 1138
+    },
+    {
+      "year": "2010",
+      "file": "laws-2010.json.gz",
+      "count": 1002
+    },
+    {
+      "year": "2011",
+      "file": "laws-2011.json.gz",
+      "count": 369
+    },
+    {
+      "year": "2012",
+      "file": "laws-2012.json.gz",
+      "count": 562
+    },
+    {
+      "year": "2013",
+      "file": "laws-2013.json.gz",
+      "count": 764
+    },
+    {
+      "year": "2014",
+      "file": "laws-2014.json.gz",
+      "count": 234
+    },
+    {
+      "year": "2015",
+      "file": "laws-2015.json.gz",
+      "count": 312
+    },
+    {
+      "year": "2016",
+      "file": "laws-2016.json.gz",
+      "count": 511
+    },
+    {
+      "year": "2017",
+      "file": "laws-2017.json.gz",
+      "count": 296
+    },
+    {
+      "year": "2018",
+      "file": "laws-2018.json.gz",
+      "count": 662
+    },
+    {
+      "year": "2019",
+      "file": "laws-2019.json.gz",
+      "count": 1055
+    },
+    {
+      "year": "2020",
+      "file": "laws-2020.json.gz",
+      "count": 689
+    },
+    {
+      "year": "2021",
+      "file": "laws-2021.json.gz",
+      "count": 1779
+    },
+    {
+      "year": "2022",
+      "file": "laws-2022.json.gz",
+      "count": 1522
+    },
+    {
+      "year": "2023",
+      "file": "laws-2023.json.gz",
+      "count": 1158
+    },
+    {
+      "year": "2024",
+      "file": "laws-2024.json.gz",
+      "count": 916
+    },
+    {
+      "year": "2025",
+      "file": "laws-2025.json.gz",
+      "count": 964
+    },
+    {
+      "year": "2026",
+      "file": "laws-2026.json.gz",
+      "count": 120
+    },
+    {
+      "year": "unknown",
+      "file": "laws-unknown.json.gz",
+      "count": 38078
+    }
+  ]
+}
