@@ -1,16 +1,16 @@
 {
-  "startedAt": "2026-05-06T09:12:24.463Z",
-  "finishedAt": "2026-05-06T09:40:40.529Z",
-  "previousRecords": 79660,
-  "runRecords": 27417,
+  "startedAt": "2026-05-06T20:10:57.056Z",
+  "finishedAt": "2026-05-06T20:38:15.333Z",
+  "previousRecords": 80010,
+  "runRecords": 27329,
   "sources": [
     {
       "source": "official_gazette",
       "count": 0,
       "warnings": [
         "republic acts page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/republic-acts/",
-        "executive orders page 81: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/executive-orders/page/81/",
         "executive orders page 82: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/executive-orders/page/82/",
+        "executive orders page 83: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/executive-orders/page/83/",
         "proclamations page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/proclamations/",
         "administrative orders page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/laws/executive-issuances/administrative-orders/",
         "memorandum circulars page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/laws/executive-issuances/memorandum-circulars/",
@@ -34,7 +34,9 @@
     {
       "source": "lawphil",
       "count": 9000,
-      "warnings": []
+      "warnings": [
+        "Lawphil Administrative Orders scrape failed (https://lawphil.net/executive/ao/ao.html): fetch failed"
+      ]
     },
     {
       "source": "chanrobles",
@@ -56,7 +58,7 @@
       "warnings": []
     }
   ],
-  "totalRecords": 80010,
+  "totalRecords": 81395,
   "shardManifest": {
     "path": "data/laws.scraped/manifest.json",
     "shardCount": 104

@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "generatedAt": "2026-05-06T09:40:40.528Z",
-  "totalRecords": 80010,
+  "generatedAt": "2026-05-06T20:38:15.331Z",
+  "totalRecords": 81395,
   "shards": [
     {
       "year": "1757",
@@ -321,72 +321,72 @@
     {
       "year": "1987",
       "file": "laws-1987.json.gz",
-      "count": 17
+      "count": 16
     },
     {
       "year": "1988",
       "file": "laws-1988.json.gz",
-      "count": 70
+      "count": 67
     },
     {
       "year": "1989",
       "file": "laws-1989.json.gz",
-      "count": 159
+      "count": 158
     },
     {
       "year": "1990",
       "file": "laws-1990.json.gz",
-      "count": 194
+      "count": 193
     },
     {
       "year": "1991",
       "file": "laws-1991.json.gz",
-      "count": 284
+      "count": 282
     },
     {
       "year": "1992",
       "file": "laws-1992.json.gz",
-      "count": 519
+      "count": 517
     },
     {
       "year": "1993",
       "file": "laws-1993.json.gz",
-      "count": 103
+      "count": 102
     },
     {
       "year": "1994",
       "file": "laws-1994.json.gz",
-      "count": 501
+      "count": 1252
     },
     {
       "year": "1995",
       "file": "laws-1995.json.gz",
-      "count": 4087
+      "count": 4485
     },
     {
       "year": "1996",
       "file": "laws-1996.json.gz",
-      "count": 1359
+      "count": 1356
     },
     {
       "year": "1997",
       "file": "laws-1997.json.gz",
-      "count": 1155
+      "count": 1154
     },
     {
       "year": "1998",
       "file": "laws-1998.json.gz",
-      "count": 588
+      "count": 464
     },
     {
       "year": "1999",
       "file": "laws-1999.json.gz",
-      "count": 57
+      "count": 55
     },
     {
       "year": "2000",
       "file": "laws-2000.json.gz",
-      "count": 2246
+      "count": 2243
     },
     {
       "year": "2001",
@@ -396,42 +396,42 @@
     {
       "year": "2002",
       "file": "laws-2002.json.gz",
-      "count": 41
+      "count": 39
     },
     {
       "year": "2003",
       "file": "laws-2003.json.gz",
-      "count": 123
+      "count": 119
     },
     {
       "year": "2004",
       "file": "laws-2004.json.gz",
-      "count": 702
+      "count": 701
     },
     {
       "year": "2005",
       "file": "laws-2005.json.gz",
-      "count": 458
+      "count": 455
     },
     {
       "year": "2006",
       "file": "laws-2006.json.gz",
-      "count": 606
+      "count": 607
     },
     {
       "year": "2007",
       "file": "laws-2007.json.gz",
-      "count": 825
+      "count": 829
     },
     {
       "year": "2008",
       "file": "laws-2008.json.gz",
-      "count": 1040
+      "count": 1043
     },
     {
       "year": "2009",
       "file": "laws-2009.json.gz",
-      "count": 1138
+      "count": 1141
     },
     {
       "year": "2010",
@@ -441,42 +441,42 @@
     {
       "year": "2011",
       "file": "laws-2011.json.gz",
-      "count": 369
+      "count": 373
     },
     {
       "year": "2012",
       "file": "laws-2012.json.gz",
-      "count": 562
+      "count": 563
     },
     {
       "year": "2013",
       "file": "laws-2013.json.gz",
-      "count": 764
+      "count": 765
     },
     {
       "year": "2014",
       "file": "laws-2014.json.gz",
-      "count": 234
+      "count": 237
     },
     {
       "year": "2015",
       "file": "laws-2015.json.gz",
-      "count": 312
+      "count": 314
     },
     {
       "year": "2016",
       "file": "laws-2016.json.gz",
-      "count": 511
+      "count": 513
     },
     {
       "year": "2017",
       "file": "laws-2017.json.gz",
-      "count": 296
+      "count": 299
     },
     {
       "year": "2018",
       "file": "laws-2018.json.gz",
-      "count": 662
+      "count": 664
     },
     {
       "year": "2019",
@@ -496,32 +496,32 @@
     {
       "year": "2022",
       "file": "laws-2022.json.gz",
-      "count": 1522
+      "count": 1524
     },
     {
       "year": "2023",
       "file": "laws-2023.json.gz",
-      "count": 1158
+      "count": 1160
     },
     {
       "year": "2024",
       "file": "laws-2024.json.gz",
-      "count": 916
+      "count": 918
     },
     {
       "year": "2025",
       "file": "laws-2025.json.gz",
-      "count": 964
+      "count": 968
     },
     {
       "year": "2026",
       "file": "laws-2026.json.gz",
-      "count": 120
+      "count": 121
     },
     {
       "year": "unknown",
       "file": "laws-unknown.json.gz",
-      "count": 39480
+      "count": 39830
     }
   ]
 }
