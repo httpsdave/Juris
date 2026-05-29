@@ -22,6 +22,7 @@ import type {
   FreshnessStatus,
   LawCategory,
   LawRecord,
+  LawSort,
   LawSourceId,
   SourceHealthMetrics,
   SourceProfile,
@@ -61,6 +62,11 @@ const READ_LATER_KEY = "juris.readLater.v1";
 const EXPLORER_SCROLL_KEY = "juris.explorer.scroll.v1";
 const SEARCH_STOP_WORDS = new Set(["a", "an", "and", "are", "as", "at", "be", "by", "for", "from", "in", "into", "is", "it", "of", "on", "or", "that", "the", "this", "to", "with"]);
 const RESULTS_PER_PAGE = 12;
+const SORT_OPTIONS: Array<{ label: string; value: LawSort }> = [
+  { label: "Newest", value: "newest" },
+  { label: "Oldest", value: "oldest" },
+  { label: "Alphabetical", value: "alpha" },
+];
 
 type PaginationToken = number | "left-ellipsis" | "right-ellipsis";
 
@@ -382,6 +388,7 @@ export function JurisExplorer({
   const [selectedCategories, setSelectedCategories] = useState<LawCategory[]>([]);
   const [sourceMenuOpen, setSourceMenuOpen] = useState(false);
   const [categoryMenuOpen, setCategoryMenuOpen] = useState(false);
+  const [sortOrder, setSortOrder] = useState<LawSort>("newest");
   const [filtersReady, setFiltersReady] = useState(false);
   const [hasFetchedOnce, setHasFetchedOnce] = useState(false);
   const [laws, setLaws] = useState<LawRecord[]>([]);
@@ -473,13 +480,17 @@ export function JurisExplorer({
       params.set("broad", "true");
     }
 
+    if (sortOrder !== "newest") {
+      params.set("sort", sortOrder);
+    }
+
     if (currentPage > 1) {
       params.set("page", String(currentPage));
     }
 
     const search = params.toString();
     return search ? `/?${search}` : "/";
-  }, [broadMode, currentPage, query, selectedCategories, selectedSources]);
+  }, [broadMode, currentPage, query, selectedCategories, selectedSources, sortOrder]);
 
   useEffect(() => {
     setBookmarks(loadIdSet(BOOKMARK_KEY));
@@ -503,6 +514,7 @@ export function JurisExplorer({
     const queryFromUrl = params.get("q") ?? "";
     const broadFromUrl = params.get("broad");
     const pageFromUrl = parsePageParam(params.get("page"));
+    const sortFromUrl = params.get("sort");
     const sourceFromUrl = params
       .getAll("source")
       .flatMap((value) => value.split(","))
@@ -518,6 +530,9 @@ export function JurisExplorer({
     setQuery(queryFromUrl);
     setBroadMode(broadFromUrl === "true" || broadFromUrl === "1");
     setCurrentPage(pageFromUrl);
+    if (sortFromUrl === "oldest" || sortFromUrl === "alpha" || sortFromUrl === "newest") {
+      setSortOrder(sortFromUrl);
+    }
     setSelectedSources(Array.from(new Set(sourceFromUrl)));
     setSelectedCategories(Array.from(new Set(categoryFromUrl)));
     setFiltersReady(true);
@@ -546,6 +561,10 @@ export function JurisExplorer({
       params.set("broad", "true");
     }
 
+    if (sortOrder !== "newest") {
+      params.set("sort", sortOrder);
+    }
+
     if (currentPage > 1) {
       params.set("page", String(currentPage));
     }
@@ -557,7 +576,7 @@ export function JurisExplorer({
     if (currentUrl !== nextUrl) {
       window.history.replaceState(window.history.state, "", nextUrl);
     }
-  }, [broadMode, currentPage, filtersReady, query, selectedCategories, selectedSources]);
+  }, [broadMode, currentPage, filtersReady, query, selectedCategories, selectedSources, sortOrder]);
 
   useEffect(() => {
     const onDocumentClick = (event: MouseEvent) => {
@@ -648,6 +667,7 @@ export function JurisExplorer({
         });
 
         url.searchParams.set("broad", broadMode ? "true" : "false");
+        url.searchParams.set("sort", sortOrder);
 
         url.searchParams.set("limit", String(RESULTS_PER_PAGE));
         url.searchParams.set("offset", String((currentPage - 1) * RESULTS_PER_PAGE));
@@ -684,7 +704,7 @@ export function JurisExplorer({
       clearTimeout(timeout);
       controller.abort();
     };
-  }, [broadMode, currentPage, filtersReady, query, selectedCategories, selectedSources]);
+  }, [broadMode, currentPage, filtersReady, query, selectedCategories, selectedSources, sortOrder]);
 
   useEffect(() => {
     let active = true;
@@ -1152,6 +1172,11 @@ export function JurisExplorer({
               totalPages={totalPages}
               tokens={paginationTokens}
               loading={loading}
+              sortOrder={sortOrder}
+              onSortChange={(value) => {
+                setSortOrder(value);
+                setCurrentPage(1);
+              }}
               onPageChange={goToPage}
             />
           ) : null}
@@ -1289,6 +1314,11 @@ export function JurisExplorer({
               totalPages={totalPages}
               tokens={paginationTokens}
               loading={loading}
+              sortOrder={sortOrder}
+              onSortChange={(value) => {
+                setSortOrder(value);
+                setCurrentPage(1);
+              }}
               onPageChange={goToPage}
             />
           ) : null}
@@ -1564,12 +1594,16 @@ function PaginationControls({
   totalPages,
   tokens,
   loading,
+  sortOrder,
+  onSortChange,
   onPageChange,
 }: {
   currentPage: number;
   totalPages: number;
   tokens: PaginationToken[];
   loading: boolean;
+  sortOrder: LawSort;
+  onSortChange: (value: LawSort) => void;
   onPageChange: (page: number) => void;
 }) {
   const baseButtonClass =
@@ -1623,6 +1657,22 @@ function PaginationControls({
         >
           Next
         </button>
+
+        <div className="inline-flex min-h-9 items-center gap-2 border-2 border-[var(--color-fg-primary)] bg-[var(--color-surface-1)] px-2 py-1.5 font-mono text-[11px] font-bold uppercase tracking-widest text-[var(--color-fg-primary)]">
+          <span className="text-[10px] text-[var(--color-fg-muted)]">Sort</span>
+          <select
+            aria-label="Sort results"
+            value={sortOrder}
+            onChange={(event) => onSortChange(event.target.value as LawSort)}
+            className="bg-transparent text-[11px] font-bold uppercase tracking-widest outline-none"
+          >
+            {SORT_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
     </div>
   );
 }

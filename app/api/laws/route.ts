@@ -28,9 +28,12 @@ const broadSchema = z
   .union([z.literal("true"), z.literal("false"), z.literal("1"), z.literal("0")])
   .transform((value) => value === "true" || value === "1");
 
+const sortSchema = z.enum(["newest", "oldest", "alpha"]);
+
 const limitSchema = z.coerce.number().int().positive().max(100);
 const offsetSchema = z.coerce.number().int().min(0);
 const optionalBroadSchema = broadSchema.optional();
+const optionalSortSchema = sortSchema.optional();
 const optionalLimitSchema = limitSchema.optional();
 const optionalOffsetSchema = offsetSchema.optional();
 const optionalSourcesSchema = z.array(sourceSchema).optional();
@@ -58,6 +61,9 @@ export async function GET(request: Request) {
   const offsetParam = url.searchParams.get("offset");
   const offsetParsed = optionalOffsetSchema.safeParse(offsetParam ?? undefined);
 
+  const sortParam = url.searchParams.get("sort");
+  const sortParsed = optionalSortSchema.safeParse(sortParam ?? undefined);
+
   const sourceValues = parseMultiValueParam(url.searchParams, "source");
   const includeAllSources = sourceValues.includes("all");
   const sourceParsed = optionalSourcesSchema.safeParse(
@@ -81,11 +87,12 @@ export async function GET(request: Request) {
   const idValues = parseMultiValueParam(url.searchParams, "id");
   const idsParsed = optionalIdsSchema.safeParse(idValues.length ? idValues : undefined);
 
-  if (!broadParsed.success || !limitParsed.success || !offsetParsed.success || !sourceParsed.success || !categoryParsed.success || !idsParsed.success) {
+  if (!broadParsed.success || !limitParsed.success || !offsetParsed.success || !sortParsed.success || !sourceParsed.success || !categoryParsed.success || !idsParsed.success) {
     const issues = [
       ...(broadParsed.success ? [] : broadParsed.error.issues),
       ...(limitParsed.success ? [] : limitParsed.error.issues),
       ...(offsetParsed.success ? [] : offsetParsed.error.issues),
+      ...(sortParsed.success ? [] : sortParsed.error.issues),
       ...(sourceParsed.success ? [] : sourceParsed.error.issues),
       ...(categoryParsed.success ? [] : categoryParsed.error.issues),
       ...(idsParsed.success ? [] : idsParsed.error.issues),
@@ -104,6 +111,7 @@ export async function GET(request: Request) {
   const result = searchLaws({
     q,
     broad: broadParsed.data,
+    sort: sortParsed.data,
     limit: limitParsed.data,
     offset: offsetParsed.data,
     sources: sourceParsed.data,

@@ -12,6 +12,7 @@ import type {
   LawSearchQuery,
   LawSearchResult,
   LawSourceId,
+  LawSort,
   SourceHealthMetrics,
 } from "@/types/law";
 
@@ -282,6 +283,61 @@ function sortByDate(a?: string, b?: string): number {
   return new Date(b).getTime() - new Date(a).getTime();
 }
 
+function compareDateAsc(a?: string, b?: string): number {
+  if (!a && !b) {
+    return 0;
+  }
+
+  if (!a) {
+    return 1;
+  }
+
+  if (!b) {
+    return -1;
+  }
+
+  return new Date(a).getTime() - new Date(b).getTime();
+}
+
+function compareTitle(a: LawRecord, b: LawRecord): number {
+  return a.title.localeCompare(b.title, "en", { sensitivity: "base" });
+}
+
+function sortByMode(records: LawRecord[], sortMode: LawSort): LawRecord[] {
+  const sorted = records.slice();
+
+  if (sortMode === "oldest") {
+    return sorted.sort((a, b) => {
+      const dateDiff = compareDateAsc(a.enactedOn, b.enactedOn);
+      if (dateDiff !== 0) {
+        return dateDiff;
+      }
+
+      return compareTitle(a, b);
+    });
+  }
+
+  if (sortMode === "alpha") {
+    return sorted.sort((a, b) => {
+      const titleDiff = compareTitle(a, b);
+      if (titleDiff !== 0) {
+        return titleDiff;
+      }
+
+      return sortByDate(a.enactedOn, b.enactedOn);
+    });
+  }
+
+  return sorted.sort((a, b) => {
+    const dateDiff = sortByDate(a.enactedOn, b.enactedOn);
+    if (dateDiff !== 0) {
+      return dateDiff;
+    }
+
+    return compareTitle(a, b);
+  });
+}
+
 function toTimestamp(input?: string): number {
   if (!input) {
     return 0;
@@ -418,6 +474,7 @@ export function getLawById(id: string): LawRecord | undefined {
 export function searchLaws(query: LawSearchQuery): LawSearchResult {
   const limit = Math.min(Math.max(Number(query.limit) || 20, 1), 100);
   const offset = Math.max(Number(query.offset) || 0, 0);
+  const sortMode: LawSort = query.sort ?? "newest";
   const selectedIds = Array.from(
     new Set((query.ids ?? []).map((value) => value.trim()).filter(Boolean)),
   );
@@ -450,7 +507,7 @@ export function searchLaws(query: LawSearchQuery): LawSearchResult {
       return signal.phraseMatch || signal.primaryMatches >= directMatchThreshold;
     });
 
-  const ranked = laws
+  const matched = laws
     .filter((record) => {
       if (selectedIdSet && !selectedIdSet.has(record.id)) {
         return false;
@@ -482,19 +539,12 @@ export function searchLaws(query: LawSearchQuery): LawSearchResult {
       }
 
       return signal.expandedMatches >= Math.max(2, Math.ceil(tokens.length * 0.6));
-    })
-    .map((record) => ({
-      record,
-      signal: scoreRecord(record, normalizedQuery, tokens, expandedTokens),
-    }))
-    .sort((a, b) => {
-      if (b.signal.score === a.signal.score) {
-        return sortByDate(a.record.enactedOn, b.record.enactedOn);
-      }
+    });
 
-      return b.signal.score - a.signal.score;
-    })
-    .map((entry) => entry.record);
+  const ranked = sortByMode(
+    matched,
+    sortMode,
+  );
 
   const items = ranked.slice(offset, offset + limit);
 

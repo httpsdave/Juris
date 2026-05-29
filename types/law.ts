@@ -21,6 +21,8 @@ export type LawCategory =
 
 export type FreshnessStatus = "fresh" | "stale" | "blocked" | "api";
 
+export type LawSort = "newest" | "oldest" | "alpha";
+
 export interface LawRecord {
   id: string;
   title: string;
@@ -61,6 +63,7 @@ export interface LawSearchQuery {
   category?: LawCategory | "all";
   categories?: LawCategory[];
   broad?: boolean;
+  sort?: LawSort;
   limit?: number;
   offset?: number;
 }
