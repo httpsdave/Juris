@@ -1,173 +1,173 @@
 {
   "judiciaryStart": 0,
-  "openCongressOffset": 32400,
+  "openCongressOffset": 33600,
   "congressCursor": {
     "hb:20": {
-      "nextNumber": 9956,
+      "nextNumber": 9976,
       "consecutiveMisses": 20
     },
     "hb:19": {
-      "nextNumber": 11340,
+      "nextNumber": 11360,
       "consecutiveMisses": 20
     },
     "hb:18": {
-      "nextNumber": 11117,
+      "nextNumber": 11137,
       "consecutiveMisses": 20
     },
     "hb:17": {
-      "nextNumber": 9772,
+      "nextNumber": 9792,
       "consecutiveMisses": 20
     },
     "hb:16": {
-      "nextNumber": 7888,
+      "nextNumber": 7908,
       "consecutiveMisses": 20
     },
     "hb:15": {
-      "nextNumber": 8507,
+      "nextNumber": 8527,
       "consecutiveMisses": 20
     },
     "hb:14": {
-      "nextNumber": 3061,
+      "nextNumber": 3081,
       "consecutiveMisses": 20
     },
     "hr:14": {
-      "nextNumber": 3061,
+      "nextNumber": 3081,
       "consecutiveMisses": 20
     },
     "ra:14": {
-      "nextNumber": 3061,
+      "nextNumber": 3081,
       "consecutiveMisses": 20
     },
     "cr:14": {
-      "nextNumber": 3061,
+      "nextNumber": 3081,
       "consecutiveMisses": 20
     },
     "hb:13": {
-      "nextNumber": 5569,
+      "nextNumber": 5589,
       "consecutiveMisses": 20
     },
     "hb:12": {
-      "nextNumber": 3061,
+      "nextNumber": 3081,
       "consecutiveMisses": 20
     },
     "hr:12": {
-      "nextNumber": 3061,
+      "nextNumber": 3081,
       "consecutiveMisses": 20
     },
     "ra:12": {
-      "nextNumber": 3061,
+      "nextNumber": 3081,
       "consecutiveMisses": 20
     },
     "cr:12": {
-      "nextNumber": 3061,
+      "nextNumber": 3081,
       "consecutiveMisses": 20
     },
     "hb:11": {
-      "nextNumber": 3061,
+      "nextNumber": 3081,
       "consecutiveMisses": 20
     },
     "hr:11": {
-      "nextNumber": 3061,
+      "nextNumber": 3081,
       "consecutiveMisses": 20
     },
     "ra:11": {
-      "nextNumber": 3061,
+      "nextNumber": 3081,
       "consecutiveMisses": 20
     },
     "cr:11": {
-      "nextNumber": 3061,
+      "nextNumber": 3081,
       "consecutiveMisses": 20
     },
     "hb:10": {
-      "nextNumber": 3061,
+      "nextNumber": 3081,
       "consecutiveMisses": 20
     },
     "hr:10": {
-      "nextNumber": 3061,
+      "nextNumber": 3081,
       "consecutiveMisses": 20
     },
     "ra:10": {
-      "nextNumber": 3061,
+      "nextNumber": 3081,
       "consecutiveMisses": 20
     },
     "cr:10": {
-      "nextNumber": 3061,
+      "nextNumber": 3081,
       "consecutiveMisses": 20
     },
     "hb:9": {
-      "nextNumber": 3061,
+      "nextNumber": 3081,
       "consecutiveMisses": 20
     },
     "hr:9": {
-      "nextNumber": 3061,
+      "nextNumber": 3081,
       "consecutiveMisses": 20
     },
     "ra:9": {
-      "nextNumber": 3061,
+      "nextNumber": 3081,
       "consecutiveMisses": 20
     },
     "cr:9": {
-      "nextNumber": 3061,
+      "nextNumber": 3081,
       "consecutiveMisses": 20
     },
     "hb:8": {
-      "nextNumber": 3061,
+      "nextNumber": 3081,
       "consecutiveMisses": 20
     },
     "hr:8": {
-      "nextNumber": 3061,
+      "nextNumber": 3081,
       "consecutiveMisses": 20
     },
     "ra:8": {
-      "nextNumber": 3061,
+      "nextNumber": 3081,
       "consecutiveMisses": 20
     },
     "cr:8": {
-      "nextNumber": 3061,
+      "nextNumber": 3081,
       "consecutiveMisses": 20
     },
     "hr:13": {
-      "nextNumber": 2397,
+      "nextNumber": 2417,
       "consecutiveMisses": 20
     },
     "ra:13": {
-      "nextNumber": 2381,
+      "nextNumber": 2401,
       "consecutiveMisses": 20
     },
     "cr:13": {
-      "nextNumber": 2381,
+      "nextNumber": 2401,
       "consecutiveMisses": 20
     },
     "hr:18": {
-      "nextNumber": 1200,
+      "nextNumber": 1274,
       "consecutiveMisses": 0
     },
     "hr:15": {
-      "nextNumber": 1960,
+      "nextNumber": 1980,
       "consecutiveMisses": 20
     },
     "ra:15": {
-      "nextNumber": 1961,
+      "nextNumber": 1981,
       "consecutiveMisses": 20
     },
     "cr:15": {
-      "nextNumber": 1961,
+      "nextNumber": 1981,
       "consecutiveMisses": 20
     },
     "hr:20": {
-      "nextNumber": 1154,
+      "nextNumber": 1174,
       "consecutiveMisses": 20
     },
     "ra:20": {
-      "nextNumber": 121,
+      "nextNumber": 141,
       "consecutiveMisses": 20
     },
     "cr:20": {
-      "nextNumber": 271,
+      "nextNumber": 291,
       "consecutiveMisses": 20
     },
     "hr:19": {
-      "nextNumber": 397,
+      "nextNumber": 468,
       "consecutiveMisses": 0
     },
     "ra:19": {
@@ -187,7 +187,7 @@
       "consecutiveMisses": 20
     },
     "hr:17": {
-      "nextNumber": 2506,
+      "nextNumber": 2580,
       "consecutiveMisses": 0
     },
     "ra:17": {
@@ -199,15 +199,15 @@
       "consecutiveMisses": 0
     },
     "hr:16": {
-      "nextNumber": 2863,
+      "nextNumber": 2883,
       "consecutiveMisses": 20
     },
     "ra:16": {
-      "nextNumber": 981,
+      "nextNumber": 1001,
       "consecutiveMisses": 20
     },
     "cr:16": {
-      "nextNumber": 1708,
+      "nextNumber": 1728,
       "consecutiveMisses": 20
     }
   },
@@ -216,7 +216,7 @@
       "nextPage": 1
     },
     "executive_orders": {
-      "nextPage": 152
+      "nextPage": 153
     },
     "proclamations": {
       "nextPage": 1
@@ -231,5 +231,5 @@
       "nextPage": 1
     }
   },
-  "updatedAt": "2026-06-10T21:41:31.185Z"
+  "updatedAt": "2026-06-11T11:43:30.298Z"
 }

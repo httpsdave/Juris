@@ -1,16 +1,16 @@
 {
-  "startedAt": "2026-06-10T21:09:19.940Z",
-  "finishedAt": "2026-06-10T21:41:35.467Z",
-  "previousRecords": 124366,
-  "runRecords": 27312,
+  "startedAt": "2026-06-11T11:12:30.170Z",
+  "finishedAt": "2026-06-11T11:43:34.514Z",
+  "previousRecords": 124610,
+  "runRecords": 26593,
   "sources": [
     {
       "source": "official_gazette",
       "count": 0,
       "warnings": [
         "republic acts page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/republic-acts/",
-        "executive orders page 151: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/executive-orders/page/151/",
         "executive orders page 152: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/executive-orders/page/152/",
+        "executive orders page 153: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/executive-orders/page/153/",
         "proclamations page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/proclamations/",
         "administrative orders page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/laws/executive-issuances/administrative-orders/",
         "memorandum circulars page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/laws/executive-issuances/memorandum-circulars/",
@@ -34,7 +34,9 @@
     {
       "source": "lawphil",
       "count": 9000,
-      "warnings": []
+      "warnings": [
+        "Lawphil Batas Pambansa scrape failed (https://lawphil.net/statutes/bataspam/bataspam.html): fetch failed"
+      ]
     },
     {
       "source": "chanrobles",
@@ -45,7 +47,7 @@
     },
     {
       "source": "congress",
-      "count": 244,
+      "count": 210,
       "warnings": [
         "Congress listing pages returned HTTP 403. Falling back to direct PDF probing on docs.congress.hrep.online."
       ]
@@ -56,7 +58,7 @@
       "warnings": []
     }
   ],
-  "totalRecords": 124610,
+  "totalRecords": 124820,
   "shardManifest": {
     "path": "data/laws.scraped/manifest.json",
     "shardCount": 104
