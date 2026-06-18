@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "generatedAt": "2026-06-17T21:06:58.816Z",
-  "totalRecords": 127733,
+  "generatedAt": "2026-06-18T11:26:37.822Z",
+  "totalRecords": 127943,
   "shards": [
     {
       "year": "1757",
@@ -406,12 +406,12 @@
     {
       "year": "2004",
       "file": "laws-2004.json.gz",
-      "count": 530
+      "count": 529
     },
     {
       "year": "2005",
       "file": "laws-2005.json.gz",
-      "count": 398
+      "count": 392
     },
     {
       "year": "2006",
@@ -421,7 +421,7 @@
     {
       "year": "2007",
       "file": "laws-2007.json.gz",
-      "count": 669
+      "count": 667
     },
     {
       "year": "2008",
@@ -436,7 +436,7 @@
     {
       "year": "2010",
       "file": "laws-2010.json.gz",
-      "count": 873
+      "count": 872
     },
     {
       "year": "2011",
@@ -451,12 +451,12 @@
     {
       "year": "2013",
       "file": "laws-2013.json.gz",
-      "count": 663
+      "count": 1124
     },
     {
       "year": "2014",
       "file": "laws-2014.json.gz",
-      "count": 545
+      "count": 672
     },
     {
       "year": "2015",
@@ -466,7 +466,7 @@
     {
       "year": "2016",
       "file": "laws-2016.json.gz",
-      "count": 3640
+      "count": 3087
     },
     {
       "year": "2017",
@@ -476,22 +476,22 @@
     {
       "year": "2018",
       "file": "laws-2018.json.gz",
-      "count": 1743
+      "count": 1731
     },
     {
       "year": "2019",
       "file": "laws-2019.json.gz",
-      "count": 1264
+      "count": 1263
     },
     {
       "year": "2020",
       "file": "laws-2020.json.gz",
-      "count": 764
+      "count": 759
     },
     {
       "year": "2021",
       "file": "laws-2021.json.gz",
-      "count": 2651
+      "count": 2646
     },
     {
       "year": "2022",
@@ -501,7 +501,7 @@
     {
       "year": "2023",
       "file": "laws-2023.json.gz",
-      "count": 1211
+      "count": 1209
     },
     {
       "year": "2024",
@@ -521,7 +521,7 @@
     {
       "year": "unknown",
       "file": "laws-unknown.json.gz",
-      "count": 64937
+      "count": 65147
     }
   ]
 }
