@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "generatedAt": "2026-06-22T21:53:30.349Z",
-  "totalRecords": 129426,
+  "generatedAt": "2026-06-23T10:36:49.689Z",
+  "totalRecords": 129566,
   "shards": [
     {
       "year": "1757",
@@ -406,27 +406,27 @@
     {
       "year": "2004",
       "file": "laws-2004.json.gz",
-      "count": 517
+      "count": 514
     },
     {
       "year": "2005",
       "file": "laws-2005.json.gz",
-      "count": 379
+      "count": 376
     },
     {
       "year": "2006",
       "file": "laws-2006.json.gz",
-      "count": 515
+      "count": 514
     },
     {
       "year": "2007",
       "file": "laws-2007.json.gz",
-      "count": 644
+      "count": 642
     },
     {
       "year": "2008",
       "file": "laws-2008.json.gz",
-      "count": 862
+      "count": 860
     },
     {
       "year": "2009",
@@ -436,7 +436,7 @@
     {
       "year": "2010",
       "file": "laws-2010.json.gz",
-      "count": 2292
+      "count": 2777
     },
     {
       "year": "2011",
@@ -451,12 +451,12 @@
     {
       "year": "2013",
       "file": "laws-2013.json.gz",
-      "count": 2496
+      "count": 2069
     },
     {
       "year": "2014",
       "file": "laws-2014.json.gz",
-      "count": 317
+      "count": 306
     },
     {
       "year": "2015",
@@ -476,7 +476,7 @@
     {
       "year": "2018",
       "file": "laws-2018.json.gz",
-      "count": 1726
+      "count": 1715
     },
     {
       "year": "2019",
@@ -486,12 +486,12 @@
     {
       "year": "2020",
       "file": "laws-2020.json.gz",
-      "count": 732
+      "count": 727
     },
     {
       "year": "2021",
       "file": "laws-2021.json.gz",
-      "count": 2639
+      "count": 2631
     },
     {
       "year": "2022",
@@ -501,7 +501,7 @@
     {
       "year": "2023",
       "file": "laws-2023.json.gz",
-      "count": 1201
+      "count": 1189
     },
     {
       "year": "2024",
@@ -521,7 +521,7 @@
     {
       "year": "unknown",
       "file": "laws-unknown.json.gz",
-      "count": 66630
+      "count": 66770
     }
   ]
 }
