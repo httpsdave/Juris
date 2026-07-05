@@ -1,16 +1,16 @@
 {
-  "startedAt": "2026-07-05T09:29:18.370Z",
-  "finishedAt": "2026-07-05T10:01:33.730Z",
-  "previousRecords": 132059,
-  "runRecords": 14842,
+  "startedAt": "2026-07-05T19:53:35.436Z",
+  "finishedAt": "2026-07-05T20:22:44.260Z",
+  "previousRecords": 132129,
+  "runRecords": 14801,
   "sources": [
     {
       "source": "official_gazette",
       "count": 0,
       "warnings": [
         "republic acts page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/republic-acts/",
-        "executive orders page 199: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/executive-orders/page/199/",
         "executive orders page 200: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/executive-orders/page/200/",
+        "executive orders page 201: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/executive-orders/page/201/",
         "proclamations page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/proclamations/",
         "administrative orders page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/laws/executive-issuances/administrative-orders/",
         "memorandum circulars page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/laws/executive-issuances/memorandum-circulars/",
@@ -47,7 +47,7 @@
     },
     {
       "source": "congress",
-      "count": 70,
+      "count": 29,
       "warnings": [
         "Congress listing pages returned HTTP 403. Falling back to direct PDF probing on docs.congress.hrep.online."
       ]
@@ -58,7 +58,7 @@
       "warnings": []
     }
   ],
-  "totalRecords": 132129,
+  "totalRecords": 132158,
   "shardManifest": {
     "path": "data/laws.scraped/manifest.json",
     "shardCount": 104
