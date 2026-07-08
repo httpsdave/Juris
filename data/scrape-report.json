@@ -1,7 +1,7 @@
 {
-  "startedAt": "2026-07-07T20:28:34.348Z",
-  "finishedAt": "2026-07-07T20:52:56.957Z",
-  "previousRecords": 132158,
+  "startedAt": "2026-07-08T09:08:43.782Z",
+  "finishedAt": "2026-07-08T09:34:49.445Z",
+  "previousRecords": 132159,
   "runRecords": 14773,
   "sources": [
     {
@@ -9,8 +9,8 @@
       "count": 0,
       "warnings": [
         "republic acts page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/republic-acts/",
-        "executive orders page 204: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/executive-orders/page/204/",
         "executive orders page 205: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/executive-orders/page/205/",
+        "executive orders page 206: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/executive-orders/page/206/",
         "proclamations page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/proclamations/",
         "administrative orders page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/laws/executive-issuances/administrative-orders/",
         "memorandum circulars page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/laws/executive-issuances/memorandum-circulars/",
@@ -50,7 +50,7 @@
       "count": 1,
       "warnings": [
         "Congress listing pages returned HTTP 403. Falling back to direct PDF probing on docs.congress.hrep.online.",
-        "Congress PDF links were discovered but yielded no extractable text in sampled records."
+        "No Congress PDF records discovered in this run. Increase probes or verify current congress range configuration."
       ]
     },
     {
