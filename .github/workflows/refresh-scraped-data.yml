@@ -82,7 +82,22 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/laws.scraped data/scrape-report.json data/scrape-checkpoint.json
           git commit -m "chore(data): refresh legal dataset"
-          git push
+
+          # Pull with rebase first to avoid conflicts from concurrent runs,
+          # then retry push up to 3 times to handle transient GitHub errors
+          # (e.g. "remote: fatal error in commit_refs").
+          push_attempts=0
+          push_max=3
+          until git push; do
+            push_attempts=$((push_attempts + 1))
+            if [ "$push_attempts" -ge "$push_max" ]; then
+              echo "Push failed after $push_max attempts."
+              exit 1
+            fi
+            echo "Push failed (attempt $push_attempts/$push_max). Pulling with rebase and retrying..."
+            sleep $((push_attempts * 15))
+            git pull --rebase origin main
+          done
 
       - name: No data changes
         if: steps.changes.outputs.has_changes != 'true'
