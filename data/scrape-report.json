@@ -1,6 +1,6 @@
 {
-  "startedAt": "2026-08-21T07:28:03.004Z",
-  "finishedAt": "2026-08-21T08:00:24.041Z",
+  "startedAt": "2026-08-21T19:10:25.450Z",
+  "finishedAt": "2026-08-21T19:54:19.166Z",
   "previousRecords": 132205,
   "runRecords": 13913,
   "sources": [
@@ -9,8 +9,8 @@
       "count": 0,
       "warnings": [
         "republic acts page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/republic-acts/",
-        "executive orders page 294: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/executive-orders/page/294/",
         "executive orders page 295: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/executive-orders/page/295/",
+        "executive orders page 296: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/executive-orders/page/296/",
         "proclamations page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/proclamations/",
         "administrative orders page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/laws/executive-issuances/administrative-orders/",
         "memorandum circulars page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/laws/executive-issuances/memorandum-circulars/",
@@ -44,7 +44,8 @@
       "source": "chanrobles",
       "count": 5243,
       "warnings": [
-        "ChanRobles jurisprudence had 16 year page(s) without month-level case listings."
+        "ChanRobles jurisprudence had 16 year page(s) without month-level case listings.",
+        "ChanRobles Batas Pambansa index scrape failed (https://chanrobles.com/BatasPambansaBlg.651-700.html): Request failed: 522 <none> for https://chanrobles.com/BatasPambansaBlg.651-700.html"
       ]
     },
     {
@@ -61,7 +62,7 @@
       "warnings": []
     }
   ],
-  "totalRecords": 132205,
+  "totalRecords": 132242,
   "shardManifest": {
     "path": "data/laws.scraped/manifest.json",
     "shardCount": 104
