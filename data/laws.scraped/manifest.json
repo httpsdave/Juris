@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-09-12T11:44:26.125Z",
+  "generatedAt": "2026-09-12T21:25:58.882Z",
   "totalRecords": 132296,
   "shards": [
     {
@@ -391,7 +391,7 @@
     {
       "year": "2001",
       "file": "laws-2001.json.gz",
-      "count": 1770
+      "count": 2698
     },
     {
       "year": "2002",
@@ -406,7 +406,7 @@
     {
       "year": "2004",
       "file": "laws-2004.json.gz",
-      "count": 2136
+      "count": 1208
     },
     {
       "year": "2005",
