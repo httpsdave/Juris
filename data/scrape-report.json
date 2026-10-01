@@ -1,16 +1,16 @@
 {
-  "startedAt": "2026-10-01T13:48:40.006Z",
-  "finishedAt": "2026-10-01T14:36:27.934Z",
-  "previousRecords": 132316,
-  "runRecords": 8366,
+  "startedAt": "2026-10-01T22:54:07.355Z",
+  "finishedAt": "2026-10-01T23:20:40.533Z",
+  "previousRecords": 132613,
+  "runRecords": 8368,
   "sources": [
     {
       "source": "official_gazette",
       "count": 0,
       "warnings": [
         "republic acts page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/republic-acts/",
-        "executive orders page 375: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/executive-orders/page/375/",
         "executive orders page 376: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/executive-orders/page/376/",
+        "executive orders page 377: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/executive-orders/page/377/",
         "proclamations page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/proclamations/",
         "administrative orders page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/laws/executive-issuances/administrative-orders/",
         "memorandum circulars page 1: Request failed: 403 Forbidden for https://www.officialgazette.gov.ph/section/laws/executive-issuances/memorandum-circulars/",
@@ -52,27 +52,9 @@
     },
     {
       "source": "chanrobles",
-      "count": 5241,
+      "count": 5243,
       "warnings": [
-        "ChanRobles jurisprudence year scrape failed (https://chanrobles.com/scdecisions/2009.php): Request failed: 522 <none> for https://chanrobles.com/scdecisions/2009.php",
-        "ChanRobles jurisprudence year scrape failed (https://chanrobles.com/scdecisions/2008.php): Request failed: 525 <none> for https://chanrobles.com/scdecisions/2008.php",
-        "ChanRobles jurisprudence year scrape failed (https://chanrobles.com/scdecisions/2007.php): Request failed: 525 <none> for https://chanrobles.com/scdecisions/2007.php",
-        "ChanRobles jurisprudence year scrape failed (https://chanrobles.com/scdecisions/2005.php): Request failed: 522 <none> for https://chanrobles.com/scdecisions/2005.php",
-        "ChanRobles jurisprudence year scrape failed (https://chanrobles.com/scdecisions/2004.php): Request failed: 525 <none> for https://chanrobles.com/scdecisions/2004.php",
-        "ChanRobles jurisprudence year scrape failed (https://chanrobles.com/scdecisions/2003.php): Request failed: 522 <none> for https://chanrobles.com/scdecisions/2003.php",
-        "ChanRobles jurisprudence year scrape failed (https://chanrobles.com/scdecisions/2002.php): Request failed: 522 <none> for https://chanrobles.com/scdecisions/2002.php",
-        "ChanRobles jurisprudence year scrape failed (https://chanrobles.com/scdecisions/1998.php): Request failed: 522 <none> for https://chanrobles.com/scdecisions/1998.php",
-        "ChanRobles jurisprudence year scrape failed (https://chanrobles.com/scdecisions/1997.php): Request failed: 522 <none> for https://chanrobles.com/scdecisions/1997.php",
-        "ChanRobles jurisprudence month scrape failed (https://chanrobles.com/scdecisions/jurisprudence1995/may1995/may1995.php): Request failed: 522 <none> for https://chanrobles.com/scdecisions/jurisprudence1995/may1995/may1995.php",
-        "ChanRobles jurisprudence month scrape failed (https://chanrobles.com/scdecisions/jurisprudence1995/mar1995/mar1995.php): Request failed: 522 <none> for https://chanrobles.com/scdecisions/jurisprudence1995/mar1995/mar1995.php",
-        "ChanRobles jurisprudence month scrape failed (https://chanrobles.com/scdecisions/jurisprudence1995/feb1995/feb1995.php): Request failed: 522 <none> for https://chanrobles.com/scdecisions/jurisprudence1995/feb1995/feb1995.php",
-        "ChanRobles jurisprudence month scrape failed (https://chanrobles.com/scdecisions/jurisprudence1995/jan1995/jan1995.php): Request failed: 522 <none> for https://chanrobles.com/scdecisions/jurisprudence1995/jan1995/jan1995.php",
-        "ChanRobles jurisprudence month scrape failed (https://chanrobles.com/scdecisions/jurisprudence1994/sep1994/sep1994.php): Request failed: 522 <none> for https://chanrobles.com/scdecisions/jurisprudence1994/sep1994/sep1994.php",
-        "ChanRobles jurisprudence month scrape failed (https://chanrobles.com/scdecisions/jurisprudence1994/jun1994/jun1994.php): Request failed: 525 <none> for https://chanrobles.com/scdecisions/jurisprudence1994/jun1994/jun1994.php",
-        "ChanRobles jurisprudence month scrape failed (https://chanrobles.com/scdecisions/jurisprudence1994/feb1994/feb1994.php): Request failed: 522 <none> for https://chanrobles.com/scdecisions/jurisprudence1994/feb1994/feb1994.php",
-        "ChanRobles jurisprudence had 7 year page(s) without month-level case listings.",
-        "ChanRobles Republic Acts index scrape failed (https://chanrobles.com/RepublicActs.10001-10050.html): Request failed: 525 <none> for https://chanrobles.com/RepublicActs.10001-10050.html",
-        "ChanRobles Acts index scrape failed (https://chanrobles.com/Acts.3451-3500.html): fetch failed"
+        "ChanRobles jurisprudence had 16 year page(s) without month-level case listings."
       ]
     },
     {
