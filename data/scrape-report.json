@@ -1,8 +1,8 @@
 {
-  "startedAt": "2026-10-20T21:49:39.488Z",
-  "finishedAt": "2026-10-20T22:23:34.988Z",
-  "previousRecords": 133103,
-  "runRecords": 8437,
+  "startedAt": "2026-10-21T12:16:29.254Z",
+  "finishedAt": "2026-10-21T12:56:15.339Z",
+  "previousRecords": 133173,
+  "runRecords": 8380,
   "sources": [
     {
       "source": "official_gazette",
@@ -58,7 +58,7 @@
     },
     {
       "source": "congress",
-      "count": 70,
+      "count": 13,
       "warnings": [
         "Congress listing pages returned HTTP 403. Falling back to direct PDF probing on docs.congress.hrep.online."
       ]
@@ -69,7 +69,7 @@
       "warnings": []
     }
   ],
-  "totalRecords": 133173,
+  "totalRecords": 133186,
   "shardManifest": {
     "path": "data/laws.scraped/manifest.json",
     "shardCount": 104
