@@ -1,8 +1,8 @@
 {
-  "startedAt": "2026-10-23T21:36:26.678Z",
-  "finishedAt": "2026-10-23T22:09:53.900Z",
+  "startedAt": "2026-10-24T11:29:38.965Z",
+  "finishedAt": "2026-10-24T12:03:29.192Z",
   "previousRecords": 133186,
-  "runRecords": 8368,
+  "runRecords": 20664,
   "sources": [
     {
       "source": "official_gazette",
@@ -27,10 +27,8 @@
     },
     {
       "source": "judiciary_elibrary",
-      "count": 0,
-      "warnings": [
-        "fetch failed"
-      ]
+      "count": 12450,
+      "warnings": []
     },
     {
       "source": "lawphil",
@@ -70,7 +68,7 @@
       "warnings": []
     }
   ],
-  "totalRecords": 133186,
+  "totalRecords": 133193,
   "shardManifest": {
     "path": "data/laws.scraped/manifest.json",
     "shardCount": 104
