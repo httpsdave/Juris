@@ -1,8 +1,8 @@
 {
-  "startedAt": "2026-10-26T22:51:38.161Z",
-  "finishedAt": "2026-10-26T23:19:38.497Z",
+  "startedAt": "2026-10-27T12:38:01.207Z",
+  "finishedAt": "2026-10-27T13:06:50.820Z",
   "previousRecords": 133193,
-  "runRecords": 20664,
+  "runRecords": 19464,
   "sources": [
     {
       "source": "official_gazette",
@@ -64,11 +64,14 @@
     },
     {
       "source": "open_congress",
-      "count": 1200,
-      "warnings": []
+      "count": 0,
+      "warnings": [
+        "Open Congress documents endpoint failed: 503",
+        "No Open Congress documents parsed for this run."
+      ]
     }
   ],
-  "totalRecords": 133193,
+  "totalRecords": 133212,
   "shardManifest": {
     "path": "data/laws.scraped/manifest.json",
     "shardCount": 104
