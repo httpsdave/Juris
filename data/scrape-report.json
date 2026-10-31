@@ -1,8 +1,8 @@
 {
-  "startedAt": "2026-10-31T13:00:44.096Z",
-  "finishedAt": "2026-10-31T13:32:55.508Z",
+  "startedAt": "2026-10-31T21:50:59.507Z",
+  "finishedAt": "2026-10-31T22:25:39.902Z",
   "previousRecords": 133213,
-  "runRecords": 19464,
+  "runRecords": 19533,
   "sources": [
     {
       "source": "official_gazette",
@@ -56,10 +56,11 @@
     },
     {
       "source": "congress",
-      "count": 1,
+      "count": 70,
       "warnings": [
         "Congress listing pages returned HTTP 403. Falling back to direct PDF probing on docs.congress.hrep.online.",
-        "No Congress PDF records discovered in this run. Increase probes or verify current congress range configuration."
+        "Congress PDF extraction failed for Republic Act RA 8749 (Congress 11): PDF exceeds max size limit (31079245 bytes).",
+        "Congress PDF extraction failed for Republic Act RA 8755 (Congress 11): PDF exceeds max size limit (42439136 bytes)."
       ]
     },
     {
@@ -71,7 +72,7 @@
       ]
     }
   ],
-  "totalRecords": 133213,
+  "totalRecords": 133283,
   "shardManifest": {
     "path": "data/laws.scraped/manifest.json",
     "shardCount": 104
