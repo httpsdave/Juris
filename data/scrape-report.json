@@ -1,7 +1,7 @@
 {
-  "startedAt": "2026-10-31T21:50:59.507Z",
-  "finishedAt": "2026-10-31T22:25:39.902Z",
-  "previousRecords": 133213,
+  "startedAt": "2026-11-01T13:45:20.746Z",
+  "finishedAt": "2026-11-01T14:22:27.343Z",
+  "previousRecords": 133283,
   "runRecords": 19533,
   "sources": [
     {
@@ -58,21 +58,19 @@
       "source": "congress",
       "count": 70,
       "warnings": [
-        "Congress listing pages returned HTTP 403. Falling back to direct PDF probing on docs.congress.hrep.online.",
-        "Congress PDF extraction failed for Republic Act RA 8749 (Congress 11): PDF exceeds max size limit (31079245 bytes).",
-        "Congress PDF extraction failed for Republic Act RA 8755 (Congress 11): PDF exceeds max size limit (42439136 bytes)."
+        "Congress listing pages returned HTTP 403. Falling back to direct PDF probing on docs.congress.hrep.online."
       ]
     },
     {
       "source": "open_congress",
       "count": 0,
       "warnings": [
-        "Open Congress documents endpoint failed: 503",
+        "Open Congress documents endpoint failed: 500",
         "No Open Congress documents parsed for this run."
       ]
     }
   ],
-  "totalRecords": 133283,
+  "totalRecords": 133353,
   "shardManifest": {
     "path": "data/laws.scraped/manifest.json",
     "shardCount": 104
