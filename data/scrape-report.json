@@ -1,7 +1,7 @@
 {
-  "startedAt": "2026-11-01T22:18:40.406Z",
-  "finishedAt": "2026-11-01T22:52:33.854Z",
-  "previousRecords": 133353,
+  "startedAt": "2026-11-02T16:30:52.172Z",
+  "finishedAt": "2026-11-02T17:06:59.055Z",
+  "previousRecords": 133423,
   "runRecords": 19533,
   "sources": [
     {
@@ -58,7 +58,16 @@
       "source": "congress",
       "count": 70,
       "warnings": [
-        "Congress listing pages returned HTTP 403. Falling back to direct PDF probing on docs.congress.hrep.online."
+        "Congress listing pages returned HTTP 403. Falling back to direct PDF probing on docs.congress.hrep.online.",
+        "Congress PDF extraction failed for Republic Act RA 8973 (Congress 11): PDF exceeds max size limit (27221996 bytes).",
+        "Congress PDF extraction failed for Republic Act RA 8977 (Congress 11): PDF exceeds max size limit (27564679 bytes).",
+        "Congress PDF extraction failed for Republic Act RA 8978 (Congress 11): PDF exceeds max size limit (30100136 bytes).",
+        "Congress PDF extraction failed for Republic Act RA 8979 (Congress 11): PDF exceeds max size limit (28564899 bytes).",
+        "Congress PDF extraction failed for Republic Act RA 8984 (Congress 11): PDF exceeds max size limit (28551946 bytes).",
+        "Congress PDF extraction failed for Republic Act RA 8985 (Congress 11): PDF exceeds max size limit (29745111 bytes).",
+        "Congress PDF extraction failed for Republic Act RA 8988 (Congress 11): PDF exceeds max size limit (29738485 bytes).",
+        "Congress PDF extraction failed for Republic Act RA 8990 (Congress 11): PDF exceeds max size limit (28485594 bytes).",
+        "Congress PDF extraction failed for Republic Act RA 8991 (Congress 11): PDF exceeds max size limit (27237465 bytes)."
       ]
     },
     {
@@ -70,7 +79,7 @@
       ]
     }
   ],
-  "totalRecords": 133423,
+  "totalRecords": 133493,
   "shardManifest": {
     "path": "data/laws.scraped/manifest.json",
     "shardCount": 104
