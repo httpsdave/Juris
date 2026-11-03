@@ -1,7 +1,7 @@
 {
-  "startedAt": "2026-11-02T16:30:52.172Z",
-  "finishedAt": "2026-11-02T17:06:59.055Z",
-  "previousRecords": 133423,
+  "startedAt": "2026-11-03T01:13:41.143Z",
+  "finishedAt": "2026-11-03T01:45:50.868Z",
+  "previousRecords": 133493,
   "runRecords": 19533,
   "sources": [
     {
@@ -51,23 +51,15 @@
       "source": "chanrobles",
       "count": 5243,
       "warnings": [
-        "ChanRobles jurisprudence had 16 year page(s) without month-level case listings."
+        "ChanRobles jurisprudence had 16 year page(s) without month-level case listings.",
+        "ChanRobles Presidential Decrees entry scrape failed (https://chanrobles.com/PresidentialDecreesmain.html): fetch failed"
       ]
     },
     {
       "source": "congress",
       "count": 70,
       "warnings": [
-        "Congress listing pages returned HTTP 403. Falling back to direct PDF probing on docs.congress.hrep.online.",
-        "Congress PDF extraction failed for Republic Act RA 8973 (Congress 11): PDF exceeds max size limit (27221996 bytes).",
-        "Congress PDF extraction failed for Republic Act RA 8977 (Congress 11): PDF exceeds max size limit (27564679 bytes).",
-        "Congress PDF extraction failed for Republic Act RA 8978 (Congress 11): PDF exceeds max size limit (30100136 bytes).",
-        "Congress PDF extraction failed for Republic Act RA 8979 (Congress 11): PDF exceeds max size limit (28564899 bytes).",
-        "Congress PDF extraction failed for Republic Act RA 8984 (Congress 11): PDF exceeds max size limit (28551946 bytes).",
-        "Congress PDF extraction failed for Republic Act RA 8985 (Congress 11): PDF exceeds max size limit (29745111 bytes).",
-        "Congress PDF extraction failed for Republic Act RA 8988 (Congress 11): PDF exceeds max size limit (29738485 bytes).",
-        "Congress PDF extraction failed for Republic Act RA 8990 (Congress 11): PDF exceeds max size limit (28485594 bytes).",
-        "Congress PDF extraction failed for Republic Act RA 8991 (Congress 11): PDF exceeds max size limit (27237465 bytes)."
+        "Congress listing pages returned HTTP 403. Falling back to direct PDF probing on docs.congress.hrep.online."
       ]
     },
     {
@@ -79,7 +71,7 @@
       ]
     }
   ],
-  "totalRecords": 133493,
+  "totalRecords": 133563,
   "shardManifest": {
     "path": "data/laws.scraped/manifest.json",
     "shardCount": 104
