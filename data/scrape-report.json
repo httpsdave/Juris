@@ -1,8 +1,8 @@
 {
-  "startedAt": "2026-11-03T01:13:41.143Z",
-  "finishedAt": "2026-11-03T01:45:50.868Z",
-  "previousRecords": 133493,
-  "runRecords": 19533,
+  "startedAt": "2026-11-03T14:40:13.908Z",
+  "finishedAt": "2026-11-03T15:09:03.911Z",
+  "previousRecords": 133563,
+  "runRecords": 19528,
   "sources": [
     {
       "source": "official_gazette",
@@ -51,13 +51,12 @@
       "source": "chanrobles",
       "count": 5243,
       "warnings": [
-        "ChanRobles jurisprudence had 16 year page(s) without month-level case listings.",
-        "ChanRobles Presidential Decrees entry scrape failed (https://chanrobles.com/PresidentialDecreesmain.html): fetch failed"
+        "ChanRobles jurisprudence had 16 year page(s) without month-level case listings."
       ]
     },
     {
       "source": "congress",
-      "count": 70,
+      "count": 65,
       "warnings": [
         "Congress listing pages returned HTTP 403. Falling back to direct PDF probing on docs.congress.hrep.online."
       ]
@@ -71,7 +70,7 @@
       ]
     }
   ],
-  "totalRecords": 133563,
+  "totalRecords": 133628,
   "shardManifest": {
     "path": "data/laws.scraped/manifest.json",
     "shardCount": 104
