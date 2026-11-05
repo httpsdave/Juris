@@ -1,8 +1,8 @@
 {
-  "startedAt": "2026-11-04T23:58:29.730Z",
-  "finishedAt": "2026-11-05T00:25:20.778Z",
+  "startedAt": "2026-11-05T14:55:38.583Z",
+  "finishedAt": "2026-11-05T15:28:07.285Z",
   "previousRecords": 133628,
-  "runRecords": 19464,
+  "runRecords": 7168,
   "sources": [
     {
       "source": "official_gazette",
@@ -27,8 +27,11 @@
     },
     {
       "source": "judiciary_elibrary",
-      "count": 12450,
-      "warnings": []
+      "count": 0,
+      "warnings": [
+        "Judiciary fetch endpoint returned status 403.",
+        "Request failed: 403 Forbidden for https://elibrary.judiciary.gov.ph/republic_acts"
+      ]
     },
     {
       "source": "lawphil",
