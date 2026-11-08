@@ -1,6 +1,6 @@
 {
-  "startedAt": "2026-11-08T13:48:33.916Z",
-  "finishedAt": "2026-11-08T14:21:27.762Z",
+  "startedAt": "2026-11-08T22:25:03.410Z",
+  "finishedAt": "2026-11-08T22:57:39.198Z",
   "previousRecords": 133628,
   "runRecords": 7168,
   "sources": [
@@ -61,8 +61,7 @@
       "source": "congress",
       "count": 1,
       "warnings": [
-        "Congress listing pages returned HTTP 403. Falling back to direct PDF probing on docs.congress.hrep.online.",
-        "No Congress PDF records discovered in this run. Increase probes or verify current congress range configuration."
+        "Congress listing pages returned HTTP 403. Falling back to direct PDF probing on docs.congress.hrep.online."
       ]
     },
     {
@@ -74,7 +73,7 @@
       ]
     }
   ],
-  "totalRecords": 133628,
+  "totalRecords": 133629,
   "shardManifest": {
     "path": "data/laws.scraped/manifest.json",
     "shardCount": 104
