@@ -1,8 +1,8 @@
 {
-  "startedAt": "2026-11-10T15:11:58.648Z",
-  "finishedAt": "2026-11-10T15:42:39.263Z",
+  "startedAt": "2026-11-10T23:40:56.404Z",
+  "finishedAt": "2026-11-11T00:09:42.770Z",
   "previousRecords": 133629,
-  "runRecords": 7168,
+  "runRecords": 7237,
   "sources": [
     {
       "source": "official_gazette",
@@ -59,10 +59,12 @@
     },
     {
       "source": "congress",
-      "count": 1,
+      "count": 70,
       "warnings": [
         "Congress listing pages returned HTTP 403. Falling back to direct PDF probing on docs.congress.hrep.online.",
-        "No Congress PDF records discovered in this run. Increase probes or verify current congress range configuration."
+        "Congress PDF extraction failed for Republic Act RA 9165 (Congress 12): PDF exceeds max size limit (30284081 bytes).",
+        "Congress PDF extraction failed for Republic Act RA 9168 (Congress 12): PDF exceeds max size limit (40154847 bytes).",
+        "Congress PDF extraction failed for Republic Act RA 9182 (Congress 12): PDF exceeds max size limit (27438029 bytes)."
       ]
     },
     {
@@ -74,7 +76,7 @@
       ]
     }
   ],
-  "totalRecords": 133629,
+  "totalRecords": 133699,
   "shardManifest": {
     "path": "data/laws.scraped/manifest.json",
     "shardCount": 104
