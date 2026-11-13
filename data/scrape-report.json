@@ -1,8 +1,8 @@
 {
-  "startedAt": "2026-11-12T23:56:11.458Z",
-  "finishedAt": "2026-11-13T00:28:21.820Z",
+  "startedAt": "2026-11-13T14:52:35.739Z",
+  "finishedAt": "2026-11-13T15:28:24.802Z",
   "previousRecords": 133799,
-  "runRecords": 7168,
+  "runRecords": 4983,
   "sources": [
     {
       "source": "official_gazette",
@@ -35,19 +35,21 @@
     },
     {
       "source": "lawphil",
-      "count": 2206,
+      "count": 6,
       "warnings": [
-        "No rows parsed for Lawphil Acts index (https://lawphil.net/statutes/acts/acts.html).",
-        "No rows parsed for Lawphil Commonwealth Acts index (https://lawphil.net/statutes/comacts/comacts.html).",
-        "No rows parsed for Lawphil Batas Pambansa index (https://lawphil.net/statutes/bataspam/bataspam.html).",
-        "No rows parsed for Lawphil Republic Acts index (https://lawphil.net/statutes/repacts/repacts.html).",
-        "No rows parsed for Lawphil Executive Orders index (https://lawphil.net/executive/execord/execord.html).",
-        "No rows parsed for Lawphil Presidential Decrees index (https://lawphil.net/statutes/presdecs/legis_pd.html).",
-        "No rows parsed for Lawphil Administrative Orders index (https://lawphil.net/executive/ao/ao.html).",
-        "No rows parsed for Lawphil Memorandum Circulars index (https://lawphil.net/executive/mc/mc.html).",
-        "No rows parsed for Lawphil Memorandum Orders index (https://lawphil.net/executive/mo/mo.html).",
-        "No rows parsed for Lawphil Proclamations index (https://lawphil.net/executive/proc/proc.html).",
-        "No rows parsed for Lawphil General Orders index (https://lawphil.net/executive/genor/genor.html)."
+        "Lawphil Acts scrape failed (https://lawphil.net/statutes/acts/acts.html): fetch failed",
+        "Lawphil Commonwealth Acts scrape failed (https://lawphil.net/statutes/comacts/comacts.html): fetch failed",
+        "Lawphil Batas Pambansa scrape failed (https://lawphil.net/statutes/bataspam/bataspam.html): fetch failed",
+        "Lawphil Republic Acts scrape failed (https://lawphil.net/statutes/repacts/repacts.html): fetch failed",
+        "Lawphil jurisprudence root scrape failed: fetch failed",
+        "Lawphil Executive Orders scrape failed (https://lawphil.net/executive/execord/execord.html): fetch failed",
+        "Lawphil Presidential Decrees scrape failed (https://lawphil.net/statutes/presdecs/legis_pd.html): fetch failed",
+        "Lawphil Administrative Orders scrape failed (https://lawphil.net/executive/ao/ao.html): fetch failed",
+        "Lawphil Memorandum Circulars scrape failed (https://lawphil.net/executive/mc/mc.html): fetch failed",
+        "Lawphil Memorandum Orders scrape failed (https://lawphil.net/executive/mo/mo.html): fetch failed",
+        "Lawphil Proclamations scrape failed (https://lawphil.net/executive/proc/proc.html): fetch failed",
+        "Lawphil General Orders scrape failed (https://lawphil.net/executive/genor/genor.html): fetch failed",
+        "No detail page text extracted for lawphil; keeping listing-level metadata."
       ]
     },
     {
