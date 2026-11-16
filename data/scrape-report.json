@@ -1,6 +1,6 @@
 {
-  "startedAt": "2026-11-15T23:06:52.721Z",
-  "finishedAt": "2026-11-15T23:34:15.002Z",
+  "startedAt": "2026-11-16T16:20:31.237Z",
+  "finishedAt": "2026-11-16T16:53:48.873Z",
   "previousRecords": 133799,
   "runRecords": 7168,
   "sources": [
@@ -54,6 +54,7 @@
       "source": "chanrobles",
       "count": 5243,
       "warnings": [
+        "ChanRobles jurisprudence month scrape failed (https://chanrobles.com/scdecisions/jurisprudence1995/nov1995/nov1995.php): fetch failed",
         "ChanRobles jurisprudence had 16 year page(s) without month-level case listings."
       ]
     },
