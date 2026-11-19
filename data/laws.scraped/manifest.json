@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "generatedAt": "2026-11-19T01:14:35.011Z",
-  "totalRecords": 133799,
+  "generatedAt": "2026-11-19T16:30:36.244Z",
+  "totalRecords": 133869,
   "shards": [
     {
       "year": "1757",
@@ -521,7 +521,7 @@
     {
       "year": "unknown",
       "file": "laws-unknown.json.gz",
-      "count": 70535
+      "count": 70605
     }
   ]
 }

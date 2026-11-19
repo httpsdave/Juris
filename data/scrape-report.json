@@ -1,8 +1,8 @@
 {
-  "startedAt": "2026-11-19T00:42:15.849Z",
-  "finishedAt": "2026-11-19T01:14:35.012Z",
+  "startedAt": "2026-11-19T16:01:43.030Z",
+  "finishedAt": "2026-11-19T16:30:36.247Z",
   "previousRecords": 133799,
-  "runRecords": 7168,
+  "runRecords": 7237,
   "sources": [
     {
       "source": "official_gazette",
@@ -59,10 +59,10 @@
     },
     {
       "source": "congress",
-      "count": 1,
+      "count": 70,
       "warnings": [
         "Congress listing pages returned HTTP 403. Falling back to direct PDF probing on docs.congress.hrep.online.",
-        "No Congress PDF records discovered in this run. Increase probes or verify current congress range configuration."
+        "Congress PDF extraction failed for Republic Act RA 9497 (Congress 14): PDF exceeds max size limit (37912963 bytes)."
       ]
     },
     {
@@ -74,7 +74,7 @@
       ]
     }
   ],
-  "totalRecords": 133799,
+  "totalRecords": 133869,
   "shardManifest": {
     "path": "data/laws.scraped/manifest.json",
     "shardCount": 104
