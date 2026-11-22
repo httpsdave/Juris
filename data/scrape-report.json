@@ -1,7 +1,7 @@
 {
-  "startedAt": "2026-11-21T14:55:24.246Z",
-  "finishedAt": "2026-11-21T15:22:53.998Z",
-  "previousRecords": 134079,
+  "startedAt": "2026-11-21T23:34:34.829Z",
+  "finishedAt": "2026-11-22T00:09:21.705Z",
+  "previousRecords": 134151,
   "runRecords": 7237,
   "sources": [
     {
@@ -74,7 +74,7 @@
       ]
     }
   ],
-  "totalRecords": 134151,
+  "totalRecords": 134221,
   "shardManifest": {
     "path": "data/laws.scraped/manifest.json",
     "shardCount": 104
