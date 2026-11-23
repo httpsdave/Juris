@@ -1,7 +1,7 @@
 {
-  "startedAt": "2026-11-22T23:47:27.793Z",
-  "finishedAt": "2026-11-23T00:14:38.113Z",
-  "previousRecords": 134292,
+  "startedAt": "2026-11-23T18:44:19.224Z",
+  "finishedAt": "2026-11-23T19:11:16.606Z",
+  "previousRecords": 134362,
   "runRecords": 7237,
   "sources": [
     {
@@ -62,7 +62,7 @@
       "count": 70,
       "warnings": [
         "Congress listing pages returned HTTP 403. Falling back to direct PDF probing on docs.congress.hrep.online.",
-        "Congress PDF extraction failed for Republic Act RA 10022 (Congress 14): PDF exceeds max size limit (44236230 bytes)."
+        "Congress PDF extraction failed for Republic Act RA 10067 (Congress 14): PDF exceeds max size limit (43128852 bytes)."
       ]
     },
     {
@@ -74,7 +74,7 @@
       ]
     }
   ],
-  "totalRecords": 134362,
+  "totalRecords": 134434,
   "shardManifest": {
     "path": "data/laws.scraped/manifest.json",
     "shardCount": 104
