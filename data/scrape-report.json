@@ -1,8 +1,8 @@
 {
-  "startedAt": "2026-11-23T18:44:19.224Z",
-  "finishedAt": "2026-11-23T19:11:16.606Z",
-  "previousRecords": 134362,
-  "runRecords": 7237,
+  "startedAt": "2026-11-24T18:11:51.510Z",
+  "finishedAt": "2026-11-24T18:40:00.189Z",
+  "previousRecords": 134434,
+  "runRecords": 7184,
   "sources": [
     {
       "source": "official_gazette",
@@ -59,10 +59,9 @@
     },
     {
       "source": "congress",
-      "count": 70,
+      "count": 17,
       "warnings": [
-        "Congress listing pages returned HTTP 403. Falling back to direct PDF probing on docs.congress.hrep.online.",
-        "Congress PDF extraction failed for Republic Act RA 10067 (Congress 14): PDF exceeds max size limit (43128852 bytes)."
+        "Congress listing pages returned HTTP 403. Falling back to direct PDF probing on docs.congress.hrep.online."
       ]
     },
     {
@@ -74,7 +73,7 @@
       ]
     }
   ],
-  "totalRecords": 134434,
+  "totalRecords": 134451,
   "shardManifest": {
     "path": "data/laws.scraped/manifest.json",
     "shardCount": 104
