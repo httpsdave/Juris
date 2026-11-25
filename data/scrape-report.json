@@ -1,8 +1,8 @@
 {
-  "startedAt": "2026-11-24T18:11:51.510Z",
-  "finishedAt": "2026-11-24T18:40:00.189Z",
-  "previousRecords": 134434,
-  "runRecords": 7184,
+  "startedAt": "2026-11-25T02:45:30.147Z",
+  "finishedAt": "2026-11-25T03:18:39.831Z",
+  "previousRecords": 134451,
+  "runRecords": 7168,
   "sources": [
     {
       "source": "official_gazette",
@@ -59,9 +59,10 @@
     },
     {
       "source": "congress",
-      "count": 17,
+      "count": 1,
       "warnings": [
-        "Congress listing pages returned HTTP 403. Falling back to direct PDF probing on docs.congress.hrep.online."
+        "Congress listing pages returned HTTP 403. Falling back to direct PDF probing on docs.congress.hrep.online.",
+        "No Congress PDF records discovered in this run. Increase probes or verify current congress range configuration."
       ]
     },
     {
